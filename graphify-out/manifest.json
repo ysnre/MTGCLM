@@ -90,8 +90,8 @@
     "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
   },
   "src/dataloader.py": {
-    "mtime": 1789629389.8902721,
-    "seen": 1789651296.475926,
+    "mtime": 1789653704.4997394,
+    "seen": 1789654515.1901574,
     "ast_hash": "a8dd6a803e6581ce4891a48a7e431c86",
     "semantic_hash": "a8dd6a803e6581ce4891a48a7e431c86"
   },
@@ -204,16 +204,16 @@
     "semantic_hash": "40eb7be96ba16361a383582eac8d8bdc"
   },
   "src/train.py": {
-    "mtime": 1789629390.6982272,
-    "seen": 1789651296.4759393,
-    "ast_hash": "a990f863bade70dd7e86f43df3c10bbc",
-    "semantic_hash": "a990f863bade70dd7e86f43df3c10bbc"
+    "mtime": 1789653704.8998947,
+    "seen": 1789654515.190179,
+    "ast_hash": "dfec3df93812d094e34e81396d792f5f",
+    "semantic_hash": "dfec3df93812d094e34e81396d792f5f"
   },
   "src/train_unet.py": {
-    "mtime": 1789629391.10206,
-    "seen": 1789651296.4759398,
-    "ast_hash": "429172450a0237ec070321af7340dd03",
-    "semantic_hash": "429172450a0237ec070321af7340dd03"
+    "mtime": 1789653705.2995186,
+    "seen": 1789654515.19018,
+    "ast_hash": "d3bc8b13af36ca56b52e66b5a665a8a3",
+    "semantic_hash": "d3bc8b13af36ca56b52e66b5a665a8a3"
   },
   "src/update_compressed_labels_local.py": {
     "mtime": 1782216519.7318168,
@@ -336,22 +336,10 @@
     "semantic_hash": "9d5fd2c18351f15b7ecb479bde4ea42d"
   },
   "walkthrough_v2.md": {
-    "mtime": 1789629391.8965695,
-    "seen": 1789651296.4759538,
-    "ast_hash": "9447581145848c5161d67ba3470e9279",
-    "semantic_hash": "9447581145848c5161d67ba3470e9279"
-  },
-  "artifacts/ablation_study_f1.png": {
-    "mtime": 1789652998.705006,
-    "seen": 1789653686.3870318,
-    "ast_hash": "f3395e6a8cec8dcda07f868f6a9b2736",
-    "semantic_hash": "f3395e6a8cec8dcda07f868f6a9b2736"
-  },
-  "artifacts/ablation_study_loss.png": {
-    "mtime": 1789652998.5225637,
-    "seen": 1789653686.3870325,
-    "ast_hash": "4a9c536b77d8f950be4326663a52353b",
-    "semantic_hash": "4a9c536b77d8f950be4326663a52353b"
+    "mtime": 1789653706.2026982,
+    "seen": 1789654515.1902044,
+    "ast_hash": "d2985e0a73e267fb2d3217679cafa34c",
+    "semantic_hash": "d2985e0a73e267fb2d3217679cafa34c"
   },
   "artifacts/station_visualizations.png": {
     "mtime": 1782393969.7745721,
@@ -370,11 +358,5 @@
     "seen": 1789651296.475957,
     "ast_hash": "bfa156da9546f6d3248bceba152fe3b4",
     "semantic_hash": "bfa156da9546f6d3248bceba152fe3b4"
-  },
-  "artifacts/local_sanity.json": {
-    "mtime": 1789652995.6790955,
-    "seen": 1789653686.386971,
-    "ast_hash": "e85468b0382bf35773f3039dff008a2a",
-    "semantic_hash": "e85468b0382bf35773f3039dff008a2a"
   }
 }

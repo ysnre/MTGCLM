@@ -432,6 +432,7 @@ def main():
     import argparse, random
     parser = argparse.ArgumentParser(description="Train U-Net models")
     parser.add_argument("--model", type=str, default="unet", help="unet (MTGUNet, aux kanallı tam harita) | unet_fusion (CloudUNet_Fusion) | all")
+    parser.add_argument("--h5", type=str, default=None, help="HDF5 yolu (config.H5_PATH / MTGCLM_H5 yerine geçer)")
     parser.add_argument("--split", type=str, default=None, help="make_splits.py çıktısı (.npz)")
     parser.add_argument("--aux", action="store_true", help="H5 'aux' kanallarını girdiye ekle")
     parser.add_argument("--aux_channels", type=str, default=None)
@@ -444,6 +445,8 @@ def main():
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(args.seed)
     aux_channels = args.aux_channels.split(",") if args.aux_channels else None
+    h5_path = args.h5 or H5_PATH
+    print(f"HDF5: {h5_path}")
     
     all_experiments = {"MTGUNet": "MTGUNet", "CloudUNet_Fusion": "CloudUNet_Fusion"}
     if args.model == "unet":
@@ -456,14 +459,14 @@ def main():
     print("Initializing Datasets and DataLoaders...")
     test_loaders = None
     if args.split:
-        loaders = get_split_dataloaders(H5_PATH, args.split, batch_size=BATCH_SIZE, num_workers=NUM_WORKERS,
+        loaders = get_split_dataloaders(h5_path, args.split, batch_size=BATCH_SIZE, num_workers=NUM_WORKERS,
                                         use_aux=args.aux, aux_channels=aux_channels, shuffle_train=False)
         train_loader, val_loader = loaders["train"], loaders["val"]
         test_loaders = {k: v for k, v in loaders.items() if k.startswith("test")}
-    elif os.path.exists(H5_PATH):
-        print(f"HDF5 dataset found at {H5_PATH}. Using fast H5 loading!")
+    elif os.path.exists(h5_path):
+        print(f"HDF5 dataset found at {h5_path}. Using fast H5 loading!")
         train_loader, val_loader = get_dataloaders(
-            h5_path=H5_PATH,
+            h5_path=h5_path,
             batch_size=BATCH_SIZE,
             num_workers=NUM_WORKERS,
             shuffle=False,

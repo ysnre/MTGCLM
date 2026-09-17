@@ -45,11 +45,15 @@ python src\make_splits.py --h5 F:/radar/mtg_patch_dataset.h5 --out splits/split_
 :: 4) Colab için kompakt, ön-karıştırılmış H5 (~19 GB; 395k+partial örnek, float16)
 python src\export_compact_h5.py --src F:/radar/mtg_patch_dataset.h5 --split splits/split_v1.npz --out F:/radar/mtg_train_v2.h5 --seed 42
 
-:: 5) Yerel dry-run (kompakt dosyayla)
-set MTGCLM_H5=F:/radar/mtg_train_v2.h5
-python src\train.py --model mtg_flat --split splits/split_v1_compact.npz --aux --epochs 1 --limit_batches 30
-python src\train_unet.py --model unet --split splits/split_v1_compact.npz --aux --epochs 1 --limit_batches 20
+:: 5) Yerel dry-run (kompakt dosyayla) -- H5 yolunu HER ZAMAN --h5 ile verin
+python src\train.py --h5 F:/radar/mtg_train_v2.h5 --model mtg_flat --split splits/split_v1_compact.npz --aux --epochs 1 --limit_batches 30
+python src\train_unet.py --h5 F:/radar/mtg_train_v2.h5 --model unet --split splits/split_v1_compact.npz --aux --epochs 1 --limit_batches 20
 ```
+
+> `--h5` verilmezse `MTGCLM_H5` ortam değişkeni, o da yoksa `config.H5_PATH` kullanılır. Kompakt H5 için
+> üretilen `*_compact.npz` bölmesini kaynak H5'e (ya da tersini) uygulamak sessiz bir hata olurdu;
+> `get_split_dataloaders` artık indeks aralığını ve etiket geçerliliğini kontrol edip uyuşmazlıkta durur
+> ("Bölme doğrulandı: N satırlık H5 ile uyumlu." satırını görmelisiniz).
 
 `make_splits` ayrıca `test_partial` (1–4 okta, etiketsiz) alt kümesini yazar; eğitim betikleri bu kümede okta başına
 ortalama bulut olasılığını raporlar (beklenti: okta ile monoton artış, 0 ve ≥5 okta arasında kalma).
@@ -61,13 +65,12 @@ Etiket politikasını değiştirirseniz (`--cloudy_min 1` gibi) bölmeyi yeniden
 
 ```bash
 # mtg_train_v2.h5 /content'e kopyalandıktan sonra; splits/split_v1_compact.npz de repo ile gelir
-export MTGCLM_H5=/content/mtg_train_v2.h5
-# aşağıdaki komutlarda splits/split_v1.npz yerine splits/split_v1_compact.npz kullanın
 # Modalite ablasyonu (aynı split, 3 seed):
-python src/train.py --model mtg_flat --split splits/split_v1.npz --seed 1 --results artifacts/sat_radar_s1.json
-python src/train.py --model mtg_flat --split splits/split_v1.npz --seed 1 --aux --results artifacts/sat_radar_aux_s1.json
-python src/train.py --model mtg_flat --split splits/split_v1.npz --seed 1 --aux --aux_channels cos_sza,elev,radar_cov --results artifacts/no_awos_s1.json
-python src/train_unet.py --model unet --split splits/split_v1.npz --seed 1 --aux --results artifacts/unet_aux_s1.json
+H5=/content/mtg_train_v2.h5; SP=splits/split_v1_compact.npz
+python src/train.py --h5 $H5 --split $SP --model mtg_flat --seed 1 --results artifacts/sat_radar_s1.json
+python src/train.py --h5 $H5 --split $SP --model mtg_flat --seed 1 --aux --results artifacts/sat_radar_aux_s1.json
+python src/train.py --h5 $H5 --split $SP --model mtg_flat --seed 1 --aux --aux_channels cos_sza,elev,radar_cov --results artifacts/no_awos_s1.json
+python src/train_unet.py --h5 $H5 --split $SP --model unet --seed 1 --aux --results artifacts/unet_aux_s1.json
 ```
 
 Uydu-only (radar kanalı hariç) ablasyonu için `MTGH5Dataset`'e kanal seçme parametresi eklemek gerekir
@@ -88,4 +91,5 @@ Uydu-only (radar kanalı hariç) ablasyonu için `MTGH5Dataset`'e kanal seçme p
 - Model seçimi artık val **balanced accuracy** ile (F1(cloudy) çoğunluk sınıfını ödüllendiriyordu).
   Sonuç JSON'unda `best_f1` alanı geriye uyumluluk için korunur ama balanced accuracy içerir.
 - Kompakt H5 `pre_shuffled=1` attr'ı taşır; `train.py` bunu görünce `buffered_shuffle_generator`'ı atlar (dosya zaten rastgele sıralı).
+- `train.py --h5` / `train_unet.py --h5` H5 yolunu açıkça belirler; bölme–H5 uyuşmazlığı başlangıçta yakalanır.
 - Test kümeleri yalnızca eğitim bitince, en iyi val modeliyle bir kez değerlendirilir ve JSON'a yazılır.
