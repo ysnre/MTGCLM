@@ -1,0 +1,1 @@
+Noktasal istasyon enlem/boylam verilerini, 1 km'lik grid sisteminde doğru satır/sütun (X/Y) indeksine yazma yeteneği

@@ -1,0 +1,11 @@
+numpy
+pandas
+torch
+h5py
+xarray
+tqdm
+matplotlib
+pyresample
+netcdf4
+scipy
+pymongo

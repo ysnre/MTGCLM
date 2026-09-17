@@ -1,0 +1,35 @@
+# --- Veri (~96 GB; H5'ler zaten F:/radar altında) ---
+data/
+*.h5
+*.hdf5
+*.nc
+*.npy
+!splits/*.npz
+
+# --- Model ağırlıkları / checkpoint ---
+*.pth
+*.pt
+*.ckpt
+
+# --- Geçici / çalışma alanı ---
+scratch/
+sonuç1/
+*.log
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+.env
+
+# --- IDE / OS ---
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# --- Claude Code yerel ayarları ---
+.claude/settings.local.json
