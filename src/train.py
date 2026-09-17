@@ -447,7 +447,8 @@ import argparse
 
 def main():
     parser = argparse.ArgumentParser(description="Train MTGCLM Models")
-    parser.add_argument("--model", type=str, default="all", help="Model to train: all, mtg_flat, mtg_late_fusion, resnet18, resnet18_fusion")
+    parser.add_argument("--model", type=str, default="all",
+                        help="all | arch (6 mimari varyantı) | arch_flat | shallow_flat | medium_flat | deep_flat | shallow_gap | medium_gap | deep_gap | resnet18 | mtg_late_fusion | resnet18_fusion | mtg_flat (=Deep_Flat)")
     parser.add_argument("--h5", type=str, default=None, help="HDF5 yolu (config.H5_PATH / MTGCLM_H5 yerine geçer)")
     parser.add_argument("--split", type=str, default=None, help="make_splits.py çıktısı (.npz). Verilirse train/val/test_* buradan gelir.")
     parser.add_argument("--aux", action="store_true", help="H5 'aux' kanallarını (t2m, rh2m, elev, cos_sza, radar_cov) girdiye ekle")
@@ -467,24 +468,42 @@ def main():
     print(f"HDF5: {h5_path}")
     
     # Configurations to compare (Ablation Study)
+    # (conv_blocks, use_gap, model_type)
+    SHALLOW, MEDIUM, DEEP = [32, 64], [32, 64, 128], [32, 64, 128, 256]
     all_experiments = {
-        "Shallow_Flat": ([32, 64], False, "ConvNet"),
-        "Deep_Flat": ([32, 64, 128, 256], False, "ConvNet"),
-        "MTGConvNet_LateFusion": ([32, 64, 128, 256], False, "MTGConvNet_LateFusion"),
-        "ResNet18": (None, True, "ResNet18"),
-        "ResNet18_LateFusion": (None, False, "ResNet18_LateFusion")
+        # --- mimari ablasyonu: derinlik (Shallow/Medium/Deep) x havuzlama (GAP/Flatten)
+        "Shallow_GAP":  (SHALLOW, True,  "ConvNet"),
+        "Shallow_Flat": (SHALLOW, False, "ConvNet"),
+        "Medium_GAP":   (MEDIUM,  True,  "ConvNet"),
+        "Medium_Flat":  (MEDIUM,  False, "ConvNet"),
+        "Deep_GAP":     (DEEP,    True,  "ConvNet"),
+        "Deep_Flat":    (DEEP,    False, "ConvNet"),
+        # --- yüksek kapasiteli referans
+        "ResNet18":     (None,    True,  "ResNet18"),
+        # --- eski skaler geç füzyon (v1 ile kıyas için; v2'de aux kanalları tercih edilir)
+        "MTGConvNet_LateFusion": (DEEP, False, "MTGConvNet_LateFusion"),
+        "ResNet18_LateFusion":   (None, False, "ResNet18_LateFusion"),
     }
-    
-    if args.model == "mtg_flat":
-        experiments = {"Deep_Flat": all_experiments["Deep_Flat"]}
-    elif args.model == "mtg_late_fusion":
-        experiments = {"MTGConvNet_LateFusion": all_experiments["MTGConvNet_LateFusion"]}
-    elif args.model == "resnet18":
-        experiments = {"ResNet18": all_experiments["ResNet18"]}
-    elif args.model == "resnet18_fusion":
-        experiments = {"ResNet18_LateFusion": all_experiments["ResNet18_LateFusion"]}
+    ARCH_ABLATION = ["Shallow_GAP", "Shallow_Flat", "Medium_GAP", "Medium_Flat", "Deep_GAP", "Deep_Flat"]
+    ALIASES = {  # kısa ad -> deney adı listesi
+        "all": list(all_experiments),
+        "arch": ARCH_ABLATION,                       # 6 mimari varyantı (danışman istediği kıyas)
+        "arch_flat": ["Shallow_Flat", "Medium_Flat", "Deep_Flat"],
+        "mtg_flat": ["Deep_Flat"],                   # geriye uyumluluk
+        "shallow_flat": ["Shallow_Flat"], "medium_flat": ["Medium_Flat"], "deep_flat": ["Deep_Flat"],
+        "shallow_gap": ["Shallow_GAP"], "medium_gap": ["Medium_GAP"], "deep_gap": ["Deep_GAP"],
+        "resnet18": ["ResNet18"],
+        "mtg_late_fusion": ["MTGConvNet_LateFusion"], "resnet18_fusion": ["ResNet18_LateFusion"],
+    }
+    if args.model in ALIASES:
+        names = ALIASES[args.model]
+    elif args.model in all_experiments:
+        names = [args.model]
     else:
-        experiments = all_experiments
+        raise SystemExit(f"Bilinmeyen --model '{args.model}'. Seçenekler: "
+                         + ", ".join(sorted(set(list(ALIASES) + list(all_experiments)))))
+    experiments = {n: all_experiments[n] for n in names}
+    print(f"Çalıştırılacak deney(ler): {', '.join(experiments)}")
     
     # Initialize Dataloaders ONCE
     print("Initializing Datasets and DataLoaders...")
