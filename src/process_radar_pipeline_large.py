@@ -37,7 +37,10 @@ def init_worker(sample_nc_path):
     """Initializes target grid and MongoDB connection once per worker process."""
     global target_def, mongo_col
     target_def = get_satellite_grid_local(sample_nc_path)
-    client = MongoClient("mongodb://radar_user:radar@192.168.10.196:27017/radar?authSource=radar")
+    mongo_uri = os.environ.get("MTGCLM_MONGO_URI")
+    if not mongo_uri:
+        raise RuntimeError("MTGCLM_MONGO_URI ortam değişkeni tanımlı değil (mongodb://user:pass@host:27017/radar?authSource=radar)")
+    client = MongoClient(mongo_uri)
     mongo_col = client.radar.radar
 
 def parse_mtg_time(filename: str) -> datetime:

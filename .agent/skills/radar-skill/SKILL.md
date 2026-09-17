@@ -14,7 +14,7 @@ png dosyasına kaydedilen radar verilerini pyresample veya rioxarray kullanarak 
 
 ## How to use it
 
-mongodb://radar_user:radar@192.168.10.196:27017/radar?authSource=radar
+Bağlantı dizesi `MTGCLM_MONGO_URI` ortam değişkeninden okunur (repoya yazmayın).
 
  tablonun örnek çıktısı:
 {

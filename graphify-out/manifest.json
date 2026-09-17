@@ -35,36 +35,6 @@
     "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
     "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
   },
-  "src/_backup_20260916/config.py": {
-    "mtime": 1789543015.0701065,
-    "seen": 1789651296.4759152,
-    "ast_hash": "beda684141b1a372eb8af36598f110bf",
-    "semantic_hash": "beda684141b1a372eb8af36598f110bf"
-  },
-  "src/_backup_20260916/dataloader.py": {
-    "mtime": 1789543011.6572945,
-    "seen": 1789651296.4759161,
-    "ast_hash": "a17c6d093d127832f33b07187ffc4575",
-    "semantic_hash": "a17c6d093d127832f33b07187ffc4575"
-  },
-  "src/_backup_20260916/h5_dataset.py": {
-    "mtime": 1789543011.2473066,
-    "seen": 1789651296.4759169,
-    "ast_hash": "51c29c7f544cd1e8ad515a62d5a5ab60",
-    "semantic_hash": "51c29c7f544cd1e8ad515a62d5a5ab60"
-  },
-  "src/_backup_20260916/train.py": {
-    "mtime": 1789543012.0534055,
-    "seen": 1789651296.4759176,
-    "ast_hash": "94a91c911e2bdfe213264aad35d9815d",
-    "semantic_hash": "94a91c911e2bdfe213264aad35d9815d"
-  },
-  "src/_backup_20260916/train_unet.py": {
-    "mtime": 1789543012.436695,
-    "seen": 1789651296.4759188,
-    "ast_hash": "683f36deba72dbd8ee9541719ea1ef4e",
-    "semantic_hash": "683f36deba72dbd8ee9541719ea1ef4e"
-  },
   "src/artifacts/ablation_results.json": {
     "mtime": 1789474884.9789166,
     "seen": 1789651296.4759197,
@@ -210,10 +180,10 @@
     "semantic_hash": "c75fa8d0786a7301a336ffa77fd1107a"
   },
   "src/process_radar_pipeline_large.py": {
-    "mtime": 1781535117.0857944,
-    "seen": 1789651296.4759364,
-    "ast_hash": "bd92597eb983ee6584863483bbcd41dd",
-    "semantic_hash": "bd92597eb983ee6584863483bbcd41dd"
+    "mtime": 1789653504.3456,
+    "seen": 1789653686.3870044,
+    "ast_hash": "9ceda0b9606b01f8b90f9c8956145f0c",
+    "semantic_hash": "9ceda0b9606b01f8b90f9c8956145f0c"
   },
   "src/radar_loader.py": {
     "mtime": 1781035337.8150246,
@@ -294,10 +264,10 @@
     "semantic_hash": "12e2fbe3e84d9ab3a7d888dadfa36f6d"
   },
   ".agent/skills/radar-skill/SKILL.md": {
-    "mtime": 1781014542.985576,
-    "seen": 1789651296.4759464,
-    "ast_hash": "6110e11064aaa0c83958f9329d502385",
-    "semantic_hash": "6110e11064aaa0c83958f9329d502385"
+    "mtime": 1789653504.3532445,
+    "seen": 1789653686.3870184,
+    "ast_hash": "1323b9c7d16cece239e8919290980819",
+    "semantic_hash": "1323b9c7d16cece239e8919290980819"
   },
   ".agent/skills/skills.md": {
     "mtime": 1780147550.950297,
@@ -372,14 +342,14 @@
     "semantic_hash": "9447581145848c5161d67ba3470e9279"
   },
   "artifacts/ablation_study_f1.png": {
-    "mtime": 1789569153.2192247,
-    "seen": 1789651296.4759548,
+    "mtime": 1789652998.705006,
+    "seen": 1789653686.3870318,
     "ast_hash": "f3395e6a8cec8dcda07f868f6a9b2736",
     "semantic_hash": "f3395e6a8cec8dcda07f868f6a9b2736"
   },
   "artifacts/ablation_study_loss.png": {
-    "mtime": 1789569153.0289986,
-    "seen": 1789651296.4759552,
+    "mtime": 1789652998.5225637,
+    "seen": 1789653686.3870325,
     "ast_hash": "4a9c536b77d8f950be4326663a52353b",
     "semantic_hash": "4a9c536b77d8f950be4326663a52353b"
   },
@@ -401,10 +371,10 @@
     "ast_hash": "bfa156da9546f6d3248bceba152fe3b4",
     "semantic_hash": "bfa156da9546f6d3248bceba152fe3b4"
   },
-  "artifacts/test_plot.png": {
-    "mtime": 1781380392.360538,
-    "seen": 1789651296.4759579,
-    "ast_hash": "4b6834856866d9603dd7d7c5edf03ac8",
-    "semantic_hash": "4b6834856866d9603dd7d7c5edf03ac8"
+  "artifacts/local_sanity.json": {
+    "mtime": 1789652995.6790955,
+    "seen": 1789653686.386971,
+    "ast_hash": "e85468b0382bf35773f3039dff008a2a",
+    "semantic_hash": "e85468b0382bf35773f3039dff008a2a"
   }
 }
