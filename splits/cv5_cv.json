@@ -1,0 +1,109 @@
+{
+  "h5": "F:\\radar\\mtg_train_v2.h5",
+  "folds": 5,
+  "seed": 42,
+  "block_days": 7,
+  "label_policy": "{\"clear_max\": 0, \"cloudy_min\": 5, \"okta9\": \"rh\", \"fog_rh\": 90.0, \"dedup\": true, \"written\": \"2026-09-16T14:13:27\"}",
+  "fold_stats": {
+    "fold0": {
+      "train": {
+        "n": 257477,
+        "cloudy_ratio": 0.6969360370052471,
+        "majority_acc": 0.6969360370052471
+      },
+      "val": {
+        "n": 47881,
+        "cloudy_ratio": 0.43823228420459054,
+        "majority_acc": 0.5617677157954095
+      },
+      "test_time": {
+        "n": 77910,
+        "cloudy_ratio": 0.645193171608266,
+        "majority_acc": 0.645193171608266
+      },
+      "test_partial": {
+        "n": 2804
+      }
+    },
+    "fold1": {
+      "train": {
+        "n": 258336,
+        "cloudy_ratio": 0.7100481543416326,
+        "majority_acc": 0.7100481543416326
+      },
+      "val": {
+        "n": 47455,
+        "cloudy_ratio": 0.365188072911179,
+        "majority_acc": 0.6348119270888211
+      },
+      "test_time": {
+        "n": 77477,
+        "cloudy_ratio": 0.6445009486686372,
+        "majority_acc": 0.6445009486686372
+      },
+      "test_partial": {
+        "n": 6582
+      }
+    },
+    "fold2": {
+      "train": {
+        "n": 257712,
+        "cloudy_ratio": 0.6647730800273173,
+        "majority_acc": 0.6647730800273173
+      },
+      "val": {
+        "n": 52085,
+        "cloudy_ratio": 0.6782374964001152,
+        "majority_acc": 0.6782374964001152
+      },
+      "test_time": {
+        "n": 73471,
+        "cloudy_ratio": 0.5995426767023724,
+        "majority_acc": 0.5995426767023724
+      },
+      "test_partial": {
+        "n": 5080
+      }
+    },
+    "fold3": {
+      "train": {
+        "n": 255647,
+        "cloudy_ratio": 0.6537960547160734,
+        "majority_acc": 0.6537960547160734
+      },
+      "val": {
+        "n": 50666,
+        "cloudy_ratio": 0.523171357517862,
+        "majority_acc": 0.523171357517862
+      },
+      "test_time": {
+        "n": 76955,
+        "cloudy_ratio": 0.741303359105971,
+        "majority_acc": 0.741303359105971
+      },
+      "test_partial": {
+        "n": 0
+      }
+    },
+    "fold4": {
+      "train": {
+        "n": 251818,
+        "cloudy_ratio": 0.6874329873162364,
+        "majority_acc": 0.6874329873162364
+      },
+      "val": {
+        "n": 53995,
+        "cloudy_ratio": 0.5220668580424114,
+        "majority_acc": 0.5220668580424114
+      },
+      "test_time": {
+        "n": 77455,
+        "cloudy_ratio": 0.6377638628881286,
+        "majority_acc": 0.6377638628881286
+      },
+      "test_partial": {
+        "n": 2475
+      }
+    }
+  }
+}
