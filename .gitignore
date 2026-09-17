@@ -1,35 +1,43 @@
-# --- Veri (~96 GB; H5'ler zaten F:/radar altında) ---
-data/
+# --- veri (asla commit edilmez) ---
 *.h5
 *.hdf5
 *.nc
 *.npy
-!splits/*.npz
+!data/dem_800x1000.npy.md5
+data/raw_mtg/
+data/raw_radar/
+data/raw_awos_observation/
+data/raw_observation/
+data/processed/
+*.zip
 
-# --- Model ağırlıkları / checkpoint ---
+# --- model ağırlıkları / checkpoint ---
 *.pth
 *.pt
-*.ckpt
+checkpoint_*.pth
+best_model_*.pth
 
-# --- Geçici / çalışma alanı ---
+# --- çıktı ---
+artifacts/*.png
 scratch/
 sonuç1/
 *.log
 
+# bölme dosyaları ve sonuç JSON'ları PAYLAŞILIR:
+!splits/*.npz
+!splits/*.json
+!artifacts/*.json
+
 # --- Python ---
 __pycache__/
 *.py[cod]
-.ipynb_checkpoints/
 .venv/
 venv/
-.env
+.ipynb_checkpoints/
+.pytest_cache/
 
-# --- IDE / OS ---
+# --- işletim sistemi / editör ---
+.DS_Store
+Thumbs.db
 .vscode/
 .idea/
-Thumbs.db
-desktop.ini
-.DS_Store
-
-# --- Claude Code yerel ayarları ---
-.claude/settings.local.json

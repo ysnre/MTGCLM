@@ -13,10 +13,15 @@ yeniden çıkarılmaz; H5'e yeni datasetler eklenir ve eğitim betikleri bunlar�
 | `src/make_splits.py` | yeni | Hafta-blok zaman bölmesi + istasyon ayrımı → `train/val/test_time/test_station/test_both` (.npz + .json) |
 | `src/export_compact_h5.py` | yeni | Yalnızca bölmedeki örnekler, global permütasyon, float16 → `mtg_train_v2.h5` (+ `<split>_compact.npz`) |
 | `src/make_dem_npy.py` | yeni | DEM GeoTIFF → 800×1000 `.npy` (metre), ortalama ile yeniden örnekleme |
+| `src/make_cv_splits.py` | yeni | Bloklu K-katlı CV bölmeleri (`cv5_fold0..4.npz`) |
+| `src/aggregate_results.py` | yeni | Koşu JSON'larını toplar → ortalama ± s.s. tablo (Markdown/CSV/LaTeX) + grafikler |
+| `src/baselines.py` | yeni | Karşılaştırma modelleri: majority, kanal eşiği, çift eşik, logreg, RF, HGB, kNN |
+| `src/make_public_sample.py` | yeni | Paylaşılabilir küçük örneklem H5 + bölme (GitHub/Zenodo) |
+| `README.md`, `.gitignore`, `LICENSE`, `CITATION.cff`, `requirements.txt` | yeni | Depo iskeleti + veri bulunabilirliği beyanı |
 | `src/metrics.py` | yeni | Balanced Acc, MCC, F1(clear/cloudy), AUC, karışıklık matrisi, majority baseline |
 | `src/h5_dataset.py` | değişti | `use_aux=True` → aux kanalları normalize edilip 17 kanala eklenir (`num_channels`) |
 | `src/dataloader.py` | değişti | `get_split_dataloaders()` (bölme dosyasından), `get_dataloaders(use_aux=...)` |
-| `src/train.py`, `src/train_unet.py` | değişti | `--split --aux --seed --epochs --limit_batches --results`; kanal sayısı veri setinden; model seçimi **val balanced accuracy**; test kümeleri sonuç JSON'una yazılır; `torch.load(weights_only=False)` |
+| `src/train.py`, `src/train_unet.py` | değişti | `--h5 --split --aux --seed --epochs --limit_batches --results`; mimari kaydı Shallow/Medium/Deep × GAP/Flatten (6 varyant, `--model arch`); kanal sayısı veri setinden; model seçimi **val balanced accuracy**; test kümeleri sonuç JSON'una yazılır; `torch.load(weights_only=False)` |
 | `src/config.py` | değişti | `MTGCLM_H5` ortam değişkeni H5 yolunu geçersiz kılar |
 
 Eski dosyaların yedeği: `src/_backup_20260916/`.
@@ -93,3 +98,62 @@ Uydu-only (radar kanalı hariç) ablasyonu için `MTGH5Dataset`'e kanal seçme p
 - Kompakt H5 `pre_shuffled=1` attr'ı taşır; `train.py` bunu görünce `buffered_shuffle_generator`'ı atlar (dosya zaten rastgele sıralı).
 - `train.py --h5` / `train_unet.py --h5` H5 yolunu açıkça belirler; bölme–H5 uyuşmazlığı başlangıçta yakalanır.
 - Test kümeleri yalnızca eğitim bitince, en iyi val modeliyle bir kez değerlendirilir ve JSON'a yazılır.
+
+
+## Çapraz doğrulama, karşılaştırma ve raporlama (danışman talepleri)
+
+```bash
+H5=F:/radar/mtg_train_v2.h5; SP=splits/split_v1_compact.npz
+
+# 1) Bloklu 5-katlı CV (tek bölme yerine; katlar 7 günlük bloklardan oluşur)
+python src/make_cv_splits.py --h5 $H5 --out splits/cv5 --folds 5 --block_days 7 --seed 42
+for k in 0 1 2 3 4; do
+  python src/train.py --h5 $H5 --split splits/cv5_fold$k.npz --model mtg_flat --aux --seed 1 \
+      --results artifacts/CV_full_f${k}_s1.json
+done
+
+# 2) Klasik karşılaştırma modelleri (aynı bölme, aynı metrikler)
+python src/baselines.py --h5 $H5 --split $SP --aux \
+    --models majority,threshold,threshold2,logreg,rf,hgb --results artifacts/Z_baselines_s1.json
+
+# 3) Toplu rapor: ortalama ± standart sapma, Markdown + CSV + LaTeX + grafikler
+python src/aggregate_results.py --dir artifacts --out artifacts/summary --plot
+python src/aggregate_results.py --dir artifacts --pattern "CV_*.json" --out artifacts/cv_summary
+
+# 4) Paylaşılabilir örneklem (GitHub release / Zenodo)
+python src/make_public_sample.py --src $H5 --split $SP --out data/mtg_sample.h5 --n 2000
+```
+
+Raporlanan metrikler: balanced accuracy, MCC, sınıf bazında precision / recall / F1, accuracy,
+ROC-AUC, karışıklık matrisi ve çoğunluk sınıfı referansı. `aggregate_results.py` dosya adındaki
+`_f<kat>_s<seed>` kalıbını okuyup kat ve seed koşularını tek satırda ortalar.
+
+Baseline'ların eşikleri **yalnızca train** üzerinde optimize edilir; test kümesine bakılmaz.
+Baseline sonuçları CNN koşularıyla aynı JSON şemasını kullandığı için tek tabloda birleşir.
+
+
+## Mimari ablasyonu (v1 ile aynı 6 varyant)
+
+`--model arch` altı varyantı sırayla koşar; parametre sayıları v1 koşularıyla birebir aynıdır
+(aux kullanıldığında her varyant +1.440 parametre alır: 5 ek giriş kanalı × 32 filtre × 3×3).
+
+| Deney | conv_blocks | Havuzlama | Parametre (17 kanal) |
+|---|---|---|---|
+| Shallow_GAP | [32, 64] | GAP | 27.906 |
+| Shallow_Flat | [32, 64] | Flatten | 285.954 |
+| Medium_GAP | [32, 64, 128] | GAP | 106.114 |
+| Medium_Flat | [32, 64, 128] | Flatten | 228.994 |
+| Deep_GAP | [32, 64, 128, 256] | GAP | 409.986 |
+| Deep_Flat | [32, 64, 128, 256] | Flatten | 459.138 |
+
+```bash
+python src/train.py --h5 $H5 --split $SP --model arch --aux --seed 1 --results artifacts/ARCH_s1.json
+python src/train.py --h5 $H5 --split $SP --model resnet18 --aux --seed 1 --results artifacts/RESNET_s1.json
+```
+
+Tek varyant için `--model medium_flat` gibi kısa adlar ya da doğrudan deney adı (`--model Medium_GAP`)
+kullanılabilir. `--model mtg_flat` geriye uyumluluk için Deep_Flat'i çalıştırır.
+
+> Dikkat: `train.py`, sonuç JSON'unda **adı zaten bulunan** deneyi atlar (kesintiden sonra devam
+> edebilmek için). Bir deneyi yeniden koşmak istediğinizde ya yeni bir `--results` dosyası verin
+> ya da eski JSON'u silin.

@@ -56,6 +56,8 @@ def compute_metrics(preds, targets, probs=None) -> dict:
     p = float(targets.mean())
     out = {
         "accuracy": (tp + tn) / n,
+        "precision_clear": prec_clear, "recall_clear": specificity,
+        "precision_cloudy": precision, "recall_cloudy": recall,
         "balanced_accuracy": 0.5 * (recall + specificity),
         "mcc": float(mcc),
         "precision": precision, "recall": recall, "specificity": specificity,
