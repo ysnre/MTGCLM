@@ -51,6 +51,34 @@ def atomic_json(obj, path: str):
     os.replace(tmp, path)
 
 
+# --- GPU tarafı girdi hazırlığı -------------------------------------------------
+# Veri kümesi f16 modunda yamaları float16 ve aux'u HAM döndürür (bkz. MTGH5Dataset).
+# float32'ye genişletme ve aux z-skoru burada, GPU'da yapılır. Matematik aynıdır;
+# CPU'dan kalkan iş, batch başına ~3 kat daha ucuz bir veri yolu demektir.
+_AUX_NORM = None   # (n_base, mean[1,A,1,1], std[1,A,1,1]) ya da None
+
+
+def set_aux_norm(base_dataset, device):
+    """run_experiment başında çağrılır; f16 modunda aux normalizasyon sabitlerini GPU'ya taşır."""
+    global _AUX_NORM
+    if getattr(base_dataset, "f16", False) and getattr(base_dataset, "aux_idx", None) is not None:
+        m = torch.as_tensor(base_dataset.aux_means, dtype=torch.float32, device=device)
+        s = torch.as_tensor(base_dataset.aux_stds, dtype=torch.float32, device=device)
+        _AUX_NORM = (int(base_dataset.base_channels), m.unsqueeze(0), s.unsqueeze(0))
+    else:
+        _AUX_NORM = None
+
+
+def prep_features(features, device):
+    x = features.to(device, non_blocking=True)
+    if x.dtype != torch.float32:
+        x = x.float()
+    if _AUX_NORM is not None:
+        n_base, m, s = _AUX_NORM
+        x = torch.cat([x[:, :n_base], (x[:, n_base:] - m) / s], dim=1)
+    return x
+
+
 def safe_load(path: str, device):
     """Bozuk/yarım checkpoint'i sessizce yok sayar (çökme anında yazılmış olabilir)."""
     try:
@@ -175,7 +203,8 @@ def train_one_epoch(model, dataloader, criterion, optimizer, device, limit_batch
             features, labels = batch_item
             scalars = torch.zeros(labels.size(0), 3)
             
-        features, scalars, labels = features.to(device), scalars.to(device), labels.to(device)
+        features = prep_features(features, device)
+        scalars, labels = scalars.to(device), labels.to(device)
         
         optimizer.zero_grad()
         
@@ -230,7 +259,8 @@ def validate(model, dataloader, criterion, device, limit_batches=None):
                 features, labels = batch_item
                 scalars = torch.zeros(labels.size(0), 3)
                 
-            features, scalars, labels = features.to(device), scalars.to(device), labels.to(device)
+            features = prep_features(features, device)
+            scalars, labels = scalars.to(device), labels.to(device)
             
             if hasattr(model, 'module'):
                 uses_scalars = 'Fusion' in model.module.__class__.__name__
@@ -279,7 +309,7 @@ def evaluate_partial(model, dataloader, device, limit_batches=None):
             if limit_batches and batch_idx >= limit_batches:
                 break
             features, scalars, labels = batch_item if len(batch_item) == 3 else (batch_item[0], torch.zeros(batch_item[1].size(0), 3), batch_item[1])
-            features, scalars = features.to(device), scalars.to(device)
+            features, scalars = prep_features(features, device), scalars.to(device)
             uses_scalars = 'Fusion' in (model.module if hasattr(model, 'module') else model).__class__.__name__
             outputs = model(features, scalars) if uses_scalars else model(features)
             probs.extend(torch.softmax(outputs, 1)[:, 1].cpu().numpy())
@@ -307,6 +337,7 @@ def run_experiment(name: str, conv_blocks: list, train_loader, val_loader, epoch
     while hasattr(_ds, "dataset"):
         _ds = _ds.dataset
     in_ch = int(getattr(_ds, "num_channels", 17))
+    set_aux_norm(_ds, DEVICE)          # f16 modunda aux z-skoru GPU'da yapılacak
     print(f"Input channels: {in_ch}")
     
     # Initialize model
@@ -498,6 +529,9 @@ def main():
     parser.add_argument("--split", type=str, default=None, help="make_splits.py çıktısı (.npz). Verilirse train/val/test_* buradan gelir.")
     parser.add_argument("--aux", action="store_true", help="H5 'aux' kanallarını (t2m, rh2m, elev, cos_sza, radar_cov) girdiye ekle")
     parser.add_argument("--aux_channels", type=str, default=None, help="Virgülle ayrılmış aux alt kümesi, ör. t2m,rh2m,cos_sza")
+    parser.add_argument("--no_f16", action="store_true",
+                        help="Eski veri yolu: float32'ye cevirme ve aux z-skoru CPU'da yapilsin (daha yavas, "
+                             "sonuc ayni). Dogrulama/karsilastirma icin.")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--epochs", type=int, default=None, help="Varsayılan: Colab 15, yerel 3")
     parser.add_argument("--limit_batches", type=int, default=None, help="Varsayılan: Colab None, yerel 30")
@@ -565,7 +599,8 @@ def main():
     test_loaders = None
     if args.split:
         loaders = get_split_dataloaders(h5_path, args.split, batch_size=BATCH_SIZE, num_workers=n_workers,
-                                        use_aux=args.aux, aux_channels=aux_channels, shuffle_train=False)
+                                        use_aux=args.aux, aux_channels=aux_channels, shuffle_train=False,
+                                        f16=not args.no_f16)
         train_loader, val_loader = loaders["train"], loaders["val"]
         test_loaders = {k: v for k, v in loaders.items() if k.startswith("test")}
     elif os.path.exists(h5_path):

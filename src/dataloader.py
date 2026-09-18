@@ -118,18 +118,27 @@ class AugmentedDataset(TorchDataset):
     def __len__(self) -> int:
         return len(self.dataset)
         
-    def __getitem__(self, idx: int) -> tuple:
-        item = self.dataset[idx]
+    def _apply(self, item):
         if len(item) == 3:
             patch, scalars, label = item
             if self.transform:
                 patch = self.transform(patch)
             return patch, scalars, label
-        else:
-            patch, label = item
-            if self.transform:
-                patch = self.transform(patch)
-            return patch, label
+        patch, label = item
+        if self.transform:
+            patch = self.transform(patch)
+        return patch, label
+
+    def __getitem__(self, idx: int) -> tuple:
+        return self._apply(self.dataset[idx])
+
+    def __getitems__(self, indices):
+        """Alttaki dataset toplu okumayı destekliyorsa ona devret (bkz. MTGH5Dataset.__getitems__).
+        Artırma (flip) örneklere ÇAĞRILDIKLARI SIRAYLA uygulanır; yani rastgele sayı üretecinin
+        tüketim sırası tek tek okumayla birebir aynıdır, sonuçlar değişmez."""
+        fn = getattr(self.dataset, "__getitems__", None)
+        items = fn(indices) if callable(fn) else [self.dataset[i] for i in indices]
+        return [self._apply(it) for it in items]
 
 
 def _check_split_matches_h5(split, dataset, h5_path: str, split_file: str) -> None:
@@ -174,7 +183,8 @@ def get_split_dataloaders(h5_path: str,
                           num_workers: int = 0,
                           use_aux: bool = False,
                           aux_channels=None,
-                          shuffle_train: bool = False) -> dict:
+                          shuffle_train: bool = False,
+                          f16: bool = False) -> dict:
     """
     make_splits.py ile üretilen .npz bölme dosyasından DataLoader sözlüğü üretir:
         {"train", "val", "test_time", "test_station", "test_both", "test_partial"}  (boş alt kümeler atlanır)
@@ -183,7 +193,9 @@ def get_split_dataloaders(h5_path: str,
     (ya da önceden karıştırılmış H5 ile) yapılır.
     """
     print(f"Initializing MTGH5Dataset from {h5_path} (use_aux={use_aux})...")
-    full_dataset = MTGH5Dataset(h5_path, use_aux=use_aux, aux_channels=aux_channels)
+    full_dataset = MTGH5Dataset(h5_path, use_aux=use_aux, aux_channels=aux_channels, f16=f16)
+    if f16:
+        print("  Veri yolu: float16 (float32'ye cevirme ve aux z-skoru GPU'da)")
     print(f"  Kanal sayısı: {full_dataset.num_channels} (uydu/radar {full_dataset.base_channels} + aux {full_dataset.aux_names})")
     split = np.load(split_file)
     _check_split_matches_h5(split, full_dataset, h5_path, split_file)

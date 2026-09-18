@@ -224,29 +224,45 @@ Aşamayı tek tek koşmak isterseniz: `--stage arch`, `--stage modality,unet`, `
 Her koşunun tam çıktısı `<outdir>/logs/<koşu>.log` dosyasında, özet durum
 `<outdir>/run_manifest.json` içinde tutulur.
 
-### Hız: DataLoader işçileri
+### Hız: veri yolu
 
-GPU belleği 0,2/15 GB ve GPU kullanımı düşük görünüyorsa darboğaz veri yüklemededir, model değil.
-`config.py` Colab'da `NUM_WORKERS = 0` kullanır (eski sıkıştırılmış H5'te çoklu işlem kilitlenme riski
-vardı). Kompakt, ön-karıştırılmış H5 ile bu risk yok; `--num_workers 4` ile 2-4× hızlanma beklenir:
+GPU belleğinin 0,2/15 GB görünmesi normaldir — model ~230 bin parametre, batch'i ~6 MB.
+Darboğaz GPU değil, batch'i CPU'da hazırlamaktır: T4 kartı bir batch'i ~2 ms'de işlerken
+veri yolu ~55 ms harcıyordu.
+
+**İşçi artırmak çözüm değil.** Colab çalışma zamanı 2 vCPU veriyor; `--num_workers 4`
+ölçümde yalnızca %16 kazandırdı ve test değerlendirmesinde işçiler bellek yetersizliğinden
+öldürüldü (`DataLoader worker killed by signal: Killed`). İşçi kullanacaksanız en fazla 2.
+
+Asıl maliyet, her örneğin CPU'da float32'ye çevrilmesi, aux kanallarının orada normalize
+edilip `concatenate` ile eklenmesi ve 64 tensörün ayrı ayrı yığılmasıydı. İki değişiklikle
+bu kaldırıldı:
+
+1. **Toplu HDF5 okuması** (`MTGH5Dataset.__getitems__`): batch, 64+64 ayrı hyperslab yerine
+   tek dilim okumasıyla alınır.
+2. **float16 veri yolu** (varsayılan): yamalar float16 olarak GPU'ya taşınır; float32'ye
+   genişletme ve aux z-skoru orada yapılır (`train.py: prep_features`). PCIe'den geçen veri
+   yarıya iner.
+
+Ölçüm (eşdeğer sentetik veri, tek işlem): CPU veri yolu 12,7 → 6,9 ms/batch, GPU'ya giden
+6,13 → 3,07 MB/batch.
+
+> **Sonuçlar değişmez.** float16 → float32 genişletme kayıpsızdır ve z-skor yine float32
+> aritmetiğiyle yapılır; yalnızca nerede yapıldığı değişir. Toplu okuma da örnekleri aynı
+> sırayla döndürür, artırma (flip) rastgeleliği aynı sırayla tüketilir. Doğrulandı: her iki
+> yol da **bit düzeyinde aynı** girdi tensörünü üretiyor (`maxdiff=0`). Bu yüzden bu
+> değişikliğe ablasyon tablosunun ortasında geçmek sakıncasızdır.
+
+Eski yolu karşılaştırma için `--no_f16` ile açabilirsiniz:
 
 ```bash
-python src/run_all.py --h5 {H5} --outdir {OUT} --num_workers 4 ...
+python src/train.py --h5 $H5 --split $SP --outdir /content/bench --model medium_flat --aux \
+    --epochs 1 --limit_batches 200 --no_f16 --results /content/bench/old.json
+python src/train.py --h5 $H5 --split $SP --outdir /content/bench --model medium_flat --aux \
+    --epochs 1 --limit_batches 200          --results /content/bench/new.json
 ```
 
-Ölçmek için tek varyantı iki kez, kısa koşuyla çalıştırın ve "Time: Xs" değerlerini karşılaştırın:
-
-```bash
-python src/train.py --h5 $H5 --split $SP --outdir /tmp/bench --model medium_flat --aux \
-    --epochs 1 --limit_batches 200 --num_workers 0 --results /tmp/bench/w0.json
-python src/train.py --h5 $H5 --split $SP --outdir /tmp/bench --model medium_flat --aux \
-    --epochs 1 --limit_batches 200 --num_workers 4 --results /tmp/bench/w4.json
-```
-
-> **Tutarlılık uyarısı:** işçi sayısı batch içeriğini ve sırasını değiştirmez (dosya ön-karıştırılmış,
-> `shuffle=False`), ama artırma (flip) rastgeleliği her işçide ayrı tohumlandığı için sonuçlar
-> birebir aynı çıkmaz — farklı bir seed çekimi gibidir. Bu yüzden bir ablasyon tablosunun
-> koşularını **aynı** `--num_workers` değeriyle koşun; ortasında değiştirmeyin.
+İkisinde de `Val ... BalAcc` satırı aynı çıkmalı; farklı olan yalnızca `Time`.
 
 > Çökme sıklığını azaltmak için: sekmeyi açık bırakın (Pro+ arka plan yürütme sunar), ve
 > `--stage` ile işi 2-3 saatlik parçalara bölün. Yine de çökerse hiçbir şey kaybolmaz.
