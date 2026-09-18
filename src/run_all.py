@@ -65,6 +65,8 @@ def build_matrix(args):
     tr = [py, os.path.join(SRC, "train.py")]
     un = [py, os.path.join(SRC, "train_unet.py")]
     base = ["--h5", args.h5, "--outdir", args.outdir]
+    if args.num_workers is not None:
+        base += ["--num_workers", str(args.num_workers)]
     if args.epochs:
         base += ["--epochs", str(args.epochs)]
     if args.limit_batches:
@@ -129,6 +131,8 @@ def main():
                          "ablasyonunun (ARCH_*.json) val balanced accuracy kazananı otomatik seçilir. "
                          "Ya da doğrudan bir ad: medium_flat, Deep_GAP, ...")
     ap.add_argument("--stage", default="all", help="all | " + " | ".join(STAGES) + " (virgülle birden çok)")
+    ap.add_argument("--num_workers", type=int, default=None,
+                    help="DataLoader işçi sayısı (Colab T4: 4). Verilmezse config.NUM_WORKERS.")
     ap.add_argument("--epochs", type=int, default=None)
     ap.add_argument("--limit_batches", type=int, default=None)
     ap.add_argument("--dry_run", action="store_true")

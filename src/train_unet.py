@@ -473,6 +473,8 @@ def main():
     import argparse, random
     parser = argparse.ArgumentParser(description="Train U-Net models")
     parser.add_argument("--model", type=str, default="unet", help="unet (MTGUNet, aux kanallı tam harita) | unet_fusion (CloudUNet_Fusion) | all")
+    parser.add_argument("--num_workers", type=int, default=None,
+                        help="DataLoader işçi sayısı (config.NUM_WORKERS yerine). Colab T4 için 4 önerilir; 0 = ana işlemde oku (yavaş).")
     parser.add_argument("--outdir", type=str, default=None,
                         help="Checkpoint / en iyi model / sonuç JSON dizini (Colab: Drive altında kalıcı bir yol). Varsayılan: MTGCLM_OUT ortam değişkeni ya da artifacts/")
     parser.add_argument("--h5", type=str, default=None, help="HDF5 yolu (config.H5_PATH / MTGCLM_H5 yerine geçer)")
@@ -493,9 +495,13 @@ def main():
         OUT_DIR = args.outdir
     os.makedirs(OUT_DIR, exist_ok=True)
     os.makedirs(os.path.join(OUT_DIR, 'checkpoints'), exist_ok=True)
+    n_workers = args.num_workers if args.num_workers is not None else NUM_WORKERS
+    if torch.cuda.is_available():
+        torch.backends.cudnn.benchmark = True
     h5_path = args.h5 or H5_PATH
     print(f"HDF5:   {h5_path}")
     print(f"Çıktı:  {os.path.abspath(OUT_DIR)}")
+    print(f"DataLoader işçisi: {n_workers}")
     
     all_experiments = {"MTGUNet": "MTGUNet", "CloudUNet_Fusion": "CloudUNet_Fusion"}
     if args.model == "unet":
@@ -508,7 +514,7 @@ def main():
     print("Initializing Datasets and DataLoaders...")
     test_loaders = None
     if args.split:
-        loaders = get_split_dataloaders(h5_path, args.split, batch_size=BATCH_SIZE, num_workers=NUM_WORKERS,
+        loaders = get_split_dataloaders(h5_path, args.split, batch_size=BATCH_SIZE, num_workers=n_workers,
                                         use_aux=args.aux, aux_channels=aux_channels, shuffle_train=False)
         train_loader, val_loader = loaders["train"], loaders["val"]
         test_loaders = {k: v for k, v in loaders.items() if k.startswith("test")}
@@ -517,7 +523,7 @@ def main():
         train_loader, val_loader = get_dataloaders(
             h5_path=h5_path,
             batch_size=BATCH_SIZE,
-            num_workers=NUM_WORKERS,
+            num_workers=n_workers,
             shuffle=False,
             use_aux=args.aux,
             aux_channels=aux_channels
@@ -531,7 +537,7 @@ def main():
             mode="patch",
             patch_size=PATCH_SIZE,
             batch_size=BATCH_SIZE,
-            num_workers=NUM_WORKERS,
+            num_workers=n_workers,
             shuffle=IS_COLAB
         )
     

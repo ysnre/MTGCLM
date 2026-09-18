@@ -131,6 +131,43 @@ class AugmentedDataset(TorchDataset):
                 patch = self.transform(patch)
             return patch, label
 
+
+def _check_split_matches_h5(split, dataset, h5_path: str, split_file: str) -> None:
+    """
+    Bölme dosyasının BU H5 ile eşleştiğini doğrular. En sık hata: kompakt H5 için üretilmiş
+    split'i büyük kaynak H5'e (ya da tersi) uygulamak -> sessizce yanlış örnekler okunur.
+    """
+    n = len(dataset)
+    labels = np.asarray(dataset.labels)
+    okta = None if getattr(dataset, "okta", None) is None else np.asarray(dataset.okta)
+    problems = []
+    for name in split.files:
+        idx = split[name].astype(np.int64)
+        if len(idx) == 0:
+            continue
+        if idx.max() >= n:
+            problems.append(f"{name}: en büyük indeks {idx.max()} >= H5 satır sayısı {n}")
+            continue
+        if name == "test_partial":
+            if okta is not None:
+                bad = int(((okta[idx] < 1) | (okta[idx] > 4)).sum())
+                if bad:
+                    problems.append(f"test_partial: {bad}/{len(idx)} örnek 1-4 okta aralığı dışında")
+        else:
+            bad = int((labels[idx] < 0).sum())
+            if bad:
+                problems.append(f"{name}: {bad}/{len(idx)} örneğin etiketi -1 (geçersiz)")
+    if problems:
+        raise SystemExit(
+            "\nHATA: bölme dosyası bu HDF5 ile uyuşmuyor!\n"
+            f"  H5    : {h5_path}  ({n} satır)\n"
+            f"  split : {split_file}\n  - " + "\n  - ".join(problems) +
+            "\n\nOlası sebep: kompakt H5 (mtg_train_v2.h5) icin uretilmis '*_compact.npz' dosyasini "
+            "kaynak H5'e uygulamak ya da tersi. --h5 ile dogru dosyayi verin "
+            "(veya MTGCLM_H5 ortam degiskenini ayni kabukta ayarlayin).\n"
+        )
+    print(f"  Bölme doğrulandı: {n} satırlık H5 ile uyumlu.")
+
 def get_split_dataloaders(h5_path: str,
                           split_file: str,
                           batch_size: int = 64,
@@ -149,19 +186,21 @@ def get_split_dataloaders(h5_path: str,
     full_dataset = MTGH5Dataset(h5_path, use_aux=use_aux, aux_channels=aux_channels)
     print(f"  Kanal sayısı: {full_dataset.num_channels} (uydu/radar {full_dataset.base_channels} + aux {full_dataset.aux_names})")
     split = np.load(split_file)
+    _check_split_matches_h5(split, full_dataset, h5_path, split_file)
     loaders = {}
     for name in ("train", "val", "test_time", "test_station", "test_both", "test_partial"):
         if name not in split.files or len(split[name]) == 0:
             continue
         idx = split[name].astype(np.int64).tolist()
         subset = Subset(full_dataset, idx)
+        kw = dict(num_workers=num_workers, pin_memory=num_workers > 0)
+        if num_workers > 0:
+            kw.update(persistent_workers=True, prefetch_factor=4)
         if name == "train":
             ds = AugmentedDataset(subset, transform=RandomSpatialTransforms())
-            loaders[name] = DataLoader(ds, batch_size=batch_size, shuffle=shuffle_train,
-                                       num_workers=num_workers, pin_memory=False)
+            loaders[name] = DataLoader(ds, batch_size=batch_size, shuffle=shuffle_train, **kw)
         else:
-            loaders[name] = DataLoader(subset, batch_size=batch_size, shuffle=False,
-                                       num_workers=num_workers, pin_memory=False)
+            loaders[name] = DataLoader(subset, batch_size=batch_size, shuffle=False, **kw)
         print(f"  {name:13s}: {len(idx)} örnek")
     return loaders
 

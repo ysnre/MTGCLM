@@ -224,5 +224,29 @@ Aşamayı tek tek koşmak isterseniz: `--stage arch`, `--stage modality,unet`, `
 Her koşunun tam çıktısı `<outdir>/logs/<koşu>.log` dosyasında, özet durum
 `<outdir>/run_manifest.json` içinde tutulur.
 
+### Hız: DataLoader işçileri
+
+GPU belleği 0,2/15 GB ve GPU kullanımı düşük görünüyorsa darboğaz veri yüklemededir, model değil.
+`config.py` Colab'da `NUM_WORKERS = 0` kullanır (eski sıkıştırılmış H5'te çoklu işlem kilitlenme riski
+vardı). Kompakt, ön-karıştırılmış H5 ile bu risk yok; `--num_workers 4` ile 2-4× hızlanma beklenir:
+
+```bash
+python src/run_all.py --h5 {H5} --outdir {OUT} --num_workers 4 ...
+```
+
+Ölçmek için tek varyantı iki kez, kısa koşuyla çalıştırın ve "Time: Xs" değerlerini karşılaştırın:
+
+```bash
+python src/train.py --h5 $H5 --split $SP --outdir /tmp/bench --model medium_flat --aux \
+    --epochs 1 --limit_batches 200 --num_workers 0 --results /tmp/bench/w0.json
+python src/train.py --h5 $H5 --split $SP --outdir /tmp/bench --model medium_flat --aux \
+    --epochs 1 --limit_batches 200 --num_workers 4 --results /tmp/bench/w4.json
+```
+
+> **Tutarlılık uyarısı:** işçi sayısı batch içeriğini ve sırasını değiştirmez (dosya ön-karıştırılmış,
+> `shuffle=False`), ama artırma (flip) rastgeleliği her işçide ayrı tohumlandığı için sonuçlar
+> birebir aynı çıkmaz — farklı bir seed çekimi gibidir. Bu yüzden bir ablasyon tablosunun
+> koşularını **aynı** `--num_workers` değeriyle koşun; ortasında değiştirmeyin.
+
 > Çökme sıklığını azaltmak için: sekmeyi açık bırakın (Pro+ arka plan yürütme sunar), ve
 > `--stage` ile işi 2-3 saatlik parçalara bölün. Yine de çökerse hiçbir şey kaybolmaz.
