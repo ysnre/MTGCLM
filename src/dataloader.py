@@ -132,14 +132,6 @@ class AugmentedDataset(TorchDataset):
     def __getitem__(self, idx: int) -> tuple:
         return self._apply(self.dataset[idx])
 
-    def __getitems__(self, indices):
-        """Alttaki dataset toplu okumayı destekliyorsa ona devret (bkz. MTGH5Dataset.__getitems__).
-        Artırma (flip) örneklere ÇAĞRILDIKLARI SIRAYLA uygulanır; yani rastgele sayı üretecinin
-        tüketim sırası tek tek okumayla birebir aynıdır, sonuçlar değişmez."""
-        fn = getattr(self.dataset, "__getitems__", None)
-        items = fn(indices) if callable(fn) else [self.dataset[i] for i in indices]
-        return [self._apply(it) for it in items]
-
 
 def _check_split_matches_h5(split, dataset, h5_path: str, split_file: str) -> None:
     """

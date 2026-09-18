@@ -227,31 +227,31 @@ Her koşunun tam çıktısı `<outdir>/logs/<koşu>.log` dosyasında, özet duru
 ### Hız: veri yolu
 
 GPU belleğinin 0,2/15 GB görünmesi normaldir — model ~230 bin parametre, batch'i ~6 MB.
-Darboğaz GPU değil, batch'i CPU'da hazırlamaktır: T4 kartı bir batch'i ~2 ms'de işlerken
-veri yolu ~55 ms harcıyordu.
+Darboğaz GPU değil, batch'i CPU'da hazırlamaktır. Aşağıdakiler **ölçülmüş** sonuçlardır;
+denenip işe yaramadığı görülen iki yol da kayıt için burada.
 
-**İşçi artırmak çözüm değil.** Colab çalışma zamanı 2 vCPU veriyor; `--num_workers 4`
-ölçümde yalnızca %16 kazandırdı ve test değerlendirmesinde işçiler bellek yetersizliğinden
-öldürüldü (`DataLoader worker killed by signal: Killed`). İşçi kullanacaksanız en fazla 2.
+**İşe yaramayan 1 — işçi sayısı.** Colab çalışma zamanı 2 vCPU veriyor. `--num_workers 4`
+yalnızca %16 kazandırdı ve test değerlendirmesinde işçiler bellek yetersizliğinden öldürüldü
+(`DataLoader worker killed by signal: Killed`). İşçi kullanacaksanız en fazla 2; varsayılan 0
+kalsın.
 
-Asıl maliyet, her örneğin CPU'da float32'ye çevrilmesi, aux kanallarının orada normalize
-edilip `concatenate` ile eklenmesi ve 64 tensörün ayrı ayrı yığılmasıydı. İki değişiklikle
-bu kaldırıldı:
+**İşe yaramayan 2 — toplu HDF5 okuması.** Batch'i 64 ayrı okuma yerine tek dilimde almak
+mantıklı görünüyor ama indeksler seyrek olduğunda h5py'nin noktasal seçimi çok pahalı.
+Ölçüm (sentetik eşdeğer veri): eğitim bölmesinde (%55 yoğun) fark yok (6,9 / 6,7 ms), ama
+val ve test bölmelerinde (%13 seyrek) **10 kat yavaş** (133 / 13,8 ms). Colab'da epoch
+süresini 26,5 s'den 90,5 s'ye çıkardı. Bu yüzden `__getitems__` kaldırıldı; örnek örnek
+okuma korunuyor.
 
-1. **Toplu HDF5 okuması** (`MTGH5Dataset.__getitems__`): batch, 64+64 ayrı hyperslab yerine
-   tek dilim okumasıyla alınır.
-2. **float16 veri yolu** (varsayılan): yamalar float16 olarak GPU'ya taşınır; float32'ye
-   genişletme ve aux z-skoru orada yapılır (`train.py: prep_features`). PCIe'den geçen veri
-   yarıya iner.
-
-Ölçüm (eşdeğer sentetik veri, tek işlem): CPU veri yolu 12,7 → 6,9 ms/batch, GPU'ya giden
-6,13 → 3,07 MB/batch.
+**İşe yarayan — float16 veri yolu (varsayılan).** Asıl maliyet, her örneğin CPU'da float32'ye
+çevrilmesi ve aux kanallarının orada normalize edilmesiydi. Artık yamalar float16 olarak GPU'ya
+taşınıyor; genişletme ve aux z-skoru orada yapılıyor (`train.py: prep_features`). PCIe'den geçen
+veri yarıya iniyor. Ölçüm: eğitim yolunda 12,6 → 8,3 ms/batch (**1,52×**), val/test yolunda
+17,4 → 13,6 ms/batch (**1,28×**).
 
 > **Sonuçlar değişmez.** float16 → float32 genişletme kayıpsızdır ve z-skor yine float32
-> aritmetiğiyle yapılır; yalnızca nerede yapıldığı değişir. Toplu okuma da örnekleri aynı
-> sırayla döndürür, artırma (flip) rastgeleliği aynı sırayla tüketilir. Doğrulandı: her iki
-> yol da **bit düzeyinde aynı** girdi tensörünü üretiyor (`maxdiff=0`). Bu yüzden bu
-> değişikliğe ablasyon tablosunun ortasında geçmek sakıncasızdır.
+> aritmetiğiyle yapılır; yalnızca nerede yapıldığı değişir. Doğrulandı: her iki yol da bit
+> düzeyinde aynı girdi tensörünü üretiyor (`maxdiff=0`). Bu yüzden ablasyon tablosunun
+> ortasında bu değişikliğe geçmek sakıncasızdır.
 
 Eski yolu karşılaştırma için `--no_f16` ile açabilirsiniz:
 
@@ -262,7 +262,12 @@ python src/train.py --h5 $H5 --split $SP --outdir /content/bench --model medium_
     --epochs 1 --limit_batches 200          --results /content/bench/new.json
 ```
 
-İkisinde de `Val ... BalAcc` satırı aynı çıkmalı; farklı olan yalnızca `Time`.
+### Tekrarlanabilirlik: cudnn.benchmark
+
+`torch.backends.cudnn.benchmark` bilerek **kapalıdır**. Açıkken cuDNN evrişim algoritmasını
+ölçerek seçtiği için aynı konfigürasyon iki kez koşulduğunda sonuçlar birebir aynı çıkmıyor;
+ölçülen fark val balanced accuracy'de ~0,002–0,006 idi. Bu modelde GPU zaten darboğaz
+olmadığından kazanç ihmal edilebilir, tekrarlanabilirlik ise makale için gerekli.
 
 > Çökme sıklığını azaltmak için: sekmeyi açık bırakın (Pro+ arka plan yürütme sunar), ve
 > `--stage` ile işi 2-3 saatlik parçalara bölün. Yine de çökerse hiçbir şey kaybolmaz.

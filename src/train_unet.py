@@ -525,7 +525,11 @@ def main():
     os.makedirs(os.path.join(OUT_DIR, 'checkpoints'), exist_ok=True)
     n_workers = args.num_workers if args.num_workers is not None else NUM_WORKERS
     if torch.cuda.is_available():
-        torch.backends.cudnn.benchmark = True
+        # cudnn.benchmark bilerek KAPALI: algoritma secimini olcerek yaptigi icin ayni
+        # konfigurasyon iki kez kosuldugunda sonuclar birebir ayni cikmiyor (olculen fark
+        # BalAcc'te ~0.002-0.006). Bu modelde GPU zaten darbogaz degil; tekrarlanabilirlik
+        # hiz kazancindan daha degerli.
+        torch.backends.cudnn.benchmark = False
     h5_path = args.h5 or H5_PATH
     print(f"HDF5:   {h5_path}")
     print(f"Çıktı:  {os.path.abspath(OUT_DIR)}")
