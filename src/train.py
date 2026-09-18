@@ -23,6 +23,43 @@ from dataloader import get_dataloaders, get_split_dataloaders
 from model import MTGConvNet
 from metrics import compute_metrics, format_metrics
 
+# --- Çıktı dizini: checkpoint / en iyi model / sonuç JSON buraya yazılır.
+# Colab'da Drive altındaki kalıcı bir yol verin (--outdir), böylece oturum çökse de kaybolmaz.
+OUT_DIR = os.environ.get("MTGCLM_OUT", "artifacts")
+
+
+def out_path(*parts) -> str:
+    p = os.path.join(OUT_DIR, *parts)
+    os.makedirs(os.path.dirname(p) or ".", exist_ok=True)
+    return p
+
+
+def atomic_save(obj, path: str):
+    """Önce .tmp'ye yaz, sonra yerine taşı: yazma sırasında çökme dosyayı bozmaz."""
+    tmp = path + ".tmp"
+    torch.save(obj, tmp)
+    os.replace(tmp, path)
+
+
+def atomic_json(obj, path: str):
+    import json as _json
+    tmp = path + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        _json.dump(obj, f, indent=4, ensure_ascii=False)
+        f.flush()
+        os.fsync(f.fileno())
+    os.replace(tmp, path)
+
+
+def safe_load(path: str, device):
+    """Bozuk/yarım checkpoint'i sessizce yok sayar (çökme anında yazılmış olabilir)."""
+    try:
+        return torch.load(path, map_location=device, weights_only=False)
+    except Exception as e:
+        print(f"  --> Uyarı: {os.path.basename(path)} okunamadı ({e}); yok sayılıyor.")
+        return None
+
+
 def calculate_metrics(preds: np.ndarray, targets: np.ndarray) -> tuple:
     """
     Calculates Accuracy, Precision, Recall, and F1-Score from predictions and targets,
@@ -345,13 +382,16 @@ def run_experiment(name: str, conv_blocks: list, train_loader, val_loader, epoch
     }
     
     best_f1 = 0.0   # model seçimi ölçütü: val BALANCED ACCURACY (adı geriye uyumluluk için korunuyor)
-    checkpoint_path = f"checkpoint_{name.lower()}.pth"
+    checkpoint_path = out_path("checkpoints", f"checkpoint_{name.lower()}.pth")
+    best_model_path = out_path("checkpoints", f"best_model_{name.lower()}.pth")
     start_epoch = 1
     
     # Try to load checkpoint if it exists
     if os.path.exists(checkpoint_path):
         try:
-            checkpoint = torch.load(checkpoint_path, map_location=DEVICE, weights_only=False)
+            checkpoint = safe_load(checkpoint_path, DEVICE)
+            if checkpoint is None:
+                raise RuntimeError("bozuk checkpoint")
             model.load_state_dict(checkpoint['model_state_dict'])
             optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
             if 'scheduler_state_dict' in checkpoint:
@@ -397,8 +437,8 @@ def run_experiment(name: str, conv_blocks: list, train_loader, val_loader, epoch
         # Save best model (balanced accuracy)
         if vm["balanced_accuracy"] > best_f1:
             best_f1 = vm["balanced_accuracy"]
-            torch.save(model.state_dict(), f"best_model_{name.lower()}.pth")
-            print(f"  --> Saved new best model: best_model_{name.lower()}.pth")
+            atomic_save(model.state_dict(), best_model_path)
+            print(f"  --> Yeni en iyi model kaydedildi: {best_model_path}")
             
         # Save epoch checkpoint to allow resume
         try:
@@ -410,7 +450,7 @@ def run_experiment(name: str, conv_blocks: list, train_loader, val_loader, epoch
                 'best_f1': best_f1,
                 'history': history
             }
-            torch.save(checkpoint, checkpoint_path)
+            atomic_save(checkpoint, checkpoint_path)
         except Exception as e:
             print(f"  --> Warning: could not save checkpoint: {e}")
             
@@ -420,9 +460,10 @@ def run_experiment(name: str, conv_blocks: list, train_loader, val_loader, epoch
     # --- Test kümeleri: en iyi (val) modelle, yalnızca raporlama için
     test_results = {}
     if test_loaders:
-        best_path = f"best_model_{name.lower()}.pth"
-        if os.path.exists(best_path):
-            model.load_state_dict(torch.load(best_path, map_location=DEVICE, weights_only=False))
+        if os.path.exists(best_model_path):
+            sd = safe_load(best_model_path, DEVICE)
+            if sd is not None:
+                model.load_state_dict(sd)
         for tname, tloader in test_loaders.items():
             if tname == "test_partial":
                 pr = evaluate_partial(model, tloader, DEVICE, limit_batches)
@@ -449,6 +490,8 @@ def main():
     parser = argparse.ArgumentParser(description="Train MTGCLM Models")
     parser.add_argument("--model", type=str, default="all",
                         help="all | arch (6 mimari varyantı) | arch_flat | shallow_flat | medium_flat | deep_flat | shallow_gap | medium_gap | deep_gap | resnet18 | mtg_late_fusion | resnet18_fusion | mtg_flat (=Deep_Flat)")
+    parser.add_argument("--outdir", type=str, default=None,
+                        help="Checkpoint / en iyi model / sonuç JSON dizini (Colab: Drive altında kalıcı bir yol). Varsayılan: MTGCLM_OUT ortam değişkeni ya da artifacts/")
     parser.add_argument("--h5", type=str, default=None, help="HDF5 yolu (config.H5_PATH / MTGCLM_H5 yerine geçer)")
     parser.add_argument("--split", type=str, default=None, help="make_splits.py çıktısı (.npz). Verilirse train/val/test_* buradan gelir.")
     parser.add_argument("--aux", action="store_true", help="H5 'aux' kanallarını (t2m, rh2m, elev, cos_sza, radar_cov) girdiye ekle")
@@ -464,8 +507,14 @@ def main():
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(args.seed)
     aux_channels = args.aux_channels.split(",") if args.aux_channels else None
+    global OUT_DIR
+    if args.outdir:
+        OUT_DIR = args.outdir
+    os.makedirs(OUT_DIR, exist_ok=True)
+    os.makedirs(os.path.join(OUT_DIR, 'checkpoints'), exist_ok=True)
     h5_path = args.h5 or H5_PATH
-    print(f"HDF5: {h5_path}")
+    print(f"HDF5:   {h5_path}")
+    print(f"Çıktı:  {os.path.abspath(OUT_DIR)}")
     
     # Configurations to compare (Ablation Study)
     # (conv_blocks, use_gap, model_type)
@@ -539,8 +588,7 @@ def main():
     
     # Load existing results to support resuming from disconnects
     import json
-    os.makedirs("artifacts", exist_ok=True)
-    json_path = args.results or os.path.join("artifacts", "ablation_results.json")
+    json_path = args.results or out_path("ablation_results.json")
     results = {}
     if os.path.exists(json_path):
         try:
@@ -584,9 +632,8 @@ def main():
         
         # Save results immediately to prevent data loss on disconnect
         try:
-            with open(json_path, 'w') as f:
-                json.dump(results, f, indent=4)
-            print(f"Saved results for model '{name}' successfully.")
+            atomic_json(results, json_path)
+            print(f"'{name}' sonuçları kaydedildi -> {json_path}")
         except Exception as e:
             print(f"Warning: could not save incremental results to {json_path}: {e}")
         

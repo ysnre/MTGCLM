@@ -3,13 +3,19 @@
 *.hdf5
 *.nc
 *.npy
-!data/dem_800x1000.npy.md5
+*.zip
+*.tar
+*.tar.gz
+*.tif
+*.tiff
+*.grib*
 data/raw_mtg/
 data/raw_radar/
 data/raw_awos_observation/
 data/raw_observation/
 data/processed/
-*.zip
+# ham DEM kaynakları (GB'larca) ve türetilmiş grid:
+data/dem/
 
 # --- model ağırlıkları / checkpoint ---
 *.pth
@@ -21,12 +27,18 @@ best_model_*.pth
 artifacts/*.png
 scratch/
 sonuç1/
+graphify-out/
 *.log
 
 # bölme dosyaları ve sonuç JSON'ları PAYLAŞILIR:
 !splits/*.npz
 !splits/*.json
 !artifacts/*.json
+
+# --- araç / editör yerel ayarları ---
+.claude/
+.vscode/
+.idea/
 
 # --- Python ---
 __pycache__/
@@ -36,8 +48,6 @@ venv/
 .ipynb_checkpoints/
 .pytest_cache/
 
-# --- işletim sistemi / editör ---
+# --- işletim sistemi ---
 .DS_Store
 Thumbs.db
-.vscode/
-.idea/

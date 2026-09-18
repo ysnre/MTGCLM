@@ -16,6 +16,7 @@ yeniden çıkarılmaz; H5'e yeni datasetler eklenir ve eğitim betikleri bunlar�
 | `src/make_cv_splits.py` | yeni | Bloklu K-katlı CV bölmeleri (`cv5_fold0..4.npz`) |
 | `src/aggregate_results.py` | yeni | Koşu JSON'larını toplar → ortalama ± s.s. tablo (Markdown/CSV/LaTeX) + grafikler |
 | `src/baselines.py` | yeni | Karşılaştırma modelleri: majority, kanal eşiği, çift eşik, logreg, RF, HGB, kNN |
+| `src/run_all.py` | yeni | Çökmeye dayanıklı koşu yöneticisi: matrisi tanımlar, tamamlananları atlar, log/manifest tutar |
 | `src/make_public_sample.py` | yeni | Paylaşılabilir küçük örneklem H5 + bölme (GitHub/Zenodo) |
 | `README.md`, `.gitignore`, `LICENSE`, `CITATION.cff`, `requirements.txt` | yeni | Depo iskeleti + veri bulunabilirliği beyanı |
 | `src/metrics.py` | yeni | Balanced Acc, MCC, F1(clear/cloudy), AUC, karışıklık matrisi, majority baseline |
@@ -157,3 +158,68 @@ kullanılabilir. `--model mtg_flat` geriye uyumluluk için Deep_Flat'i çalışt
 > Dikkat: `train.py`, sonuç JSON'unda **adı zaten bulunan** deneyi atlar (kesintiden sonra devam
 > edebilmek için). Bir deneyi yeniden koşmak istediğinizde ya yeni bir `--results` dosyası verin
 > ya da eski JSON'u silin.
+
+
+## Colab çökmelerine karşı kalıcı kurulum
+
+Colab oturumu çökünce `/content` altındaki her şey silinir. Bu yüzden **checkpoint, en iyi model
+ve sonuç JSON'ları Drive'a yazılır**; `--outdir` ile verilen dizin kalıcı olmalıdır.
+
+Üç seviyede kaldığı yerden devam:
+
+| Seviye | Nasıl | Dosya |
+|---|---|---|
+| Koşu | tamamlanan koşu işaretlenir, tekrar çalıştırılmaz | `<outdir>/status/<koşu>.done` |
+| Deney | `--model arch` içindeki 6 varyanttan bitenler atlanır | sonuç JSON'undaki deney adları |
+| Epoch | her epoch sonunda model+optimizer+scheduler+history yazılır | `<outdir>/checkpoints/checkpoint_<ad>.pth` |
+
+Tüm yazmalar **atomiktir** (`.tmp` → `os.replace`): yazma anında çökme dosyayı bozmaz. Bozuk bir
+checkpoint yine de okunamazsa uyarı basılıp o deney sıfırdan başlar, diğerleri etkilenmez.
+
+### Colab hücreleri
+
+```python
+# 1. HÜCRE — kurulum (her oturumda, çökme sonrası dahil aynen çalıştırılır)
+from google.colab import drive; drive.mount('/content/drive')
+
+DRIVE = '/content/drive/MyDrive/MTGCLM'
+OUT   = f'{DRIVE}/artifacts'          # KALICI çıktı dizini
+H5    = '/content/mtg_train_v2.h5'    # hızlı yerel kopya
+
+import os, shutil
+os.makedirs(OUT, exist_ok=True)
+src = f'{DRIVE}/mtg_train_v2.h5'
+need = (not os.path.exists(H5)) or os.path.getsize(H5) != os.path.getsize(src)
+if need:
+    print('H5 kopyalanıyor (20-40 dk)...'); shutil.copyfile(src, H5); print('bitti')
+else:
+    print('H5 zaten yerelde ve boyutu doğru, kopyalama atlandı')
+
+if not os.path.exists('/content/MTGCLM'):
+    !git clone https://github.com/<kullanıcı>/MTGCLM.git /content/MTGCLM
+%cd /content/MTGCLM
+!git pull --ff-only
+!nvidia-smi --query-gpu=name,memory.total --format=csv,noheader
+```
+
+```python
+# 2. HÜCRE — koşular. Çökerse SADECE bu hücreyi tekrar çalıştırın.
+!python src/run_all.py --h5 {H5} --outdir {OUT}     --split splits/split_v1_compact.npz --cv_prefix splits/cv5     --seeds 1,2,3 --arch_model medium_flat --stage all
+```
+
+```python
+# 3. HÜCRE — durum ve rapor
+!python src/run_all.py --h5 {H5} --outdir {OUT} --stage all --dry_run   # ne kaldı?
+!python src/aggregate_results.py --dir {OUT} --out {OUT}/summary --plot
+```
+
+Mimari ablasyonunun kazananını gördükten sonra `--arch_model` değerini güncelleyip aynı komutu
+tekrar verin; biten aşamalar atlanır, yalnızca modalite/CV koşuları yeni mimariyle çalışır
+(bu durumda `<outdir>/status/` altındaki `A_*`, `B_*`, `C_*`, `CV_*` işaretlerini silin).
+
+Aşamayı tek tek koşmak isterseniz: `--stage arch`, `--stage modality,unet`, `--stage cv,baselines`.
+Her koşunun tam çıktısı `<outdir>/logs/<koşu>.log` dosyasında, özet durum
+`<outdir>/run_manifest.json` içinde tutulur.
+
+> Çökme sıklığını azaltmak için: sekmeyi açık bırakın (Pro+ arka plan yürütme sunar), ve
+> `--stage` ile işi 2-3 saatlik parçalara bölün. Yine de çökerse hiçbir şey kaybolmaz.
