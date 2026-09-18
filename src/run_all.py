@@ -37,6 +37,28 @@ SRC = os.path.dirname(os.path.abspath(__file__))
 STAGES = ["arch", "resnet", "modality", "unet", "cv", "baselines"]
 
 
+def pick_best_arch(outdir: str):
+    """ARCH_*.json dosyalarından val balanced accuracy'ye göre en iyi mimariyi seçer.
+    Birden çok seed varsa ortalamaya bakar. Hiç sonuç yoksa None döner."""
+    import glob
+    from collections import defaultdict
+    scores = defaultdict(list)
+    for path in sorted(glob.glob(os.path.join(outdir, "ARCH_*.json"))):
+        try:
+            data = json.load(open(path, encoding="utf-8"))
+        except Exception:
+            continue
+        for exp, res in data.items():
+            v = res.get("best_val_balanced_accuracy", res.get("best_f1"))
+            if isinstance(v, (int, float)) and v == v:   # NaN değilse
+                scores[exp].append(float(v))
+    if not scores:
+        return None, {}
+    means = {e: sum(v) / len(v) for e, v in scores.items()}
+    best = max(means, key=means.get)
+    return best, {e: (means[e], len(scores[e])) for e in means}
+
+
 def build_matrix(args):
     """(aşama, koşu_adı, komut_listesi) üçlüleri."""
     py = sys.executable
@@ -102,8 +124,10 @@ def main():
     ap.add_argument("--cv_prefix", default="splits/cv5", help="'' verilirse CV atlanır")
     ap.add_argument("--cv_folds", type=int, default=5)
     ap.add_argument("--seeds", default="1,2,3")
-    ap.add_argument("--arch_model", default="medium_flat",
-                    help="Modalite/CV koşularında kullanılacak mimari (mimari ablasyonunun kazananı)")
+    ap.add_argument("--arch_model", default="auto",
+                    help="Modalite/CV koşularında kullanılacak mimari. 'auto' (varsayılan): mimari "
+                         "ablasyonunun (ARCH_*.json) val balanced accuracy kazananı otomatik seçilir. "
+                         "Ya da doğrudan bir ad: medium_flat, Deep_GAP, ...")
     ap.add_argument("--stage", default="all", help="all | " + " | ".join(STAGES) + " (virgülle birden çok)")
     ap.add_argument("--epochs", type=int, default=None)
     ap.add_argument("--limit_batches", type=int, default=None)
@@ -132,6 +156,41 @@ def main():
 
     if not os.path.exists(args.h5):
         raise SystemExit(f"HDF5 bulunamadı: {args.h5}")
+
+    # --- mimari seçimi: 'auto' ise mimari ablasyonu sonuçlarından kazananı bul
+    needs_arch = any(st in stages for st in ("modality", "cv"))
+    if args.arch_model == "auto":
+        best, table = pick_best_arch(args.outdir)
+        if best is None:
+            if needs_arch:
+                raise SystemExit(
+                    "\n--arch_model auto: henüz ARCH_*.json yok, kazanan mimari seçilemiyor.\n"
+                    "  Önce mimari ablasyonunu koşun:   --stage arch\n"
+                    "  ya da mimariyi elle verin:        --arch_model medium_flat\n")
+            args.arch_model = "medium_flat"   # yalnızca arch/resnet koşulacaksa önemsiz
+        else:
+            print("Mimari ablasyonu sonuçları (val balanced accuracy, seed ortalaması):")
+            for e, (m, n) in sorted(table.items(), key=lambda kv: -kv[1][0]):
+                mark = "  <-- seçilen" if e == best else ""
+                print(f"   {e:<14s} {m:.4f}  ({n} seed){mark}")
+            args.arch_model = best
+
+    # --- mimari değiştiyse eski modalite/CV işaretleri geçersizdir
+    stamp = os.path.join(status_dir, "arch_model.txt")
+    prev = open(stamp).read().strip() if os.path.exists(stamp) else None
+    if prev and prev != args.arch_model and needs_arch:
+        stale = [f for f in os.listdir(status_dir)
+                 if f.endswith(".done") and f.split("_")[0] in ("A", "B", "C", "CV")]
+        if stale:
+            raise SystemExit(
+                f"\nMimari değişti: '{prev}' -> '{args.arch_model}'.\n"
+                f"  {len(stale)} adet modalite/CV koşusu eski mimariyle tamamlanmış görünüyor.\n"
+                f"  Bunları yeniden koşmak için işaretleri silin:\n"
+                f"    rm {status_dir}/[ABC]_*.done {status_dir}/CV_*.done\n"
+                f"  Eskileri korumak istiyorsanız --arch_model {prev} verin.\n")
+    with open(stamp, "w") as f:
+        f.write(args.arch_model)
+    print(f"Modalite/CV mimarisi: {args.arch_model}")
 
     jobs = [j for j in build_matrix(args) if j[0] in stages]
     done = [j for j in jobs if os.path.exists(os.path.join(status_dir, j[1] + ".done")) and not args.force]

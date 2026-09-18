@@ -208,14 +208,17 @@ if not os.path.exists('/content/MTGCLM'):
 ```
 
 ```python
-# 3. HÜCRE — durum ve rapor
+# 4. HÜCRE — durum ve rapor
 !python src/run_all.py --h5 {H5} --outdir {OUT} --stage all --dry_run   # ne kaldı?
 !python src/aggregate_results.py --dir {OUT} --out {OUT}/summary --plot
 ```
 
-Mimari ablasyonunun kazananını gördükten sonra `--arch_model` değerini güncelleyip aynı komutu
-tekrar verin; biten aşamalar atlanır, yalnızca modalite/CV koşuları yeni mimariyle çalışır
-(bu durumda `<outdir>/status/` altındaki `A_*`, `B_*`, `C_*`, `CV_*` işaretlerini silin).
+**Mimari seçimi otomatiktir.** `--arch_model auto` (varsayılan) `ARCH_*.json` dosyalarını okur,
+her varyantın seed'ler arası ortalama val balanced accuracy'sini hesaplar ve en iyisini modalite/CV
+koşularında kullanır; seçim tablosu ekrana basılır. Henüz mimari ablasyonu koşulmadıysa net bir
+hata verip durur. Mimari sonradan değişirse (ör. elle başka bir ad verirseniz) eski mimariyle
+tamamlanmış modalite/CV koşularını fark eder ve hangi işaretleri silmeniz gerektiğini söyler —
+sessizce karışık sonuç üretmez. Belirli bir mimariyi zorlamak için `--arch_model Medium_Flat`.
 
 Aşamayı tek tek koşmak isterseniz: `--stage arch`, `--stage modality,unet`, `--stage cv,baselines`.
 Her koşunun tam çıktısı `<outdir>/logs/<koşu>.log` dosyasında, özet durum

@@ -651,18 +651,17 @@ def main():
     
     print(f"\nAblation study results successfully finalized at {json_path}")
     
-    # Run plotting in a separate process to avoid Matplotlib-PyTorch DLL conflicts
-    import subprocess
-    import sys
-    print("Launching plot_results.py in a separate process...")
-    try:
-        subprocess.run(
-            [sys.executable, "src/plot_results.py"],
-            cwd=os.getcwd(),
-            check=True
-        )
-    except Exception as e:
-        print(f"Failed to generate plots via separate process: {e}")
+    # Eski tekil grafik betiği yalnızca varsayılan artifacts/ablation_results.json ile çalışır.
+    # Toplu raporlama artık src/aggregate_results.py ile yapılıyor; bu yüzden yalnızca
+    # varsayılan yol kullanıldığında çağrılır (aksi halde her koşuda anlamsız hata basıyordu).
+    if os.path.abspath(json_path) == os.path.abspath(os.path.join("artifacts", "ablation_results.json")):
+        import subprocess
+        try:
+            subprocess.run([sys.executable, os.path.join("src", "plot_results.py")], cwd=os.getcwd(), check=True)
+        except Exception as e:
+            print(f"Grafik üretilemedi: {e}")
+    else:
+        print(f"Rapor için: python src/aggregate_results.py --dir {os.path.dirname(json_path) or '.'} --plot")
 
 if __name__ == "__main__":
     try:
