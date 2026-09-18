@@ -67,6 +67,8 @@ def build_matrix(args):
     base = ["--h5", args.h5, "--outdir", args.outdir]
     if args.num_workers is not None:
         base += ["--num_workers", str(args.num_workers)]
+    if args.no_f16:
+        base += ["--no_f16"]
     if args.epochs:
         base += ["--epochs", str(args.epochs)]
     if args.limit_batches:
@@ -132,7 +134,10 @@ def main():
                          "Ya da doğrudan bir ad: medium_flat, Deep_GAP, ...")
     ap.add_argument("--stage", default="all", help="all | " + " | ".join(STAGES) + " (virgülle birden çok)")
     ap.add_argument("--num_workers", type=int, default=None,
-                    help="DataLoader işçi sayısı (Colab T4: 4). Verilmezse config.NUM_WORKERS.")
+                    help="DataLoader işçi sayısı. Colab 2 vCPU verdiği için 0 (varsayılan) bırakın.")
+    ap.add_argument("--no_f16", action="store_true",
+                    help="Eski veri yolu: float32 çevirme ve aux z-skoru CPU'da. ~%30 yavaş. "
+                         "Tüm koşuları ARCH_s1 ile birebir aynı kod yolunda tutmak isterseniz.")
     ap.add_argument("--epochs", type=int, default=None)
     ap.add_argument("--limit_batches", type=int, default=None)
     ap.add_argument("--dry_run", action="store_true")
