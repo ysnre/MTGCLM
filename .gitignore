@@ -1,0 +1,57 @@
+# --- veri (asla commit edilmez) ---
+*.h5
+*.hdf5
+*.nc
+*.npy
+*.zip
+*.tar
+*.tar.gz
+*.tif
+*.tiff
+*.grib*
+data/raw_mtg/
+data/raw_radar/
+data/raw_awos_observation/
+data/raw_observation/
+data/processed/
+# ham DEM kaynakları (GB'larca) ve türetilmiş grid:
+data/dem/
+
+
+# --- model ağırlıkları / checkpoint ---
+*.pth
+*.pt
+checkpoint_*.pth
+best_model_*.pth
+
+# --- çıktı ---
+artifacts/*.png
+scratch/
+sonuç1/
+graphify-out/
+*.log
+archive_v1/
+
+# bölme dosyaları ve sonuç JSON'ları PAYLAŞILIR:
+!splits/*.npz
+!splits/*.json
+!artifacts/*.json
+
+# --- araç / editör yerel ayarları ---
+.agent/
+.claude/
+.vscode/
+.idea/
+src/_backup_20260916/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+.pytest_cache/
+
+# --- işletim sistemi ---
+.DS_Store
+Thumbs.db
