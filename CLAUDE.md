@@ -4,7 +4,7 @@ Bu dosya, Claude Code / Cowork oturumlarının projeyi sıfırdan anlamadan kald
 devam edebilmesi için tutulur. **Yeni bir karar alındığında (model seçimi, veri bölme,
 etiket politikası, eğitim komutu) bu dosyaya birkaç satır ekleyin.**
 
-Son güncelleme: 2026-10-14
+Son güncelleme: 2026-10-16
 
 ---
 
@@ -305,6 +305,12 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   olabilir ya da kullanamıyor; CV + SYNOP-only ile incelenecek.
 - `run_all.py --resnet_imagenet_seeds` varsayılanı `1,2,3`.
 
+### K15 — 16 Eki 2026: insan-okur infografik ve 3 çalışma kuralı
+- `docs/mtgclm_infografik.html`: projeyi tek sayfada özetleyen, bağımsız (harici bağımlılıksız), açık/koyu temalı
+  HTML infografik. Kaynak sayılar `artifacts/summary.md`, `clm_on_splits.json`, `nwc_metar_on_splits.json`'dan.
+- `.agent/rules/` altına 3 kalıcı çalışma kuralı yazıldı: (1) dosya başına İngilizce commit komutları üretme,
+  (2) CLAUDE.md güncel tutma, (3) infografiği her değişiklikte güncelleme. (`.agent/` .gitignore'da, yerelde durur.)
+
 ---
 
 ## 3. Komutlar
@@ -430,6 +436,7 @@ tek satırda ortalar (ortalama ± s.s.; Markdown + CSV + LaTeX + grafik) — ger
 | `src/extract_nwcsaf_ct.py` | NWC SAF CT PNG (MGM, Mercator) → istasyon çevresi bulut tipi sayımları |
 | `src/eval_clm_on_splits.py`, `src/eval_nwc_and_metar.py` | Referansları split örneklerinde değerlendirme; METAR NSC doğrulaması; bulut tipi kırılımı |
 | `src/clm_vs_synop_quicklook.py` | CLM ↔ ham SYNOP ön bakış (merkez vs alan) |
+| `docs/mtgclm_infografik.html` | Proje geneli insan-okur HTML infografik (her anlamlı değişiklikte güncellenir, K15) |
 | `src/loss.py` | `MaskedBCELoss` — yalnız (16,16) pikselinde, `-1` yok sayılır |
 | `src/train.py`, `src/train_unet.py` | Eğitim; `--h5 --split --aux --aux_channels --seed --epochs --limit_batches --results --outdir --model` |
 | `src/config.py` | Colab/yerel yollar, `MTGCLM_H5`, PATCH_SIZE 33, BATCH_SIZE 64, LR 1e-3 |
@@ -500,4 +507,7 @@ Yereldeki diğer notlar: `MTG Cloud Phase Web Service Development.md`,
 - Mimari/modalite tartışırken **Medium_Flat**'in kazanan mimari olduğunu ve AWOS-aux'un
   test kümelerinde net bir katkısı görünmediğini unutma (K6, K12) — v1 sayılarını güncel
   karşılaştırma için kullanma.
-- Yeni bir karar alındığında bu dosyanın §2'sine ekle.
+- Yeni bir karar alındığında bu dosyanın §2'sine ekle (Kural 2 / `.agent/rules/rule_update_claude_md.md`).
+- İş paketi bitince dosya başına ayrı İngilizce commit komutları üret, çalıştırma (Kural 1 / `.agent/rules/rule_commit_per_file.md`).
+- Anlamlı her değişiklikte `docs/mtgclm_infografik.html`'i güncelle (Kural 3 / `.agent/rules/rule_update_infographic.md`).
+- `.agent/` ve `archive_v1/` .gitignore'da; bu dosyalar için commit komutu verme, yerelde kalır.
