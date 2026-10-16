@@ -20,13 +20,14 @@ import matplotlib.pyplot as plt
 # Import custom modules
 from config import RAW_MTG_DIR, PROCESSED_RADAR_DIR, PROCESSED_AWOS_DIR, PATCH_SIZE, BATCH_SIZE, EPOCHS, LEARNING_RATE, DEVICE, NUM_WORKERS, IS_COLAB, H5_PATH
 from dataloader import get_dataloaders, get_split_dataloaders
-from model import MTGUNet, CloudUNet_Fusion
+from model import MTGUNet   # v1 CloudUNet_Fusion: src/_backup_20260916/model_v1_fusion_classes.py
 from loss import MaskedBCELoss
 from metrics import compute_metrics, format_metrics
 
 # --- Çıktı dizini: checkpoint / en iyi model / sonuç JSON buraya yazılır.
 # Colab'da Drive altındaki kalıcı bir yol verin (--outdir), böylece oturum çökse de kaybolmaz.
 OUT_DIR = os.environ.get("MTGCLM_OUT", "artifacts")
+RUN_TAG = None   # main() içinde --results dosya adından atanır (koşuya özgü checkpoint adları için)
 
 
 def out_path(*parts) -> str:
@@ -342,10 +343,7 @@ def run_experiment(name: str, train_loader, val_loader, epochs: int = EPOCHS, li
     set_aux_norm(_ds, DEVICE)
     print(f"Input channels: {in_ch}")
     
-    if name == "CloudUNet_Fusion":
-        model = CloudUNet_Fusion(in_channels=in_ch, scalar_features=3, num_classes=2).to(DEVICE)
-    else:
-        model = MTGUNet(in_channels=in_ch, num_classes=2).to(DEVICE)
+    model = MTGUNet(in_channels=in_ch, num_classes=2).to(DEVICE)
     
     # Count parameters
     num_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
@@ -400,8 +398,10 @@ def run_experiment(name: str, train_loader, val_loader, epochs: int = EPOCHS, li
     }
     
     best_f1 = 0.0   # model seçimi ölçütü: val BALANCED ACCURACY
-    checkpoint_path = out_path("checkpoints", f"checkpoint_{name.lower()}.pth")
-    best_model_path = out_path("checkpoints", f"best_model_{name.lower()}.pth")
+    # Koşuya özgü adlar (RUN_TAG = --results dosyasının adı): seed'ler birbirinin üstüne yazmaz.
+    tag = f"{RUN_TAG}__" if RUN_TAG else ""
+    checkpoint_path = out_path("checkpoints", f"checkpoint_{tag}{name.lower()}.pth")
+    best_model_path = out_path("checkpoints", f"best_model_{tag}{name.lower()}.pth")
     start_epoch = 1
     
     if os.path.exists(checkpoint_path):
@@ -498,7 +498,7 @@ def run_experiment(name: str, train_loader, val_loader, epochs: int = EPOCHS, li
 def main():
     import argparse, random
     parser = argparse.ArgumentParser(description="Train U-Net models")
-    parser.add_argument("--model", type=str, default="unet", help="unet (MTGUNet, aux kanallı tam harita) | unet_fusion (CloudUNet_Fusion) | all")
+    parser.add_argument("--model", type=str, default="unet", help="unet (MTGUNet, aux kanallı tam harita) | all (= unet)")
     parser.add_argument("--num_workers", type=int, default=None,
                         help="DataLoader işçi sayısı (config.NUM_WORKERS yerine). Colab T4 için 4 önerilir; 0 = ana işlemde oku (yavaş).")
     parser.add_argument("--outdir", type=str, default=None,
@@ -518,7 +518,9 @@ def main():
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(args.seed)
     aux_channels = args.aux_channels.split(",") if args.aux_channels else None
-    global OUT_DIR
+    global OUT_DIR, RUN_TAG
+    if args.results:
+        RUN_TAG = os.path.splitext(os.path.basename(args.results))[0]
     if args.outdir:
         OUT_DIR = args.outdir
     os.makedirs(OUT_DIR, exist_ok=True)
@@ -535,13 +537,10 @@ def main():
     print(f"Çıktı:  {os.path.abspath(OUT_DIR)}")
     print(f"DataLoader işçisi: {n_workers}")
     
-    all_experiments = {"MTGUNet": "MTGUNet", "CloudUNet_Fusion": "CloudUNet_Fusion"}
-    if args.model == "unet":
-        experiments = {"MTGUNet": "MTGUNet"}
-    elif args.model == "unet_fusion":
-        experiments = {"CloudUNet_Fusion": "CloudUNet_Fusion"}
-    else:
-        experiments = all_experiments
+    # v1 CloudUNet_Fusion 12 Eki 2026'da arşive taşındı (v2 verisinde istasyon skalerleri yok).
+    if args.model not in ("unet", "all"):
+        raise SystemExit(f"Bilinmeyen --model '{args.model}'. Seçenekler: unet | all")
+    experiments = {"MTGUNet": "MTGUNet"}
     
     print("Initializing Datasets and DataLoaders...")
     test_loaders = None
@@ -608,7 +607,8 @@ def main():
             "num_params": num_params,
             "test": test_results,
             "config": {"seed": args.seed, "aux": args.aux, "aux_channels": aux_channels, "split": args.split,
-                       "epochs": epochs_to_run, "limit_batches": limit_batches}
+                       "epochs": epochs_to_run, "limit_batches": limit_batches,
+                       "best_model_file": f"best_model_{RUN_TAG + '__' if RUN_TAG else ''}{name.lower()}.pth"}
         }
         
         try:
