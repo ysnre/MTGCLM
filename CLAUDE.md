@@ -22,6 +22,10 @@ MTG (Meteosat Third Generation) FCI uydu verisi + TMM C-bandı radar + yer gözl
 
 > **Durum (5 Eki 2026): v2 koşu matrisi tamamlandı.** ARCH/RESNET/modalite/U-Net/CV/baseline
 > sonuçları `artifacts/` altında; özet `artifacts/summary.md|csv|tex` + grafikler. Detay §2/K6, K12.
+>
+> **Durum (16 Eki 2026): v3 hazır, koşulmadı.** Etiket politikası "verify" (`splits/split_v2_verify.npz`,
+> `splits/cv5_verify_*`), hızlı yükleyici, örnek bazlı tahmin kaydı. Koşular yerel PC (CPU) + Colab (ResNet-CIFAR),
+> çıktı `artifacts_v3/`. Detay §2/K16, komutlar §3.4.
 
 ### Veri
 - Uydu grid'i: lon 25.01–44.99 (0.02°), lat 42.995–35.005 (0.01°) → **800×1000**. Piksel ≈ **1,73 km (D–B) × 1,11 km (K–G)** (39°K), 33×33 yama ≈ **57 × 37 km**
@@ -204,6 +208,8 @@ v2 sonucu: ortalama BalAcc 0.806 ± 0.166 (test_time) — modeller arası büyü
 - `torch.load(..., weights_only=False, map_location=DEVICE)`.
 - Test kümeleri yalnız eğitim bitince, en iyi val modeliyle **bir kez** değerlendirilir.
 - Eğitimler Colab'da; yerelde `--epochs 1 --limit_batches N` dry-run. T4'te epoch ≈ 3 dk.
+  **(16 Eki güncellemesi, K16):** epoch'un ~3 dk'sı GPU değil örnek-örnek H5 okumasıydı. v3'te eğitim yerel PC'de
+  (CPU, bölme RAM'de) + Colab'da (yalnız ResNet-CIFAR); `train*.py` varsayılanı her platformda 15 epoch / tüm veri.
 
 ### K12 — **v2 koşu matrisi sonuçları ve bulgular (5 Eki 2026)** — `artifacts/summary.md|csv|tex`
 
@@ -311,6 +317,40 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
 - `.agent/rules/` altına 3 kalıcı çalışma kuralı yazıldı: (1) dosya başına İngilizce commit komutları üretme,
   (2) CLAUDE.md güncel tutma, (3) infografiği her değişiklikte güncelleme. (`.agent/` .gitignore'da, yerelde durur.)
 
+### K16 — 16 Eki 2026: v3 hazırlığı — etiket politikası "verify", hızlı yükleyici, tahmin kaydı, yerel PC
+- **Etiket politikası (kullanıcı kararı): yalnız doğrulanmış NSC.** METAR "açık" (gözlem dakikası ≠ 0, etiket 0) yalnız
+  aynı istasyonun aynı (yuvarlanmış) saatteki SYNOP'u N=0 ise tutulur; SYNOP'un tamamı ve METAR bulutlu aynen kalır.
+  `src/make_label_policy.py` → `splits/split_v2_verify.npz` + `splits/cv5_verify_fold{0..4}.npz` (+ `.json` istatistik).
+  **Kompakt H5 değişmedi**: politika yalnız örnek çıkarır, etiket değiştirmez → K4'teki "etiket → bölme → H5" yeniden
+  üretimi gerekmedi. METAR açık 82.650 → 16.808 tutuldu. train 218.648 → **179.326** (açık %33,8 → %19,3), val 52.033 → 43.152,
+  test_time 51.704 → 40.868, test_station 49.228 → 43.865, test_both 11.655 → 10.215, test_partial aynen 16.941.
+- **"Colab GPU %1" kök nedeni:** `MTGH5Dataset.__getitem__` örnek-örnek okuma (0,88 ms/örnek ≈ 3,2 dk/epoch yalnız okuma) +
+  `num_workers=0`. Çözüm `src/fast_loader.py`, `--loader memory|stream|auto|legacy` (varsayılan auto). Bölme indeksleri
+  artan sıralı → batch'ler eski yolla **birebir aynı örneklerden** (mini H5'te tensör eşitliği test edildi); yalnız
+  çevirme RNG'si artık (seed, epoch)'a bağlı `torch.Generator`. `--cache_dir`: bölme satırlarının `.npy` önbelleği
+  (~16 GB, bir kez yazılır; Colab'da şart, yerelde NVMe'ye isteğe bağlı).
+- **Örnek bazlı tahmin kaydı:** `<outdir>/preds/<koşu>__<deney>.npz` — val + test_* için satır, etiket, olasılık (en iyi val
+  modeli), `last_<küme>_prob` (son epoch), test_partial. Sonuç JSON'unda yeni anahtarlar: `test.<küme>_synop` (yalnız SYNOP,
+  referanslarla adil kıyas), `test.<küme>_last`, `test.val_best(_synop)`; `config.env` (git commit + dirty, torch, cihaz,
+  iş parçacığı, yükleyici), `config.label_policy`, `config.preds_file`, `config.wall_minutes`; `history.epoch_time`.
+- **Tekrarlanabilirlik:** `src/run_utils.py` → seed'ler, `cudnn.deterministic`, `use_deterministic_algorithms(warn_only)`,
+  `CUBLAS_WORKSPACE_CONFIG`; checkpoint RNG durumlarını da saklar → kesintiye uğrayıp devam eden koşu kesintisizle
+  birebir aynı (CPU'da doğrulandı). Kapatmak için `--no_deterministic`.
+- **Sessiz varsayılan düzeltildi:** `train.py`/`train_unet.py` yerelde (Colab dışı) sessizce 3 epoch/30 batch (U-Net 2/20)
+  koşuyordu. Artık her platformda 15 epoch / tüm veri; hızlı deneme `--epochs 1 --limit_batches 50`.
+- **run_all v3:** varsayılan split `split_v2_verify`, CV `cv5_verify`, mimari `medium_flat` (K6 kazananı; `auto` hâlâ var),
+  `--stage v3` = modality, unet, resnet, cv, baselines (arch hariç). Modaliteler A_sat, B_full, C_noawos ve yeni **C_t2m**
+  (C + yalnız t2m, K14). CV artık 4 modalite × 5 kat: `CV_<A|B|C|Ct2m>_f<k>_s1`. Baselines tüm veriyle (`--max_train 0
+  --max_eval 0`, blok okuma, SYNOP-only + tahmin kaydı). Süzgeç `--only/--skip` (ön ek), `--threads`, `--loader`,
+  `--cache_dir` (CV'ye yalnız `--cache_cv` ile). `aggregate_results.py` `*_synop` alt kümelerini de tablolar.
+- **Donanım (kullanıcı, 16 Eki):** i7-12700, 31,6 GB RAM, **NVIDIA GPU yok** (Intel UHD 770 eğitimde kullanılmaz), NVMe 1 TB +
+  USB 3.0 4 TB disk, conda base Python 3.11.5. **Plan:** Medium_Flat modalite + CV, U-Net, ResNet-ImageNet ve baselines yerel
+  CPU'da; ResNet-CIFAR Colab T4'te. Çıktı `artifacts_v3/` (v2 `artifacts/` karşılaştırma için korunur).
+- **Hız:** `src/bench_speed.py` (sentetik batch, veri gerekmez). Bulut ortamının 2 çekirdeğinde koşu başına: Medium_Flat ~76 dk,
+  U-Net ~6,3 sa, ResNet-ImageNet ~5,6 sa, ResNet-CIFAR ~26 sa → i7-12700'de birkaç kat hızlı beklenir; kesin değerler
+  kullanıcının ölçümüyle buraya yazılacak.
+- Ayrıntı: proje dokümanı `claude/mtgclm_run_hazirlik_2026-10-16.md`.
+
 ---
 
 ## 3. Komutlar
@@ -411,6 +451,38 @@ python src/make_public_sample.py --src $H5 --split $SP --out data/mtg_sample.h5 
 tek satırda ortalar (ortalama ± s.s.; Markdown + CSV + LaTeX + grafik) — gerçek çıktı
 `artifacts/summary.md|csv|tex` + `artifacts/summary_{balanced_accuracy,mcc,f1_cloudy}.png`.
 
+### 3.4 v3 — yerel PC (Windows, CPU) + Colab (ResNet-CIFAR) — K16
+```bat
+cd /d E:\belgeler\MTGCLM
+
+:: 0) Ortam kontrolü (conda base)
+python -c "import torch, h5py, sklearn, psutil, tqdm; print(torch.__version__, torch.get_num_threads())"
+
+:: 1) Etiket politikası bölmeleri (yapıldı, 16 Eki; yeniden üretmek gerekirse)
+python src\make_label_policy.py --h5 F:/radar/mtg_train_v2.h5 --policy verify
+
+:: 2) Hız ölçümü (~3-5 dk) -> en iyi iş parçacığı sayısını seç
+python src\bench_speed.py --threads 8,12,20
+
+:: 3) 1 epoch gerçek deneme (yükleme MB/s ve epoch süresi log'da)
+python src\train.py --h5 F:/radar/mtg_train_v2.h5 --split splits/split_v2_verify.npz --model medium_flat --aux ^
+    --epochs 1 --loader auto --threads 8 --outdir artifacts_bench --results artifacts_bench/BENCH_B_s1.json
+
+:: 4) v3 matrisi (yerel; ResNet-CIFAR hariç). Kesilirse aynı komut kaldığı yerden sürer.
+python src\run_all.py --h5 F:/radar/mtg_train_v2.h5 --outdir artifacts_v3 --stage v3 --skip RESNET_CIFAR ^
+    --loader auto --threads 8
+::    isteğe bağlı: --cache_dir C:/mtg_cache  (NVMe'de >= 20 GB boş yer varsa; yüklemeyi hızlandırır)
+
+:: 5) Rapor
+python src\aggregate_results.py --dir artifacts_v3 --out artifacts_v3/summary --plot
+```
+```python
+# Colab — ResNet-CIFAR (3 koşu). 1. hücre §3.2 ile aynı (Drive, H5 kopyası, git pull).
+!python src/run_all.py --h5 {H5} --outdir {DRIVE}/artifacts_v3 --stage resnet --only RESNET_CIFAR \
+    --loader auto --cache_dir /content/cache
+# Bitince Drive'daki artifacts_v3/RESNET_CIFAR_s*.json + preds/RESNET_CIFAR_* dosyalarını yerel artifacts_v3/'e kopyalayın.
+```
+
 ---
 
 ## 4. Dosya haritası
@@ -426,11 +498,15 @@ tek satırda ortalar (ortalama ± s.s.; Markdown + CSV + LaTeX + grafik) — ger
 | `src/make_dem_npy.py` | DEM GeoTIFF → 800×1000 `.npy` (metre) — Copernicus GLO-90 ile çalıştırıldı |
 | `src/make_public_sample.py` | Paylaşılabilir küçük örneklem H5 + bölme (henüz çalıştırılmadı) |
 | `src/metrics.py` | Balanced Acc, MCC, F1(clear/cloudy), AUC, karışıklık matrisi, majority |
-| `src/baselines.py` | majority, threshold_ir_105, threshold2_ir_105+vis_06, logreg_aux, rf_aux, hgb_aux |
+| `src/baselines.py` | majority, threshold_ir_105, threshold2_ir_105+vis_06, logreg_aux, rf_aux, hgb_aux (K16: blok okuma, SYNOP-only, tahmin kaydı) |
 | `src/aggregate_results.py` | Koşu JSON'ları → ortalama ± s.s. tablo (MD/CSV/LaTeX) + grafik |
-| `src/run_all.py` | Çökmeye dayanıklı koşu yöneticisi (aşamalar, `.done`, manifest, log) |
-| `src/h5_dataset.py` | `use_aux=True` → aux normalize edilip kanallara eklenir |
-| `src/dataloader.py` | `get_split_dataloaders()` (+ bölme–H5 doğrulaması), `get_dataloaders(use_aux=...)` |
+| `src/run_all.py` | Çökmeye dayanıklı koşu yöneticisi (aşamalar, `.done`, manifest, log); v3: `--stage v3 --only --skip --loader --threads --cache_dir` |
+| `src/h5_dataset.py` | `use_aux=True` → aux normalize edilip kanallara eklenir; meta (labels, okta, obs_time, ...) |
+| `src/dataloader.py` | `get_split_dataloaders(loader=...)` (+ bölme–H5 doğrulaması), `get_dataloaders(use_aux=...)` |
+| `src/fast_loader.py` | Hızlı yükleyici (K16): blok okuma, `memory/stream/auto`, `.npy` önbellek, batch çevirme |
+| `src/run_utils.py` | Tekrarlanabilirlik (seed, deterministik, RNG checkpoint), ortam bilgisi, SYNOP-only metrik, tahmin kaydı |
+| `src/make_label_policy.py` | METAR NSC politikası (keep/verify/ignore) → `split_v2_<politika>.npz`, `cv5_<politika>_fold*.npz` |
+| `src/bench_speed.py` | Model başına eğitim/değerlendirme hızı (sentetik), koşu süresi tahmini, iş parçacığı seçimi |
 | `src/model.py` | `MTGConvNet` (Shallow/Medium/Deep × GAP/Flatten), `MTGResNet18` (stem: imagenet / cifar), `MTGUNet` |
 | `src/extract_fci_clm.py` | FCI CLM → istasyon çevresi sınıf sayımları (merkez, 3×3, r5–r30 km); indeks `data/clm_station_index.npz` |
 | `src/extract_nwcsaf_ct.py` | NWC SAF CT PNG (MGM, Mercator) → istasyon çevresi bulut tipi sayımları |
@@ -438,7 +514,7 @@ tek satırda ortalar (ortalama ± s.s.; Markdown + CSV + LaTeX + grafik) — ger
 | `src/clm_vs_synop_quicklook.py` | CLM ↔ ham SYNOP ön bakış (merkez vs alan) |
 | `docs/mtgclm_infografik.html` | Proje geneli insan-okur HTML infografik (her anlamlı değişiklikte güncellenir, K15) |
 | `src/loss.py` | `MaskedBCELoss` — yalnız (16,16) pikselinde, `-1` yok sayılır |
-| `src/train.py`, `src/train_unet.py` | Eğitim; `--h5 --split --aux --aux_channels --seed --epochs --limit_batches --results --outdir --model` |
+| `src/train.py`, `src/train_unet.py` | Eğitim; `--h5 --split --aux --aux_channels --seed --epochs --limit_batches --results --outdir --model` + K16: `--loader --mem_splits --cache_dir --threads --no_deterministic --no_last_preds` |
 | `src/config.py` | Colab/yerel yollar, `MTGCLM_H5`, PATCH_SIZE 33, BATCH_SIZE 64, LR 1e-3 |
 | `README.md`, `LICENSE`, `CITATION.cff`, `.gitignore` | Depo iskeleti + veri bulunabilirliği beyanı |
 
@@ -464,10 +540,13 @@ geç-füzyon planıdır — **arşiv**, güncel hattı temsil etmez. `notebooks/
       (`base_channels` alt kümesi) — henüz yok.
 - [ ] FCI CLM karşılaştırması: çıkarım `src/extract_fci_clm.py` ile (K13); aynı örneklerde merkez + alan bazlı, C/O dönemleri ayrı.
 - [x] ~~NWC SAF CT projeksiyonu~~ — MGM köşeleri alındı, çıkarım yapıldı (K13/K14).
-- [ ] METAR NSC politikası: bulutlu METAR'ı tut, NSC'yi SYNOP ile doğrula/yok say (K14) → etiket+bölme yeniden üret.
-- [ ] Modellerin SYNOP-only performansı (tahmin kaydı gerekiyor) ve AWOS-t2m'nin CNN'deki etkisi (CV, K14).
-- [ ] ResNet karşılaştırması: `run_all.py --stage resnet` → RESNET_CIFAR_s1..3 + RESNET_s2..3 (5 koşu, ~8–10 sa T4).
-- [ ] METAR NSC etiket kararı — büyük Colab koşularından ÖNCE (K13).
+- [x] ~~METAR NSC politikası~~ — **verify** seçildi, `split_v2_verify` + `cv5_verify` üretildi; H5 yeniden üretimi gerekmedi (K16).
+- [x] ~~Örnek bazlı tahmin kaydı, SYNOP-only metrik, determinizm, hızlı yükleyici~~ — K16.
+- [ ] **v3 matrisini koş:** önce `bench_speed.py` + 1 epoch deneme (§3.4), sonra yerel `run_all --stage v3 --skip RESNET_CIFAR`,
+      Colab'da `--only RESNET_CIFAR`; ölçülen süreleri K16'ya yaz.
+- [ ] `src/analyze_preds.py`: McNemar + blok bootstrap (gün/istasyon blokları), gündüz/gece, ay, yükseklik kırılımı; CLM/NWC ile
+      aynı SYNOP-only örneklerde kıyas — preds dosyaları hazır olunca.
+- [ ] AWOS-t2m'nin CNN'deki etkisi: CV × {A, B, C, C_t2m} sonuçlarıyla (K14, K16).
 - [ ] U-Net tam harita için hedef-piksel jitter (49×49 çıkar → 33×33 rastgele kırp).
 - [ ] `infer_scene.py`: tek NetCDF sahne + radar + aux → 800×1000 olasılık haritası (GeoTIFF/PNG) — henüz yok.
 - [ ] Kanal permütasyon önemi / Integrated Gradients (17→22 kanal için asıl bilimsel soru).
@@ -502,7 +581,8 @@ Yereldeki diğer notlar: `MTG Cloud Phase Web Service Development.md`,
   val'de yap, test'e yalnız bir kez dokun.
 - Betiklere **`--h5` ver**; yolları sabit kodlama (`config.py` / env / argparse).
 - H5'i yeniden çıkarma (`create_patch_dataset.py`) — yamalar sabit, yalnız dataset eklenir.
-- Ağır eğitim Colab'da, `run_all.py` üzerinden, `--outdir` Drive altında; yerelde dry-run.
+- Ağır eğitim `run_all.py` üzerinden: v3'te yerel PC (CPU, `--loader auto`, `--outdir artifacts_v3`) + Colab (ResNet-CIFAR,
+  `--outdir` Drive altında, `--cache_dir /content/cache`). Bkz. K16, §3.4.
 - Depoya veri/ağırlık commit etme; `splits/*.npz|json` ve `artifacts/*.json` paylaşılır.
 - Mimari/modalite tartışırken **Medium_Flat**'in kazanan mimari olduğunu ve AWOS-aux'un
   test kümelerinde net bir katkısı görünmediğini unutma (K6, K12) — v1 sayılarını güncel
