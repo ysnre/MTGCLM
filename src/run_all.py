@@ -82,11 +82,17 @@ def build_matrix(args):
         jobs.append(("arch", f"ARCH_s{s}",
                      tr + base + sp + ["--model", "arch", "--aux", "--seed", str(s),
                                        "--results", os.path.join(args.outdir, f"ARCH_s{s}.json")]))
-    # 2) ResNet18 referansı
-    for s in seeds[:1]:
+    # 2) ResNet18 referansı — iki giriş katmanı (stem) ile, danışmanların istediği model karşılaştırması için:
+    #    RESNET_s*        : ImageNet stem (7x7 adım 2 + maxpool). RESNET_s1 v2 matrisinde koşuldu.
+    #    RESNET_CIFAR_s*  : CIFAR stem (3x3 adım 1, maxpool yok) — 33x33 yamalara uygun olan.
+    for s in [int(x) for x in args.resnet_imagenet_seeds.split(",") if x.strip()]:
         jobs.append(("resnet", f"RESNET_s{s}",
                      tr + base + sp + ["--model", "resnet18", "--aux", "--seed", str(s),
                                        "--results", os.path.join(args.outdir, f"RESNET_s{s}.json")]))
+    for s in seeds:
+        jobs.append(("resnet", f"RESNET_CIFAR_s{s}",
+                     tr + base + sp + ["--model", "resnet18_cifar", "--aux", "--seed", str(s),
+                                       "--results", os.path.join(args.outdir, f"RESNET_CIFAR_s{s}.json")]))
     # 3) Modalite ablasyonu (mimari --arch_model ile sabit)
     for s in seeds:
         jobs.append(("modality", f"A_sat_s{s}",
@@ -132,6 +138,10 @@ def main():
                     help="Modalite/CV koşularında kullanılacak mimari. 'auto' (varsayılan): mimari "
                          "ablasyonunun (ARCH_*.json) val balanced accuracy kazananı otomatik seçilir. "
                          "Ya da doğrudan bir ad: medium_flat, Deep_GAP, ...")
+    ap.add_argument("--resnet_imagenet_seeds", default="1,2,3",
+                    help="ImageNet-stem ResNet18 (RESNET_s*) için seed'ler. Varsayılan '1,2,3': s1 v2'de koşuldu "
+                         "(atlanır), s2-s3 eklenir (~2,5 sa T4); böylece iki stem de ± ile raporlanır. Yalnız mevcut "
+                         "sonuç için '1' verin.")
     ap.add_argument("--stage", default="all", help="all | " + " | ".join(STAGES) + " (virgülle birden çok)")
     ap.add_argument("--num_workers", type=int, default=None,
                     help="DataLoader işçi sayısı. Colab 2 vCPU verdiği için 0 (varsayılan) bırakın.")
