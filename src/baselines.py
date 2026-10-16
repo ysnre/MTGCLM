@@ -49,13 +49,18 @@ def channel_index(name: str) -> int:
 
 
 def load_features(h5, idx: np.ndarray, use_aux: bool, aux_idx, block: int = 4096):
-    """idx (artan) -> X [n, 4*C] öznitelik, y [n], ayrıca merkez piksel ham değerleri [n, C]."""
+    """idx (artan) -> X [n, 4*C] öznitelik, y [n], ayrıca merkez piksel ham değerleri [n, C].
+    K16: dosya ardışık bloklarla okunur (h5py'nin dağınık indeksli okuması tüm veride çok yavaştı)."""
     feats, centers, ys = [], [], []
-    for s in range(0, len(idx), block):
-        sel = idx[s:s + block]
-        p = h5["patches"][sel].astype(np.float32)
+    idx = np.asarray(idx, dtype=np.int64)
+    labels_all = h5["labels"]
+    for b in np.unique(idx // block):
+        lo, hi = int(b) * block, min((int(b) + 1) * block, h5["labels"].shape[0])
+        j0, j1 = np.searchsorted(idx, lo), np.searchsorted(idx, hi)
+        sel = idx[j0:j1]
+        p = h5["patches"][lo:hi][sel - lo].astype(np.float32)
         if use_aux:
-            a = h5["aux"][sel].astype(np.float32)[:, aux_idx]
+            a = h5["aux"][lo:hi][sel - lo].astype(np.float32)[:, aux_idx]
             p = np.concatenate([p, a], axis=1)
         c = p[:, :, 16, 16]
         m5 = p[:, :, 14:19, 14:19].mean(axis=(2, 3))
@@ -63,7 +68,7 @@ def load_features(h5, idx: np.ndarray, use_aux: bool, aux_idx, block: int = 4096
         sd = p.std(axis=(2, 3))
         feats.append(np.concatenate([c, m5, mu, sd], axis=1))
         centers.append(c)
-        ys.append(h5["labels"][sel])
+        ys.append(labels_all[lo:hi][sel - lo])
     return np.concatenate(feats), np.concatenate(ys).astype(np.int64), np.concatenate(centers)
 
 
@@ -90,8 +95,8 @@ def main():
     ap.add_argument("--aux", action="store_true", help="aux kanallarını da özniteliklere kat")
     ap.add_argument("--ch1", default="ir_105", help="threshold modeli için kanal")
     ap.add_argument("--ch2", default="vis_06", help="threshold2 için ikinci kanal")
-    ap.add_argument("--max_train", type=int, default=60000, help="Klasik modeller için eğitim örneklemi")
-    ap.add_argument("--max_eval", type=int, default=30000, help="Her test kümesi için değerlendirme örneklemi")
+    ap.add_argument("--max_train", type=int, default=60000, help="Klasik modeller için eğitim örneklemi (0 = tümü)")
+    ap.add_argument("--max_eval", type=int, default=30000, help="Her test kümesi için değerlendirme örneklemi (0 = tümü)")
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--results", default="artifacts/baselines.json")
     args = ap.parse_args()
@@ -101,6 +106,7 @@ def main():
     split = np.load(args.split)
     with h5py.File(args.h5, "r") as f:
         n_rows = len(f["labels"])
+        obs_time = f["obs_time"][:] if "obs_time" in f else None   # SYNOP-only metrikler için (K16)
         aux_idx = None
         if args.aux:
             if "aux" not in f:
@@ -120,25 +126,35 @@ def main():
         tr_idx = sample("train", args.max_train)
         print(f"Öznitelik çıkarımı: train {len(tr_idx)}...")
         Xtr, ytr, Ctr = load_features(f, tr_idx, args.aux, aux_idx)
-        evals = {}
+        evals, eval_rows = {}, {}
         for s in SUBSETS:
             if s in split.files and len(split[s]):
                 i = sample(s, args.max_eval)
                 evals[s] = load_features(f, i, args.aux, aux_idx)
+                eval_rows[s] = i
                 print(f"  {s}: {len(i)} örnek")
         print(f"Öznitelikler hazır ({time.time()-t0:.0f} s), boyut {Xtr.shape}")
 
     results = {}
+    preds = {f"{s}_rows": eval_rows[s].astype(np.int32) for s in evals}
+    preds.update({f"{s}_label": evals[s][1].astype(np.int8) for s in evals})
 
     def record(name, params, preds_probs):
         entry = {"num_params": params, "history": {}, "best_f1": float("nan"),
                  "best_val_balanced_accuracy": float("nan"), "test": {},
                  "config": {"model": name, "aux": args.aux, "split": args.split, "seed": args.seed,
-                            "max_train": args.max_train, "baseline": True}}
+                            "max_train": args.max_train, "max_eval": args.max_eval, "n_train": int(len(ytr)),
+                            "baseline": True}}
         for s, (pred, prob) in preds_probs.items():
             m = compute_metrics(pred, evals[s][1], probs=prob)
             entry["test"][s] = m
             print(f"  [{s}] {format_metrics(m)}")
+            preds[f"{name}__{s}_prob"] = np.asarray(prob, dtype=np.float32)
+            if obs_time is not None:
+                syn = (obs_time[eval_rows[s]] // 60) % 60 == 0
+                if syn.any():
+                    entry["test"][f"{s}_synop"] = compute_metrics(np.asarray(pred)[syn], evals[s][1][syn],
+                                                                  probs=np.asarray(prob)[syn])
         results[name] = entry
 
     # ---------------- majority
@@ -235,7 +251,11 @@ def main():
     prev.update(results)
     with open(args.results, "w", encoding="utf-8") as f:
         json.dump(prev, f, indent=2, ensure_ascii=False)
-    print(f"\nYazıldı: {args.results}  ({', '.join(results)})")
+    pp = os.path.join(os.path.dirname(args.results) or ".", "preds",
+                      os.path.splitext(os.path.basename(args.results))[0] + ".npz")
+    os.makedirs(os.path.dirname(pp), exist_ok=True)
+    np.savez_compressed(pp, **preds)
+    print(f"\nYazıldı: {args.results}  ({', '.join(results)})  | tahminler: {pp}")
     print("Tabloya eklemek için: python src/aggregate_results.py --dir artifacts")
 
 
