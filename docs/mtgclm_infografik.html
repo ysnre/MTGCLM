@@ -69,7 +69,7 @@
   .step{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; position:relative}
   .step .num{font-size:12px; font-weight:800; color:var(--sky2)}
   .step .t{font-weight:750; margin:6px 0 4px; font-size:15px}
-  .step .d{font-size:13px; color:var(--mut)}
+  .step .d{font-size:13px; color:var(--mut); overflow-wrap:anywhere}
 
   /* bars */
   .bars{margin-top:6px}
@@ -115,7 +115,7 @@
 <div class="wrap">
 
 <header>
-  <span class="badge"><span class="dot"></span> Durum: v2 koşu matrisi tamam · referans ürünler değerlendirildi</span>
+  <span class="badge"><span class="dot"></span> Durum: v2 tamam · v3 hazır (doğrulanmış etiketler, hızlı yükleyici) · koşular başlıyor</span>
   <h1>MTGCLM — <span class="g">Türkiye üzerinde uydu tabanlı bulut maskesi</span></h1>
   <p class="lede">MTG (Meteosat Third Generation) FCI uydusu, C-bandı radar ve yer gözlemlerini birleştirerek
   istasyon noktalarında ve tam harita üzerinde bulut var/yok tahmini yapan bir derin öğrenme çalışması.</p>
@@ -157,9 +157,9 @@
   <div class="pipe">
     <div class="step"><div class="num">01</div><div class="t">Uydu + radar</div><div class="d">16 FCI kanalı 0,02°×0,01° (≈1,7×1,1 km) ızgaraya örneklenir; radar dBZ eklenir.</div></div>
     <div class="step"><div class="num">02</div><div class="t">Yardımcı kanallar</div><div class="d">t2m, rh2m (1982 istasyondan IDW), DEM yükseklik, güneş açısı, radar kapsama → 22 kanal.</div></div>
-    <div class="step"><div class="num">03</div><div class="t">Etiketleme</div><div class="d">0 okta = açık, ≥5 okta = bulutlu, 1–4 okta yok sayılır. 147 sinoptik + 79 havaalanı gözlemi.</div></div>
-    <div class="step"><div class="num">04</div><div class="t">Sızıntısız bölme</div><div class="d">Hafta-blok zaman + 30 istasyon ayrımı → train/val/test_time/test_station/test_both.</div></div>
-    <div class="step"><div class="num">05</div><div class="t">Eğitim</div><div class="d">Colab T4, ön-karıştırılmış kompakt H5 (~19 GB); 3 seed; model seçimi val’de, rapor test’te.</div></div>
+    <div class="step"><div class="num">03</div><div class="t">Etiketleme</div><div class="d">0 okta = açık, ≥5 okta = bulutlu, 1–4 okta yok sayılır. v3: METAR “açık” yalnız aynı saatteki SYNOP N=0 ise sayılır.</div></div>
+    <div class="step"><div class="num">04</div><div class="t">Sızıntısız bölme</div><div class="d">Hafta-blok zaman + 30 istasyon ayrımı → train / val / test_time / test_station / test_both.</div></div>
+    <div class="step"><div class="num">05</div><div class="t">Eğitim</div><div class="d">Kompakt H5 (~19 GB) blok blok okunur; yerel PC (CPU, RAM’de) + Colab T4; 3 seed; seçim val’de, rapor test’te.</div></div>
   </div>
   <div class="grid g3" style="margin-top:16px">
     <div class="card"><h3>Yama ≈ 57×37 km</h3><p class="mut" style="font-size:13.5px">Bir gözlemcinin gördüğü gökyüzü alanı bulut yüksekliğine göre değişir; “0 okta” tüm kubbenin açık olması demek — görev aslında bir <b>alan</b> görevi.</p></div>
@@ -184,7 +184,8 @@
       <div class="bar"><div class="nm">Çoğunluk tahmini <small>referans taban</small></div><div class="track"><div class="fill ref" style="width:4.3%"></div></div><div class="v">0,543</div></div>
     </div>
     <p class="note">Ölçek 0,85–0,95 (çoğunluk tabanı 0,50’den başlar). Derin modellerin tamamı ~0,93’te kümeleniyor;
-    mimari, kapasite ve aux farkları ≤ 0,006. Bloklu CV, tek bölmenin iyimser olduğunu gösteriyor.</p>
+    mimari, kapasite ve aux farkları ≤ 0,006. Bloklu CV, tek bölmenin iyimser olduğunu gösteriyor.
+    <b>Bunlar v2 sonuçları (eski etiketler);</b> v3 doğrulanmış etiketlerle yeniden koşulacak.</p>
   </div>
 </section>
 
@@ -250,8 +251,45 @@
         <div class="it warn"><div class="k">K12 · 5 Eki</div><div class="t">v2 matrisi + bulgular</div><div class="d">HGB≈CNN; AWOS belirsiz; CV tek bölmeden düşük.</div></div>
         <div class="it warn"><div class="k">K13 · 12 Eki</div><div class="t">Grid düzeltmesi, füzyon arşivi, CIFAR stem</div><div class="d">Piksel ~1,7×1,1 km; paralaks düzeltmesiz; ResNet’e CIFAR girişi.</div></div>
         <div class="it good"><div class="k">K14 · 14 Eki</div><div class="t">Referanslar + METAR doğrulaması</div><div class="d">CLM/NWC aynı örneklerde; METAR “açık”ı SYNOP ile doğrula; AWOS-t2m gerçek.</div></div>
+        <div class="it"><div class="k">K15 · 16 Eki</div><div class="t">İnfografik + 3 çalışma kuralı</div><div class="d">Dosya başına commit, CLAUDE.md ve bu sayfanın güncel tutulması.</div></div>
+        <div class="it good"><div class="k">K16 · 16 Eki</div><div class="t">v3 hazırlığı</div><div class="d">Etiket politikası “verify”; hızlı yükleyici (GPU %1 sorunu); örnek bazlı tahmin + SYNOP-only metrik; yerel PC + Colab planı.</div></div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- V3 PLANI -->
+<section id="v3">
+  <div class="sec-h"><h2>v3 koşu planı</h2><span class="k">16 Ekim 2026 · neden yeniden koşuyoruz, nerede, ne kadar</span></div>
+  <div class="grid g3">
+    <div class="card">
+      <h3><span class="ic" style="background:rgba(255,107,127,.16);color:var(--rose)">⚑</span> Daha temiz etiket</h3>
+      <p>METAR “açık” yalnız SYNOP N=0 ile doğrulanırsa tutulur. train 218.648 → <b>179.326</b> örnek;
+      açık oranı %33,8 → <b>%19,3</b>. H5 değişmedi, yalnız bölme dosyası türetildi (<code>split_v2_verify</code>).</p>
+    </div>
+    <div class="card">
+      <h3><span class="ic" style="background:rgba(53,214,195,.15);color:var(--teal)">⚡</span> GPU’nun %1’i çözüldü</h3>
+      <p>Örnekler tek tek okunuyordu (0,88 ms/örnek). Yeni yükleyici aynı batch’leri ardışık bloklarla üretir:
+      yerelde bölme RAM’e alınır, Colab’da diskten önbellekle akıtılır. Sonuçlar eski yolla birebir aynı örneklerden.</p>
+    </div>
+    <div class="card">
+      <h3><span class="ic" style="background:rgba(73,167,240,.15);color:var(--sky2)">≡</span> Her tahmin kayıtlı</h3>
+      <p>Her koşu örnek bazlı olasılıkları saklar (son epoch + en iyi model) ve <b>yalnız-SYNOP</b> metrikleri raporlar:
+      CLM/NWC ile adil kıyas ve McNemar / bootstrap anlamlılık testleri artık mümkün.</p>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px; overflow-x:auto">
+    <table class="tbl">
+      <thead><tr><th>Koşu grubu</th><th>Nerede</th><th class="num">Koşu</th><th>Kaba süre</th></tr></thead>
+      <tbody>
+        <tr><td>Modalite A / B / C / C+t2m × 3 seed (Medium_Flat)</td><td>Yerel PC (CPU)</td><td class="num">12</td><td>~15–20 dk / koşu</td></tr>
+        <tr><td>Bloklu CV: 5 kat × 4 modalite</td><td>Yerel PC (CPU)</td><td class="num">20</td><td>~20 dk / koşu</td></tr>
+        <tr><td>U-Net × 3, ResNet (ImageNet girişi) × 3</td><td>Yerel PC (CPU)</td><td class="num">6</td><td>~1–1,5 sa / koşu</td></tr>
+        <tr><td>ResNet (CIFAR girişi) × 3</td><td>Colab T4</td><td class="num">3</td><td>~45 dk / koşu</td></tr>
+        <tr><td>Klasik modeller (HGB, RF, eşikler) — tüm veri</td><td>Yerel PC</td><td class="num">1</td><td>~30 dk</td></tr>
+      </tbody>
+    </table>
+    <p class="note">Süreler tahmindir; ilk deneme ölçümüyle (<code>bench_speed.py</code> + 1 epoch) kesinleşir. Yerel toplam ≈ 18 saat (iki gece).</p>
   </div>
 </section>
 
@@ -262,9 +300,9 @@
     <div class="card">
       <h3>Olmazsa olmaz</h3>
       <ul class="lst">
-        <li>Örnek bazlı tahminleri kaydet → anlamlılık testleri (McNemar, blok bootstrap)</li>
-        <li>Modalite (A/B/C/D) ve HGB’yi CV katlarında eşleştirilmiş koş</li>
-        <li>SYNOP-only değerlendirme; METAR NSC etiket kararı</li>
+        <li>v3 matrisini koş (yerel PC + Colab) ve özetle</li>
+        <li>Anlamlılık testleri (McNemar, blok bootstrap) — tahminler artık kaydediliyor</li>
+        <li>Modalite (A/B/C/C+t2m) ve HGB’yi CV katlarında eşleştirilmiş karşılaştır</li>
         <li>Gündüz/gece, ay, yükseklik kırılımları</li>
       </ul>
     </div>
@@ -279,7 +317,7 @@
     </div>
   </div>
   <div class="pill-row">
-    <span class="tag">Çıktı dosyaları: artifacts/*.json</span>
+    <span class="tag">Çıktı dosyaları: artifacts/*.json (v2) · artifacts_v3/ (v3)</span>
     <span class="tag">Kod: src/ (model, train, run_all, extract_*, eval_*)</span>
     <span class="tag">Depo: github.com/ysnre/MTGCLM</span>
   </div>
