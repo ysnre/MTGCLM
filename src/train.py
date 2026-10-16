@@ -26,6 +26,7 @@ from metrics import compute_metrics, format_metrics
 # --- Çıktı dizini: checkpoint / en iyi model / sonuç JSON buraya yazılır.
 # Colab'da Drive altındaki kalıcı bir yol verin (--outdir), böylece oturum çökse de kaybolmaz.
 OUT_DIR = os.environ.get("MTGCLM_OUT", "artifacts")
+RUN_TAG = None   # main() içinde --results dosya adından atanır (koşuya özgü checkpoint adları için)
 
 
 def out_path(*parts) -> str:
@@ -341,15 +342,11 @@ def run_experiment(name: str, conv_blocks: list, train_loader, val_loader, epoch
     print(f"Input channels: {in_ch}")
     
     # Initialize model
-    if model_type == "ResNet18":
+    if model_type in ("ResNet18", "ResNet18_CIFAR"):
         from model import MTGResNet18
-        model = MTGResNet18(in_channels=in_ch, num_classes=2).to(DEVICE)
-    elif model_type == "ResNet18_LateFusion":
-        from model import ResNet18_LateFusion
-        model = ResNet18_LateFusion(in_channels=in_ch, scalar_features=3, num_classes=2).to(DEVICE)
-    elif model_type == "MTGConvNet_LateFusion":
-        from model import MTGConvNet_LateFusion
-        model = MTGConvNet_LateFusion(in_channels=in_ch, scalar_features=3, num_classes=2, conv_blocks=conv_blocks, dropout_rate=0.2).to(DEVICE)
+        stem = "cifar" if model_type == "ResNet18_CIFAR" else "imagenet"
+        model = MTGResNet18(in_channels=in_ch, num_classes=2, stem=stem).to(DEVICE)
+        print(f"ResNet18 giriş katmanı (stem): {stem}")
     else:
         from model import MTGConvNet
         model = MTGConvNet(in_channels=in_ch, num_classes=2, conv_blocks=conv_blocks, use_gap=use_gap).to(DEVICE)
@@ -413,8 +410,11 @@ def run_experiment(name: str, conv_blocks: list, train_loader, val_loader, epoch
     }
     
     best_f1 = 0.0   # model seçimi ölçütü: val BALANCED ACCURACY (adı geriye uyumluluk için korunuyor)
-    checkpoint_path = out_path("checkpoints", f"checkpoint_{name.lower()}.pth")
-    best_model_path = out_path("checkpoints", f"best_model_{name.lower()}.pth")
+    # Koşuya özgü adlar (RUN_TAG = --results dosyasının adı): aynı deney adını kullanan koşular
+    # (ör. 17 Medium_Flat koşusu, 3 seed) artık birbirinin checkpoint'inin üstüne yazmaz.
+    tag = f"{RUN_TAG}__" if RUN_TAG else ""
+    checkpoint_path = out_path("checkpoints", f"checkpoint_{tag}{name.lower()}.pth")
+    best_model_path = out_path("checkpoints", f"best_model_{tag}{name.lower()}.pth")
     start_epoch = 1
     
     # Try to load checkpoint if it exists
@@ -520,7 +520,7 @@ import argparse
 def main():
     parser = argparse.ArgumentParser(description="Train MTGCLM Models")
     parser.add_argument("--model", type=str, default="all",
-                        help="all | arch (6 mimari varyantı) | arch_flat | shallow_flat | medium_flat | deep_flat | shallow_gap | medium_gap | deep_gap | resnet18 | mtg_late_fusion | resnet18_fusion | mtg_flat (=Deep_Flat)")
+                        help="all | arch (6 mimari varyantı) | arch_flat | shallow_flat | medium_flat | deep_flat | shallow_gap | medium_gap | deep_gap | resnet18 (ImageNet stem) | resnet18_cifar (CIFAR stem) | resnet_both | mtg_flat (=Deep_Flat)")
     parser.add_argument("--num_workers", type=int, default=None,
                         help="DataLoader işçi sayısı (config.NUM_WORKERS yerine). Colab T4 için 4 önerilir; 0 = ana işlemde oku (yavaş).")
     parser.add_argument("--outdir", type=str, default=None,
@@ -543,7 +543,9 @@ def main():
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(args.seed)
     aux_channels = args.aux_channels.split(",") if args.aux_channels else None
-    global OUT_DIR
+    global OUT_DIR, RUN_TAG
+    if args.results:
+        RUN_TAG = os.path.splitext(os.path.basename(args.results))[0]
     if args.outdir:
         OUT_DIR = args.outdir
     os.makedirs(OUT_DIR, exist_ok=True)
@@ -571,11 +573,11 @@ def main():
         "Medium_Flat":  (MEDIUM,  False, "ConvNet"),
         "Deep_GAP":     (DEEP,    True,  "ConvNet"),
         "Deep_Flat":    (DEEP,    False, "ConvNet"),
-        # --- yüksek kapasiteli referans
-        "ResNet18":     (None,    True,  "ResNet18"),
-        # --- eski skaler geç füzyon (v1 ile kıyas için; v2'de aux kanalları tercih edilir)
-        "MTGConvNet_LateFusion": (DEEP, False, "MTGConvNet_LateFusion"),
-        "ResNet18_LateFusion":   (None, False, "ResNet18_LateFusion"),
+        # --- yüksek kapasiteli referans: ResNet18, iki giriş katmanıyla
+        "ResNet18":       (None,  True,  "ResNet18"),        # ImageNet stem (v2 RESNET_s1 bununla koşuldu)
+        "ResNet18_CIFAR": (None,  True,  "ResNet18_CIFAR"),  # CIFAR stem: 3x3 adım 1, maxpool yok
+        # v1 skaler geç füzyon modelleri (MTGConvNet_LateFusion, ResNet18_LateFusion) 12 Eki 2026'da
+        # src/_backup_20260916/model_v1_fusion_classes.py'ye taşındı; v2 verisiyle çalışmıyorlardı.
     }
     ARCH_ABLATION = ["Shallow_GAP", "Shallow_Flat", "Medium_GAP", "Medium_Flat", "Deep_GAP", "Deep_Flat"]
     ALIASES = {  # kısa ad -> deney adı listesi
@@ -585,8 +587,8 @@ def main():
         "mtg_flat": ["Deep_Flat"],                   # geriye uyumluluk
         "shallow_flat": ["Shallow_Flat"], "medium_flat": ["Medium_Flat"], "deep_flat": ["Deep_Flat"],
         "shallow_gap": ["Shallow_GAP"], "medium_gap": ["Medium_GAP"], "deep_gap": ["Deep_GAP"],
-        "resnet18": ["ResNet18"],
-        "mtg_late_fusion": ["MTGConvNet_LateFusion"], "resnet18_fusion": ["ResNet18_LateFusion"],
+        "resnet18": ["ResNet18"], "resnet18_cifar": ["ResNet18_CIFAR"],
+        "resnet_both": ["ResNet18", "ResNet18_CIFAR"],
     }
     if args.model in ALIASES:
         names = ALIASES[args.model]
@@ -672,7 +674,8 @@ def main():
             "num_params": num_params,
             "test": test_results,
             "config": {"seed": args.seed, "aux": args.aux, "aux_channels": aux_channels, "split": args.split,
-                       "epochs": epochs_to_run, "limit_batches": limit_batches}
+                       "epochs": epochs_to_run, "limit_batches": limit_batches,
+                       "best_model_file": f"best_model_{RUN_TAG + '__' if RUN_TAG else ''}{name.lower()}.pth"}
         }
         
         # Save results immediately to prevent data loss on disconnect
