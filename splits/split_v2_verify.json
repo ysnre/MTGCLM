@@ -1,0 +1,93 @@
+{
+  "source_split": "split_v1_compact.npz",
+  "policy": "verify",
+  "h5": "mtg_train_v2.h5",
+  "written": "2026-10-16T14:53:52",
+  "before": {
+    "train": {
+      "n": 218648,
+      "clear": 73980,
+      "cloudy": 144668,
+      "clear_ratio": 0.3384,
+      "metar_share": 0.5557,
+      "synop_n": 97154
+    },
+    "val": {
+      "n": 52033,
+      "clear": 15885,
+      "cloudy": 36148,
+      "clear_ratio": 0.3053,
+      "metar_share": 0.554,
+      "synop_n": 23209
+    },
+    "test_time": {
+      "n": 51704,
+      "clear": 23651,
+      "cloudy": 28053,
+      "clear_ratio": 0.4574,
+      "metar_share": 0.5532,
+      "synop_n": 23100
+    },
+    "test_station": {
+      "n": 49228,
+      "clear": 14207,
+      "cloudy": 35021,
+      "clear_ratio": 0.2886,
+      "metar_share": 0.4264,
+      "synop_n": 28238
+    },
+    "test_both": {
+      "n": 11655,
+      "clear": 4850,
+      "cloudy": 6805,
+      "clear_ratio": 0.4161,
+      "metar_share": 0.4313,
+      "synop_n": 6628
+    }
+  },
+  "after": {
+    "train": {
+      "n": 179326,
+      "clear": 34658,
+      "cloudy": 144668,
+      "clear_ratio": 0.1933,
+      "metar_share": 0.4582,
+      "synop_n": 97154
+    },
+    "val": {
+      "n": 43152,
+      "clear": 7004,
+      "cloudy": 36148,
+      "clear_ratio": 0.1623,
+      "metar_share": 0.4622,
+      "synop_n": 23209
+    },
+    "test_time": {
+      "n": 40868,
+      "clear": 12815,
+      "cloudy": 28053,
+      "clear_ratio": 0.3136,
+      "metar_share": 0.4348,
+      "synop_n": 23100
+    },
+    "test_station": {
+      "n": 43865,
+      "clear": 8844,
+      "cloudy": 35021,
+      "clear_ratio": 0.2016,
+      "metar_share": 0.3563,
+      "synop_n": 28238
+    },
+    "test_both": {
+      "n": 10215,
+      "clear": 3410,
+      "cloudy": 6805,
+      "clear_ratio": 0.3338,
+      "metar_share": 0.3512,
+      "synop_n": 6628
+    },
+    "test_partial": {
+      "n": 16941
+    }
+  }
+}
