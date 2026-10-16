@@ -1,0 +1,61 @@
+{
+  "source_split": "cv5_fold2.npz",
+  "policy": "verify",
+  "h5": "mtg_train_v2.h5",
+  "written": "2026-10-16T14:53:53",
+  "before": {
+    "train": {
+      "n": 257712,
+      "clear": 86392,
+      "cloudy": 171320,
+      "clear_ratio": 0.3352,
+      "metar_share": 0.5352,
+      "synop_n": 119795
+    },
+    "val": {
+      "n": 52085,
+      "clear": 16759,
+      "cloudy": 35326,
+      "clear_ratio": 0.3218,
+      "metar_share": 0.5245,
+      "synop_n": 24766
+    },
+    "test_time": {
+      "n": 73471,
+      "clear": 29422,
+      "cloudy": 44049,
+      "clear_ratio": 0.4005,
+      "metar_share": 0.5404,
+      "synop_n": 33768
+    }
+  },
+  "after": {
+    "train": {
+      "n": 215102,
+      "clear": 43782,
+      "cloudy": 171320,
+      "clear_ratio": 0.2035,
+      "metar_share": 0.4431,
+      "synop_n": 119795
+    },
+    "val": {
+      "n": 43986,
+      "clear": 8660,
+      "cloudy": 35326,
+      "clear_ratio": 0.1969,
+      "metar_share": 0.437,
+      "synop_n": 24766
+    },
+    "test_time": {
+      "n": 58338,
+      "clear": 14289,
+      "cloudy": 44049,
+      "clear_ratio": 0.2449,
+      "metar_share": 0.4212,
+      "synop_n": 33768
+    },
+    "test_partial": {
+      "n": 5080
+    }
+  }
+}
