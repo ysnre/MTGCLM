@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MTGCLM — Proje İnfografiği</title>
+<meta name="description" content="MTG FCI uydu + radar + yer gözlemleriyle Türkiye üzerinde bulut maskesi: veri, modeller, sonuçlar ve kararlar.">
+<style>
+  :root{
+    --bg:#0c1726; --bg2:#122236; --card:#15273d; --card2:#1b3047;
+    --ink:#eaf2fb; --ink2:#a9c0da; --mut:#7e9ab6; --line:#24405f;
+    --sky:#49a7f0; --sky2:#7cc5ff; --cloud:#e8f1fb; --teal:#35d6c3;
+    --amber:#f5b733; --rose:#ff6b7f; --green:#52d08a; --violet:#b79cff;
+    --maxw:1180px;
+  }
+  @media (prefers-color-scheme: light){
+    :root:not([data-theme="dark"]){
+      --bg:#eef4fb; --bg2:#e4edf7; --card:#ffffff; --card2:#f4f8fd;
+      --ink:#132233; --ink2:#38506b; --mut:#5f7793; --line:#d4e2f0;
+      --cloud:#1b3047;
+    }
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:linear-gradient(180deg,var(--bg),var(--bg2));
+    color:var(--ink); font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased; padding:0 16px;
+  }
+  .wrap{max-width:var(--maxw); margin:0 auto}
+  a{color:var(--sky2)}
+  h1,h2,h3{line-height:1.2; margin:0}
+  .eyebrow{letter-spacing:.14em; text-transform:uppercase; font-size:12px; font-weight:700; color:var(--sky2)}
+  .mut{color:var(--mut)}
+  .ink2{color:var(--ink2)}
+
+  /* header */
+  header{padding:54px 0 26px}
+  .badge{display:inline-flex; gap:8px; align-items:center; background:var(--card); border:1px solid var(--line);
+    padding:6px 12px; border-radius:999px; font-size:12.5px; color:var(--ink2)}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 4px rgba(53,214,195,.18)}
+  h1{font-size:clamp(30px,5.5vw,52px); font-weight:800; margin:16px 0 10px; letter-spacing:-.02em}
+  h1 .g{background:linear-gradient(90deg,var(--sky2),var(--teal)); -webkit-background-clip:text; background-clip:text; color:transparent}
+  .lede{font-size:clamp(16px,2.3vw,20px); color:var(--ink2); max-width:760px}
+
+  /* stat row */
+  .stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin:30px 0}
+  .stat{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px}
+  .stat .n{font-size:clamp(22px,3.4vw,30px); font-weight:800; letter-spacing:-.02em}
+  .stat .n small{font-size:14px; font-weight:700; color:var(--mut)}
+  .stat .l{font-size:13px; color:var(--mut); margin-top:4px}
+
+  section{padding:34px 0; border-top:1px solid var(--line)}
+  .sec-h{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:20px}
+  .sec-h h2{font-size:clamp(21px,3.2vw,30px); font-weight:800; letter-spacing:-.01em}
+  .sec-h .k{font-size:13px; color:var(--mut)}
+
+  .grid{display:grid; gap:16px}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:20px}
+  .card h3{font-size:16px; font-weight:750; margin-bottom:8px; display:flex; align-items:center; gap:9px}
+  .card p{margin:0; color:var(--ink2); font-size:14.5px}
+  .tag{display:inline-block; font-size:11.5px; font-weight:700; padding:3px 9px; border-radius:999px; border:1px solid var(--line); color:var(--ink2); background:var(--card2)}
+  .ic{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:15px;flex:0 0 auto}
+
+  /* pipeline */
+  .pipe{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; align-items:stretch}
+  .step{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; position:relative}
+  .step .num{font-size:12px; font-weight:800; color:var(--sky2)}
+  .step .t{font-weight:750; margin:6px 0 4px; font-size:15px}
+  .step .d{font-size:13px; color:var(--mut)}
+
+  /* bars */
+  .bars{margin-top:6px}
+  .bar{display:grid; grid-template-columns:150px 1fr auto; gap:12px; align-items:center; padding:7px 0}
+  .bar .nm{font-size:13.5px; font-weight:650}
+  .bar .nm small{display:block; color:var(--mut); font-weight:500; font-size:11.5px}
+  .track{height:16px; background:var(--card2); border:1px solid var(--line); border-radius:8px; overflow:hidden}
+  .fill{height:100%; border-radius:7px 0 0 7px; background:linear-gradient(90deg,var(--sky),var(--sky2))}
+  .fill.ref{background:linear-gradient(90deg,#4a5d76,#6d84a1)}
+  .fill.good{background:linear-gradient(90deg,var(--teal),#7af0e0)}
+  .bar .v{font-variant-numeric:tabular-nums; font-weight:750; font-size:13.5px; min-width:46px; text-align:right}
+  .axis{display:flex; justify-content:space-between; font-size:11px; color:var(--mut); margin:4px 0 2px; padding-left:162px}
+
+  /* table */
+  .tbl{width:100%; border-collapse:collapse; font-size:14px}
+  .tbl th,.tbl td{text-align:left; padding:10px 12px; border-bottom:1px solid var(--line)}
+  .tbl th{font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--mut); font-weight:700}
+  .tbl td.num{font-variant-numeric:tabular-nums; text-align:right}
+  .tbl tr:last-child td{border-bottom:none}
+  .hl{color:var(--teal); font-weight:750}
+
+  /* timeline */
+  .tl{position:relative; margin-left:8px; padding-left:24px; border-left:2px solid var(--line)}
+  .tl .it{position:relative; padding:0 0 18px 4px}
+  .tl .it::before{content:""; position:absolute; left:-31px; top:4px; width:12px; height:12px; border-radius:50%; background:var(--sky); border:3px solid var(--bg)}
+  .tl .it.warn::before{background:var(--amber)} .tl .it.good::before{background:var(--teal)}
+  .tl .k{font-size:12px; font-weight:800; color:var(--sky2)}
+  .tl .t{font-weight:700; font-size:14.5px; margin:1px 0 2px}
+  .tl .d{font-size:13px; color:var(--mut)}
+
+  ul.lst{margin:10px 0 0; padding-left:18px; color:var(--ink2); font-size:14.5px}
+  ul.lst li{margin:5px 0}
+  .pill-row{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px}
+
+  footer{padding:30px 0 60px; color:var(--mut); font-size:13px}
+  .legend{display:flex; gap:16px; flex-wrap:wrap; font-size:12.5px; color:var(--ink2); margin-top:10px}
+  .legend span{display:inline-flex; align-items:center; gap:7px}
+  .sw{width:14px;height:10px;border-radius:3px;display:inline-block}
+  .note{font-size:12.5px; color:var(--mut); margin-top:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <span class="badge"><span class="dot"></span> Durum: v2 koşu matrisi tamam · referans ürünler değerlendirildi</span>
+  <h1>MTGCLM — <span class="g">Türkiye üzerinde uydu tabanlı bulut maskesi</span></h1>
+  <p class="lede">MTG (Meteosat Third Generation) FCI uydusu, C-bandı radar ve yer gözlemlerini birleştirerek
+  istasyon noktalarında ve tam harita üzerinde bulut var/yok tahmini yapan bir derin öğrenme çalışması.</p>
+
+  <div class="stats">
+    <div class="stat"><div class="n">16+1+5<small> kanal</small></div><div class="l">FCI + radar + yardımcı (toplam 22)</div></div>
+    <div class="stat"><div class="n">~400<small> bin</small></div><div class="l">etiketli yama (33×33 piksel)</div></div>
+    <div class="stat"><div class="n">132</div><div class="l">yer istasyonu</div></div>
+    <div class="stat"><div class="n">0,937</div><div class="l">en iyi test BalAcc (görülmemiş haftalar)</div></div>
+    <div class="stat"><div class="n">15</div><div class="l">ay veri (Mar 2025 – Haz 2026)</div></div>
+  </div>
+</header>
+
+<!-- AMAÇ -->
+<section id="amac">
+  <div class="sec-h"><h2>Amaç</h2><span class="k">neyi çözüyoruz</span></div>
+  <div class="grid g2">
+    <div class="card">
+      <h3><span class="ic" style="background:rgba(73,167,240,.15);color:var(--sky2)">◉</span> Problem</h3>
+      <p>Uydu görüntüsünden her nokta için “bulutlu mu, açık mı” kararını, yersel gözlemlerle doğrulanmış biçimde üretmek.
+      Nihai hedef 800×1000’lik bir sahneyi tek geçişte işleyen <b>tam harita bulut maskesi</b>.</p>
+    </div>
+    <div class="card">
+      <h3><span class="ic" style="background:rgba(53,214,195,.15);color:var(--teal)">◓</span> İki hat</h3>
+      <p><b>Nokta sınıflandırma:</b> istasyon merkezli 33×33 yamadan tek karar (MTGConvNet, ResNet18).
+      <b>Segmentasyon:</b> U-Net ile piksel bazlı çıktı; eğitimde yalnız merkez pikselde denetim (zayıf denetim).</p>
+    </div>
+  </div>
+  <div class="legend">
+    <span><span class="sw" style="background:#49a7f0"></span> Uydu (16 FCI kanalı)</span>
+    <span><span class="sw" style="background:#35d6c3"></span> Radar (dBZ)</span>
+    <span><span class="sw" style="background:#b79cff"></span> Yardımcı (sıcaklık, nem, yükseklik, güneş açısı, radar kapsama)</span>
+  </div>
+</section>
+
+<!-- VERİ HATTI -->
+<section id="veri">
+  <div class="sec-h"><h2>Veri hattı</h2><span class="k">kaynaktan eğitime</span></div>
+  <div class="pipe">
+    <div class="step"><div class="num">01</div><div class="t">Uydu + radar</div><div class="d">16 FCI kanalı 0,02°×0,01° (≈1,7×1,1 km) ızgaraya örneklenir; radar dBZ eklenir.</div></div>
+    <div class="step"><div class="num">02</div><div class="t">Yardımcı kanallar</div><div class="d">t2m, rh2m (1982 istasyondan IDW), DEM yükseklik, güneş açısı, radar kapsama → 22 kanal.</div></div>
+    <div class="step"><div class="num">03</div><div class="t">Etiketleme</div><div class="d">0 okta = açık, ≥5 okta = bulutlu, 1–4 okta yok sayılır. 147 sinoptik + 79 havaalanı gözlemi.</div></div>
+    <div class="step"><div class="num">04</div><div class="t">Sızıntısız bölme</div><div class="d">Hafta-blok zaman + 30 istasyon ayrımı → train/val/test_time/test_station/test_both.</div></div>
+    <div class="step"><div class="num">05</div><div class="t">Eğitim</div><div class="d">Colab T4, ön-karıştırılmış kompakt H5 (~19 GB); 3 seed; model seçimi val’de, rapor test’te.</div></div>
+  </div>
+  <div class="grid g3" style="margin-top:16px">
+    <div class="card"><h3>Yama ≈ 57×37 km</h3><p class="mut" style="font-size:13.5px">Bir gözlemcinin gördüğü gökyüzü alanı bulut yüksekliğine göre değişir; “0 okta” tüm kubbenin açık olması demek — görev aslında bir <b>alan</b> görevi.</p></div>
+    <div class="card"><h3>Dengesiz kümeler</h3><p class="mut" style="font-size:13.5px">Bulutlu oranı kümeden kümeye %54–71 değişiyor; bu yüzden doğruluk değil <b>dengeli doğruluk (BalAcc)</b> ve MCC raporlanır.</p></div>
+    <div class="card"><h3>Çift değerlendirme</h3><p class="mut" style="font-size:13.5px"><b>test_time</b> görülmemiş haftaları, <b>test_station</b> görülmemiş 30 istasyonu, <b>test_both</b> ikisini birden ölçer.</p></div>
+  </div>
+</section>
+
+<!-- SONUÇLAR -->
+<section id="sonuclar">
+  <div class="sec-h"><h2>Sonuçlar</h2><span class="k">test_time dengeli doğruluk (görülmemiş haftalar)</span></div>
+  <div class="card">
+    <div class="axis"><span>0,85</span><span>0,90</span><span>0,95</span></div>
+    <div class="bars">
+      <div class="bar"><div class="nm">C_noawos <small>CNN, AWOS’suz aux</small></div><div class="track"><div class="fill good" style="width:87.4%"></div></div><div class="v">0,937</div></div>
+      <div class="bar"><div class="nm">D_unet <small>U-Net (segmentasyon)</small></div><div class="track"><div class="fill good" style="width:86.4%"></div></div><div class="v">0,936</div></div>
+      <div class="bar"><div class="nm">ResNet18 <small>11,2 M parametre</small></div><div class="track"><div class="fill good" style="width:86.4%"></div></div><div class="v">0,936</div></div>
+      <div class="bar"><div class="nm">A_sat <small>yalnız uydu+radar</small></div><div class="track"><div class="fill good" style="width:85.4%"></div></div><div class="v">0,935</div></div>
+      <div class="bar"><div class="nm">B_full <small>tüm aux (AWOS dahil)</small></div><div class="track"><div class="fill" style="width:83.4%"></div></div><div class="v">0,933</div></div>
+      <div class="bar"><div class="nm">HGB <small>klasik ağaç modeli</small></div><div class="track"><div class="fill" style="width:82.4%"></div></div><div class="v">0,932</div></div>
+      <div class="bar"><div class="nm">Bloklu 5-katlı CV <small>ortalama ± 0,021</small></div><div class="track"><div class="fill" style="width:63.3%"></div></div><div class="v">0,913</div></div>
+      <div class="bar"><div class="nm">Çoğunluk tahmini <small>referans taban</small></div><div class="track"><div class="fill ref" style="width:4.3%"></div></div><div class="v">0,543</div></div>
+    </div>
+    <p class="note">Ölçek 0,85–0,95 (çoğunluk tabanı 0,50’den başlar). Derin modellerin tamamı ~0,93’te kümeleniyor;
+    mimari, kapasite ve aux farkları ≤ 0,006. Bloklu CV, tek bölmenin iyimser olduğunu gösteriyor.</p>
+  </div>
+</section>
+
+<!-- BULGULAR -->
+<section id="bulgular">
+  <div class="sec-h"><h2>Öne çıkan bulgular</h2><span class="k">rakamların söylediği</span></div>
+  <div class="grid g2">
+    <div class="card">
+      <h3><span class="ic" style="background:rgba(245,183,51,.16);color:var(--amber)">▲</span> Performans tavanı ~0,93</h3>
+      <p>29 bin parametreli küçük ağdan 11 milyon parametreli ResNet’e kadar herkes aynı yerde duruyor. Sınır büyük olasılıkla
+      etiket ve eşleştirme gürültüsü (gözlemcinin tüm gökyüzü ↔ 2 km piksel, ±9 dk).</p>
+    </div>
+    <div class="card">
+      <h3><span class="ic" style="background:rgba(183,156,255,.16);color:var(--violet)">≈</span> Klasik model = CNN</h3>
+      <p>Histogram tabanlı gradyan artırma (HGB) 0,932 ile CNN’lerle başa baş. Bu yüzden katkı “tam harita, uzaysal tutarlılık,
+      U-Net’in istasyon-dışı genellemesi” üzerine kurulmalı.</p>
+    </div>
+    <div class="card">
+      <h3><span class="ic" style="background:rgba(82,208,138,.16);color:var(--green)">↕</span> AWOS belirsiz</h3>
+      <p>Yer sıcaklığı/nemi val’de +0,01 kazandırıyor ama kolay test haftalarında ≈0. Tek kanal AUC’de BT10.5−T2m (0,932),
+      yalnız BT10.5’ten (0,893) iyi — bilgi gerçek, ama CNN bunu uydu bağlamından zaten çıkarıyor olabilir.</p>
+    </div>
+    <div class="card">
+      <h3><span class="ic" style="background:rgba(255,107,127,.16);color:var(--rose)">⚑</span> Etiket gürültüsü (METAR)</h3>
+      <p>METAR “açık” (NSC/CAVOK) orta ve yüksek bulutları raporlamaz. SYNOP ile çakışan çiftlerin %13’ü aslında bulutlu.
+      Çözüm: bulutlu METAR’ı tut, “açık”ı SYNOP ile doğrula.</p>
+    </div>
+  </div>
+</section>
+
+<!-- REFERANS -->
+<section id="referans">
+  <div class="sec-h"><h2>Operasyonel ürünlerle karşılaştırma</h2><span class="k">aynı örnekler, aynı etiketler</span></div>
+  <div class="card" style="overflow-x:auto">
+    <table class="tbl">
+      <thead><tr><th>Yöntem</th><th class="num">test_time</th><th class="num">test_station</th><th class="num">val (zor)</th></tr></thead>
+      <tbody>
+        <tr><td><b>Modellerimiz</b> (CNN / U-Net)</td><td class="num hl">0,933–0,937</td><td class="num hl">0,918–0,923</td><td class="num">~0,89–0,91</td></tr>
+        <tr><td>FCI CLM (EUMETSAT) — 30 km alan</td><td class="num">0,884</td><td class="num">0,853</td><td class="num">0,801</td></tr>
+        <tr><td>NWC SAF Cloud Type (MGM) — 30 km alan</td><td class="num">0,893</td><td class="num">0,865</td><td class="num">0,810</td></tr>
+        <tr><td>FCI CLM — merkez piksel</td><td class="num">0,869</td><td class="num">0,841</td><td class="num">0,785</td></tr>
+      </tbody>
+    </table>
+    <p class="note">Modeller iki operasyonel üründen de yüksek. <b>Uyarı:</b> modeller METAR etiketleriyle eğitildi; adil kıyas yalnız SYNOP
+    etiketlerinde yapılmalı (orada referanslar belirgin güçleniyor). Alan büyüdükçe referans uyumu artıyor — etiketin bir alan büyüklüğü olduğunun kanıtı.</p>
+  </div>
+</section>
+
+<!-- KARARLAR -->
+<section id="kararlar">
+  <div class="sec-h"><h2>Karar zaman çizelgesi</h2><span class="k">neyi neden seçtik</span></div>
+  <div class="grid g2">
+    <div>
+      <div class="tl">
+        <div class="it"><div class="k">K1 · 15 Eyl</div><div class="t">Nokta skaleri yerine raster aux</div><div class="d">Yardımcı veriler 22 kanallı girdinin parçası → tam harita mümkün.</div></div>
+        <div class="it"><div class="k">K4 · 16 Eyl</div><div class="t">Sızıntısız bölme</div><div class="d">Hafta-blok + istasyon ayrımı; ayrıca bloklu 5-katlı CV.</div></div>
+        <div class="it"><div class="k">K5 · 17 Eyl</div><div class="t">Model seçimi val BalAcc’te</div><div class="d">F1 çoğunluk sınıfını ödüllendiriyordu.</div></div>
+        <div class="it good"><div class="k">K6 · 5 Eki</div><div class="t">Medium_Flat kazandı</div><div class="d">Derinlik × havuzlama ablasyonu; kapasite marjinal.</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="tl">
+        <div class="it warn"><div class="k">K12 · 5 Eki</div><div class="t">v2 matrisi + bulgular</div><div class="d">HGB≈CNN; AWOS belirsiz; CV tek bölmeden düşük.</div></div>
+        <div class="it warn"><div class="k">K13 · 12 Eki</div><div class="t">Grid düzeltmesi, füzyon arşivi, CIFAR stem</div><div class="d">Piksel ~1,7×1,1 km; paralaks düzeltmesiz; ResNet’e CIFAR girişi.</div></div>
+        <div class="it good"><div class="k">K14 · 14 Eki</div><div class="t">Referanslar + METAR doğrulaması</div><div class="d">CLM/NWC aynı örneklerde; METAR “açık”ı SYNOP ile doğrula; AWOS-t2m gerçek.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AÇIK İŞLER -->
+<section id="acik">
+  <div class="sec-h"><h2>Sıradaki adımlar</h2><span class="k">makaleye giden yol</span></div>
+  <div class="grid g2">
+    <div class="card">
+      <h3>Olmazsa olmaz</h3>
+      <ul class="lst">
+        <li>Örnek bazlı tahminleri kaydet → anlamlılık testleri (McNemar, blok bootstrap)</li>
+        <li>Modalite (A/B/C/D) ve HGB’yi CV katlarında eşleştirilmiş koş</li>
+        <li>SYNOP-only değerlendirme; METAR NSC etiket kararı</li>
+        <li>Gündüz/gece, ay, yükseklik kırılımları</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Güçlendirir</h3>
+      <ul class="lst">
+        <li>U-Net için ayak izi (alan) kayıplı eğitim + tam harita çıkarımı</li>
+        <li>Kanal önemi (permütasyon / Integrated Gradients)</li>
+        <li>Bulut tipine göre hata analizi (NWC CT)</li>
+        <li>Zenodo DOI, paylaşılabilir örneklem, ağırlık yayını</li>
+      </ul>
+    </div>
+  </div>
+  <div class="pill-row">
+    <span class="tag">Çıktı dosyaları: artifacts/*.json</span>
+    <span class="tag">Kod: src/ (model, train, run_all, extract_*, eval_*)</span>
+    <span class="tag">Depo: github.com/ysnre/MTGCLM</span>
+  </div>
+</section>
+
+<footer>
+  MTGCLM proje infografiği · güncelleme: <b>16 Ekim 2026</b> · Bu sayfa projedeki her anlamlı değişiklikte güncellenir.
+  Sayılar <code>artifacts/summary.md</code>, <code>artifacts/clm_on_splits.json</code> ve <code>artifacts/nwc_metar_on_splits.json</code>’dan türetilmiştir.
+</footer>
+
+</div>
+</body>
+</html>
