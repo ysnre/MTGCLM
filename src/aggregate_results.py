@@ -30,6 +30,8 @@ SHORT = {"balanced_accuracy": "BalAcc", "mcc": "MCC", "f1_cloudy": "F1(cloudy)",
          "precision_cloudy": "P(cloudy)", "recall_cloudy": "R(cloudy)", "precision_clear": "P(clear)",
          "recall_clear": "R(clear)", "accuracy": "Acc", "roc_auc": "AUC"}
 SUBSETS = ["test_time", "test_station", "test_both", "val"]
+# K16: yalnız SYNOP etiketlerinde (gözlem dakikası 0) metrikler — CLM/NWC referanslarıyla adil kıyas için
+SYNOP_SUBSETS = ["test_time_synop", "test_station_synop", "test_both_synop"]
 RUN_RE = re.compile(r"^(?P<exp>.+?)(?:_f(?P<fold>\d+))?_s(?P<seed>\d+)$")
 
 
@@ -223,7 +225,7 @@ def main():
         raise SystemExit(f"{args.dir}/{args.pattern} içinde sonuç JSON'u bulunamadı.")
     print(f"{len(runs)} koşu yüklendi: " + ", ".join(sorted({r['exp'] for r in runs})))
 
-    subsets = [args.subset] if args.subset else SUBSETS
+    subsets = [args.subset] if args.subset else SUBSETS + SYNOP_SUBSETS
     md_parts, csv_parts, tex_parts, agg_by_subset = [], [], [], {}
     for s in subsets:
         agg = aggregate(runs, s)
