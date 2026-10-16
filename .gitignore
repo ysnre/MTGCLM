@@ -27,6 +27,12 @@ best_model_*.pth
 # --- çıktı ---
 artifacts/*.png
 artifacts/status/
+# v3 ve deneme çıktı dizinleri (artifacts_v3/, artifacts_bench/): JSON'lar paylaşılır, gerisi yerel
+artifacts_*/*.png
+artifacts_*/status/
+artifacts_bench/
+# örnek bazlı tahminler (koşu başına ~1-2 MB; Zenodo'ya gider, depoya değil)
+artifacts*/preds/
 scratch/
 sonuç1/
 graphify-out/
@@ -37,6 +43,7 @@ archive_v1/
 !splits/*.npz
 !splits/*.json
 !artifacts/*.json
+!artifacts_v3/*.json
 
 # --- araç / editör yerel ayarları ---
 .agent/
