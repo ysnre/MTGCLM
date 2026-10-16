@@ -169,6 +169,9 @@ def _check_split_matches_h5(split, dataset, h5_path: str, split_file: str) -> No
         )
     print(f"  Bölme doğrulandı: {n} satırlık H5 ile uyumlu.")
 
+SPLIT_NAMES = ("train", "val", "test_time", "test_station", "test_both", "test_partial")
+
+
 def get_split_dataloaders(h5_path: str,
                           split_file: str,
                           batch_size: int = 64,
@@ -176,21 +179,46 @@ def get_split_dataloaders(h5_path: str,
                           use_aux: bool = False,
                           aux_channels=None,
                           shuffle_train: bool = False,
-                          f16: bool = False) -> dict:
+                          f16: bool = False,
+                          loader: str = "legacy",
+                          mem_splits=None,
+                          block_rows: int = 4096,
+                          seed: int = 0,
+                          cache_dir: str = None) -> dict:
     """
     make_splits.py ile üretilen .npz bölme dosyasından DataLoader sözlüğü üretir:
         {"train", "val", "test_time", "test_station", "test_both", "test_partial"}  (boş alt kümeler atlanır)
     Eğitim alt kümesi RandomSpatialTransforms ile sarılır. Diğerleri sıralı okunur.
     shuffle_train=False: sıralı H5 okuması; karıştırma train.py'deki buffered_shuffle_generator'da
     (ya da önceden karıştırılmış H5 ile) yapılır.
+
+    loader: "legacy" (eski DataLoader, örnek-örnek okuma) | "memory" | "stream" | "auto"
+            (src/fast_loader.py — aynı batch'ler, ardışık blok okuması; K16). Yeni modlar her zaman
+            float16 + ham aux döndürür (f16 yolu); mem_splits: RAM'e alınacak küme adları (None = mod karar verir).
+    cache_dir: (yeni modlar) bölme satırlarının .npy önbelleği — bir kez yazılır, sonra ardışık okunur (Colab için).
     """
-    print(f"Initializing MTGH5Dataset from {h5_path} (use_aux={use_aux})...")
-    full_dataset = MTGH5Dataset(h5_path, use_aux=use_aux, aux_channels=aux_channels, f16=f16)
-    if f16:
-        print("  Veri yolu: float16 (float32'ye cevirme ve aux z-skoru GPU'da)")
+    fast = loader != "legacy"
+    print(f"Initializing MTGH5Dataset from {h5_path} (use_aux={use_aux}, loader={loader})...")
+    full_dataset = MTGH5Dataset(h5_path, use_aux=use_aux, aux_channels=aux_channels, f16=(f16 or fast))
+    if f16 or fast:
+        print("  Veri yolu: float16 (float32'ye cevirme ve aux z-skoru cihazda)")
     print(f"  Kanal sayısı: {full_dataset.num_channels} (uydu/radar {full_dataset.base_channels} + aux {full_dataset.aux_names})")
     split = np.load(split_file)
     _check_split_matches_h5(split, full_dataset, h5_path, split_file)
+    if fast:
+        from fast_loader import H5RowStore, FastLoader, choose_mem_splits
+        rows = {n: split[n].astype(np.int64) for n in SPLIT_NAMES if n in split.files and len(split[n])}
+        mem = choose_mem_splits(loader, full_dataset, rows, mem_splits=mem_splits)
+        import os as _os
+        tag = _os.path.splitext(_os.path.basename(split_file))[0]
+        store = H5RowStore(h5_path, full_dataset, mem_rows=mem, block_rows=block_rows,
+                           cache_dir=cache_dir, cache_tag=tag, cache_rows=rows if cache_dir else None)
+        loaders = {}
+        for name, r in rows.items():
+            loaders[name] = FastLoader(store, name, r, batch_size, full_dataset, augment=(name == "train"), seed=seed)
+            where = "RAM" if name in mem else ("önbellek akışı" if name in store.cache else "H5 akışı")
+            print(f"  {name:13s}: {len(r)} örnek ({where})")
+        return loaders
     loaders = {}
     for name in ("train", "val", "test_time", "test_station", "test_both", "test_partial"):
         if name not in split.files or len(split[name]) == 0:
