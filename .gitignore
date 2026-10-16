@@ -56,3 +56,6 @@ venv/
 # --- işletim sistemi ---
 .DS_Store
 Thumbs.db
+
+# --- kişisel öğrenme sayfaları (projeyle ilgisiz) ---
+_kisisel/
