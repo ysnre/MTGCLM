@@ -1,5 +1,7 @@
 import os
 import sys
+# Deterministik cuBLAS için CUDA başlamadan önce ayarlanmalı (K16; CPU'da etkisiz).
+os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
 
 # Ensure Windows PATH includes conda environment's Library/bin for DLL resolution (matplotlib, numpy, etc.)
 if sys.platform == "win32":
@@ -23,6 +25,7 @@ from dataloader import get_dataloaders, get_split_dataloaders
 from model import MTGUNet   # v1 CloudUNet_Fusion: src/_backup_20260916/model_v1_fusion_classes.py
 from loss import MaskedBCELoss
 from metrics import compute_metrics, format_metrics
+from run_utils import setup_repro, run_env, split_info, rows_of, base_of, synop_metrics, save_preds, rng_state, set_rng_state
 
 # --- Çıktı dizini: checkpoint / en iyi model / sonuç JSON buraya yazılır.
 # Colab'da Drive altındaki kalıcı bir yol verin (--outdir), böylece oturum çökse de kaybolmaz.
@@ -242,7 +245,7 @@ def train_one_epoch(model, dataloader, criterion, optimizer, device, limit_batch
     
     return epoch_loss, acc, f1
 
-def validate(model, dataloader, criterion, device, limit_batches=None):
+def validate(model, dataloader, criterion, device, limit_batches=None, return_outputs=False):
     model.eval()
     running_loss = 0.0
     all_preds = []
@@ -294,11 +297,12 @@ def validate(model, dataloader, criterion, device, limit_batches=None):
     num_batches = limit_batches if limit_batches and limit_batches < len(dataloader) else len(dataloader)
     val_loss = running_loss / max(num_batches, 1)
     metrics = compute_metrics(np.array(all_preds), np.array(all_targets), probs=np.array(all_probs))
-    
+    if return_outputs:
+        return val_loss, metrics, np.asarray(all_probs, dtype=np.float32), np.asarray(all_targets, dtype=np.int64)
     return val_loss, metrics
 
 
-def evaluate_partial(model, dataloader, device, limit_batches=None):
+def evaluate_partial(model, dataloader, device, limit_batches=None, return_probs=False):
     """
     test_partial (1-4 okta, etiketsiz) tutarlılık testi: okta başına ortalama bulut olasılığı ve
     'bulutlu' tahmin oranı. Beklenti: olasılık okta ile monoton artmalı, 0 ve >=5 okta arasında kalmalı.
@@ -327,9 +331,12 @@ def evaluate_partial(model, dataloader, device, limit_batches=None):
         m = okta_all == o
         out[f"okta{o}"] = {"n": int(m.sum()), "mean_prob": float(probs[m].mean()), "frac_cloudy": float((probs[m] >= 0.5).mean())}
     out["all"] = {"n": int(len(probs)), "mean_prob": float(probs.mean()), "frac_cloudy": float((probs >= 0.5).mean())}
+    if return_probs:
+        return out, probs.astype(np.float32)
     return out
 
-def run_experiment(name: str, train_loader, val_loader, epochs: int = EPOCHS, limit_batches: int = None, test_loaders: dict = None):
+def run_experiment(name: str, train_loader, val_loader, epochs: int = EPOCHS, limit_batches: int = None, test_loaders: dict = None,
+                   preds_path: str = None, save_last_preds: bool = True):
     print(f"\n==========================================")
     print(f"Starting Experiment: {name}")
     print(f"Model Type: UNet")
@@ -394,7 +401,8 @@ def run_experiment(name: str, train_loader, val_loader, epochs: int = EPOCHS, li
     history = {
         "train_loss": [], "train_acc": [], "train_f1": [],
         "val_loss": [], "val_acc": [], "val_f1": [],
-        "val_prec": [], "val_rec": [], "val_bal_acc": [], "val_mcc": [], "val_f1_clear": [], "val_auc": []
+        "val_prec": [], "val_rec": [], "val_bal_acc": [], "val_mcc": [], "val_f1_clear": [], "val_auc": [],
+        "epoch_time": []
     }
     
     best_f1 = 0.0   # model seçimi ölçütü: val BALANCED ACCURACY
@@ -416,6 +424,9 @@ def run_experiment(name: str, train_loader, val_loader, epochs: int = EPOCHS, li
             start_epoch = checkpoint['epoch'] + 1
             best_f1 = checkpoint['best_f1']
             history = checkpoint['history']
+            history.setdefault("epoch_time", [])
+            if checkpoint.get('rng') is not None:
+                set_rng_state(checkpoint['rng'])
             print(f"-> Resuming from epoch {start_epoch} using existing checkpoint.")
         except Exception as e:
             print(f"-> Warning: Could not load checkpoint {checkpoint_path} ({e}). Starting from epoch 1.")
@@ -425,6 +436,8 @@ def run_experiment(name: str, train_loader, val_loader, epochs: int = EPOCHS, li
     
     for epoch in range(start_epoch, epochs + 1):
         epoch_start = time.time()
+        if hasattr(train_loader, "set_epoch"):
+            train_loader.set_epoch(epoch)     # çevirme rastgeleliği (seed, epoch) — devamda da aynı
         
         train_loss, train_acc, train_f1 = train_one_epoch(model, train_loader, criterion, optimizer, DEVICE, limit_batches)
         val_loss, vm = validate(model, val_loader, criterion, DEVICE, limit_batches)
@@ -445,6 +458,7 @@ def run_experiment(name: str, train_loader, val_loader, epochs: int = EPOCHS, li
         history["val_mcc"].append(vm["mcc"])
         history["val_f1_clear"].append(vm["f1_clear"])
         history["val_auc"].append(vm["roc_auc"])
+        history["epoch_time"].append(round(float(epoch_time), 1))
         
         print(f"Epoch {epoch:02d}/{epochs:02d} | Time: {epoch_time:.1f}s")
         print(f"  Train Loss: {train_loss:.4f} | Acc: {train_acc:.4f} | F1: {train_f1:.4f}")
@@ -462,7 +476,8 @@ def run_experiment(name: str, train_loader, val_loader, epochs: int = EPOCHS, li
                 'optimizer_state_dict': optimizer.state_dict(),
                 'scheduler_state_dict': scheduler.state_dict(),
                 'best_f1': best_f1,
-                'history': history
+                'history': history,
+                'rng': rng_state(),      # K16: devamda dropout/çevirme dizisi kesintisiz koşuyla aynı
             }
             atomic_save(checkpoint, checkpoint_path)
         except Exception as e:
@@ -471,21 +486,47 @@ def run_experiment(name: str, train_loader, val_loader, epochs: int = EPOCHS, li
     elapsed = time.time() - start_time
     print(f"Finished {name} in {elapsed/60:.2f} minutes. Best Val BalancedAcc: {best_f1:.4f}")
     
+    # --- Test kümeleri (K16): son epoch + en iyi val modeli; örnek bazlı olasılıklar ve SYNOP-only metrikler.
     test_results = {}
+    preds = {}
     if test_loaders:
+        if save_last_preds:
+            for tname, tloader in test_loaders.items():
+                if tname == "test_partial":
+                    continue
+                _, tm, p, y = validate(model, tloader, criterion, DEVICE, limit_batches, return_outputs=True)
+                test_results[f"{tname}_last"] = tm
+                preds[f"last_{tname}_prob"] = p
+            print("  [son epoch] " + ", ".join(f"{k[:-5]} BalAcc={v['balanced_accuracy']:.4f}"
+                                              for k, v in test_results.items() if k.endswith("_last")))
         if os.path.exists(best_model_path):
             sd = safe_load(best_model_path, DEVICE)
             if sd is not None:
                 model.load_state_dict(sd)
-        for tname, tloader in test_loaders.items():
+        evals = [("val", val_loader)] + list(test_loaders.items())
+        for tname, tloader in evals:
+            rows = rows_of(tloader)
             if tname == "test_partial":
-                pr = evaluate_partial(model, tloader, DEVICE, limit_batches)
+                pr, p = evaluate_partial(model, tloader, DEVICE, limit_batches, return_probs=True)
                 test_results[tname] = pr
+                preds[f"{tname}_rows"] = rows[:len(p)].astype(np.int32); preds[f"{tname}_prob"] = p
                 print("  [test_partial] " + ", ".join(f"{k}: p̄={v['mean_prob']:.2f} cloudy%={v['frac_cloudy']*100:.0f} (n={v['n']})" for k, v in pr.items()))
                 continue
-            _, tm = validate(model, tloader, criterion, DEVICE, limit_batches)
-            test_results[tname] = tm
-            print(f"  [{tname}] {format_metrics(tm)}")
+            _, tm, p, y = validate(model, tloader, criterion, DEVICE, limit_batches, return_outputs=True)
+            key = "val_best" if tname == "val" else tname
+            test_results[key] = tm
+            r = rows[:len(p)]
+            preds[f"{tname}_rows"] = r.astype(np.int32); preds[f"{tname}_label"] = y.astype(np.int8)
+            preds[f"{tname}_prob"] = p
+            sm = synop_metrics(base_of(tloader), r, p, y, compute_metrics)
+            if sm is not None:
+                test_results[f"{key}_synop"] = sm
+            print(f"  [{key}] {format_metrics(tm)}")
+            if sm is not None:
+                print(f"  [{key} SYNOP-only] BalAcc={sm['balanced_accuracy']:.4f} MCC={sm['mcc']:.4f} (n={sm['n']})")
+        if preds_path:
+            save_preds(preds_path, preds)
+            print(f"  --> Örnek bazlı tahminler: {preds_path}")
     
     if os.path.exists(checkpoint_path):
         try:
@@ -510,13 +551,24 @@ def main():
     parser.add_argument("--no_f16", action="store_true",
                         help="Eski veri yolu (float32 cevirme + aux z-skoru CPU'da). Daha yavas, sonuc ayni.")
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--epochs", type=int, default=None)
-    parser.add_argument("--limit_batches", type=int, default=None)
+    parser.add_argument("--epochs", type=int, default=15, help="Varsayılan 15 (her platformda; eskiden yerelde 2'ydi)")
+    parser.add_argument("--limit_batches", type=int, default=None, help="Yalnız deneme için; 0/None = tüm veri")
     parser.add_argument("--results", type=str, default=None)
+    parser.add_argument("--loader", type=str, default="auto", choices=["auto", "memory", "stream", "legacy"],
+                        help="Veri yükleyici (K16): memory | stream | auto | legacy (bkz. src/fast_loader.py)")
+    parser.add_argument("--mem_splits", type=str, default=None, help="RAM'e alınacak kümeler, ör. train,val")
+    parser.add_argument("--block_rows", type=int, default=4096)
+    parser.add_argument("--cache_dir", type=str, default=None,
+                        help="Bölme satırları için .npy önbellek dizini (bir kez yazılır, ~16 GB; Colab'da /content/cache önerilir)")
+    parser.add_argument("--threads", type=int, default=None, help="CPU eğitiminde torch iş parçacığı sayısı")
+    parser.add_argument("--no_deterministic", action="store_true")
+    parser.add_argument("--no_last_preds", action="store_true")
     args = parser.parse_args()
-    random.seed(args.seed); np.random.seed(args.seed); torch.manual_seed(args.seed)
-    if torch.cuda.is_available():
-        torch.cuda.manual_seed_all(args.seed)
+    if args.limit_batches == 0:
+        args.limit_batches = None
+    if args.threads:
+        torch.set_num_threads(args.threads)
+    setup_repro(args.seed, deterministic=not args.no_deterministic)
     aux_channels = args.aux_channels.split(",") if args.aux_channels else None
     global OUT_DIR, RUN_TAG
     if args.results:
@@ -547,7 +599,9 @@ def main():
     if args.split:
         loaders = get_split_dataloaders(h5_path, args.split, batch_size=BATCH_SIZE, num_workers=n_workers,
                                         use_aux=args.aux, aux_channels=aux_channels, shuffle_train=False,
-                                        f16=not args.no_f16)
+                                        f16=not args.no_f16, loader=args.loader,
+                                        mem_splits=args.mem_splits.split(",") if args.mem_splits else None,
+                                        block_rows=args.block_rows, seed=args.seed, cache_dir=args.cache_dir)
         train_loader, val_loader = loaders["train"], loaders["val"]
         test_loaders = {k: v for k, v in loaders.items() if k.startswith("test")}
     elif os.path.exists(h5_path):
@@ -583,22 +637,31 @@ def main():
         except Exception as e:
             pass
     
-    # Run a dry-run limit if not on colab to verify it works quickly
-    epochs_to_run = args.epochs if args.epochs is not None else (2 if not IS_COLAB else 15)
-    limit_batches = args.limit_batches if args.limit_batches is not None else (20 if not IS_COLAB else None)
+    # K16: varsayılanlar her platformda aynı (15 epoch, tüm veri).
+    epochs_to_run = args.epochs
+    limit_batches = args.limit_batches
+    env = run_env({"loader": args.loader, "deterministic": not args.no_deterministic})
+    sinfo = split_info(args.split)
+    print(f"Ortam: {env['device']} | torch {env['torch']} | {env['threads']} iş parçacığı | git {env['git_commit']}"
+          f"{' (+değişiklik)' if env['git_dirty'] else ''} | etiket politikası: {sinfo.get('label_policy', '-')}")
     
     for name, model_type in experiments.items():
         if name in results:
             print(f"Model '{name}' already trained. Skipping.")
             continue
             
+        tag = f"{RUN_TAG}__" if RUN_TAG else ""
+        preds_file = f"{tag}{name.lower()}.npz"
+        t_run = time.time()
         history, best_f1, num_params, test_results = run_experiment(
             name, 
             train_loader,
             val_loader,
             epochs=epochs_to_run, 
             limit_batches=limit_batches,
-            test_loaders=test_loaders
+            test_loaders=test_loaders,
+            preds_path=out_path("preds", preds_file) if test_loaders else None,
+            save_last_preds=not args.no_last_preds
         )
         results[name] = {
             "history": history,
@@ -608,7 +671,9 @@ def main():
             "test": test_results,
             "config": {"seed": args.seed, "aux": args.aux, "aux_channels": aux_channels, "split": args.split,
                        "epochs": epochs_to_run, "limit_batches": limit_batches,
-                       "best_model_file": f"best_model_{RUN_TAG + '__' if RUN_TAG else ''}{name.lower()}.pth"}
+                       "best_model_file": f"best_model_{RUN_TAG + '__' if RUN_TAG else ''}{name.lower()}.pth",
+                       "preds_file": f"preds/{preds_file}" if test_loaders else None,
+                       **sinfo, "env": env, "wall_minutes": round((time.time() - t_run) / 60, 1)}
         }
         
         try:
