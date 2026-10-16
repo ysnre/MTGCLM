@@ -1,0 +1,156 @@
+{
+  "ARCH_s1": {
+    "stage": "arch",
+    "ok": true,
+    "minutes": 397.9,
+    "finished": "2026-09-18 15:48:09",
+    "cmd": "/usr/bin/python3 /content/MTGCLM/src/train.py --h5 /content/mtg_train_v2.h5 --outdir /content/drive/MyDrive/MTGCLM/artifacts --split /content/MTGCLM/splits/split_v1_compact.npz --model arch --aux --seed 1 --results /content/drive/MyDrive/MTGCLM/artifacts/ARCH_s1.json"
+  },
+  "ARCH_s2": {
+    "stage": "arch",
+    "ok": true,
+    "minutes": 5.6,
+    "finished": "2026-09-19 06:32:52",
+    "cmd": "/usr/bin/python3 /content/MTGCLM/src/train.py --h5 /content/mtg_train_v2.h5 --outdir /content/drive/MyDrive/MTGCLM/artifacts --no_f16 --split /content/MTGCLM/splits/split_v1_compact.npz --model arch --aux --seed 2 --results /content/drive/MyDrive/MTGCLM/artifacts/ARCH_s2.json"
+  },
+  "ARCH_s3": {
+    "stage": "arch",
+    "ok": true,
+    "minutes": 114.8,
+    "finished": "2026-09-19 14:27:11",
+    "cmd": "/usr/bin/python3 /content/MTGCLM/src/train.py --h5 /content/mtg_train_v2.h5 --outdir /content/drive/MyDrive/MTGCLM/artifacts --no_f16 --split /content/MTGCLM/splits/split_v1_compact.npz --model arch --aux --seed 3 --results /content/drive/MyDrive/MTGCLM/artifacts/ARCH_s3.json"
+  },
+  "RESNET_s1": {
+    "stage": "resnet",
+    "ok": true,
+    "minutes": 80.1,
+    "finished": "2026-09-19 15:47:17",
+    "cmd": "/usr/bin/python3 /content/MTGCLM/src/train.py --h5 /content/mtg_train_v2.h5 --outdir /content/drive/MyDrive/MTGCLM/artifacts --no_f16 --split /content/MTGCLM/splits/split_v1_compact.npz --model resnet18 --aux --seed 1 --results /content/drive/MyDrive/MTGCLM/artifacts/RESNET_s1.json"
+  },
+  "A_sat_s1": {
+    "stage": "modality",
+    "ok": true,
+    "minutes": 53.4,
+    "finished": "2026-09-19 18:37:53",
+    "cmd": "/usr/bin/python3 /content/MTGCLM/src/train.py --h5 /content/mtg_train_v2.h5 --outdir /content/drive/MyDrive/MTGCLM/artifacts --no_f16 --split /content/MTGCLM/splits/split_v1_compact.npz --model Medium_Flat --seed 1 --results /content/drive/MyDrive/MTGCLM/artifacts/A_sat_s1.json"
+  },
+  "B_full_s1": {
+    "stage": "modality",
+    "ok": true,
+    "minutes": 70.5,
+    "finished": "2026-09-19 19:48:20",
+    "cmd": "/usr/bin/python3 /content/MTGCLM/src/train.py --h5 /content/mtg_train_v2.h5 --outdir /content/drive/MyDrive/MTGCLM/artifacts --no_f16 --split /content/MTGCLM/splits/split_v1_compact.npz --model Medium_Flat --aux --seed 1 --results /content/drive/MyDrive/MTGCLM/artifacts/B_full_s1.json"
+  },
+  "C_noawos_s1": {
+    "stage": "modality",
+    "ok": true,
+    "minutes": 71.0,
+    "finished": "2026-09-19 20:59:20",
+    "cmd": "/usr/bin/python3 /content/MTGCLM/src/train.py --h5 /content/mtg_train_v2.h5 --outdir /content/drive/MyDrive/MTGCLM/artifacts --no_f16 --split /content/MTGCLM/splits/split_v1_compact.npz --model Medium_Flat --aux --aux_channels cos_sza,elev,radar_cov --seed 1 --results /content/drive/MyDrive/MTGCLM/artifacts/C_noawos_s1.json"
+  },
+  "A_sat_s2": {
+    "stage": "modality",
+    "ok": true,
+    "minutes": 54.7,
+    "finished": "2026-09-19 21:53:59",
+    "cmd": "/usr/bin/python3 /content/MTGCLM/src/train.py --h5 /content/mtg_train_v2.h5 --outdir /content/drive/MyDrive/MTGCLM/artifacts --no_f16 --split /content/MTGCLM/splits/split_v1_compact.npz --model Medium_Flat --seed 2 --results /content/drive/MyDrive/MTGCLM/artifacts/A_sat_s2.json"
+  },
+  "B_full_s2": {
+    "stage": "modality",
+    "ok": true,
+    "minutes": 70.9,
+    "finished": "2026-09-19 23:04:55",
+    "cmd": "/usr/bin/python3 /content/MTGCLM/src/train.py --h5 /content/mtg_train_v2.h5 --outdir /content/drive/MyDrive/MTGCLM/artifacts --no_f16 --split /content/MTGCLM/splits/split_v1_compact.npz --model Medium_Flat --aux --seed 2 --results /content/drive/MyDrive/MTGCLM/artifacts/B_full_s2.json"
+  },
+  "C_noawos_s2": {
+    "stage": "modality",
+    "ok": true,
+    "minutes": 70.9,
+    "finished": "2026-09-20 00:15:51",
+    "cmd": "/usr/bin/python3 /content/MTGCLM/src/train.py --h5 /content/mtg_train_v2.h5 --outdir /content/drive/MyDrive/MTGCLM/artifacts --no_f16 --split /content/MTGCLM/splits/split_v1_compact.npz --model Medium_Flat --aux --aux_channels cos_sza,elev,radar_cov --seed 2 --results /content/drive/MyDrive/MTGCLM/artifacts/C_noawos_s2.json"
+  },
+  "A_sat_s3": {
+    "stage": "modality",
+    "ok": true,
+    "minutes": 54.1,
+    "finished": "2026-09-20 01:09:57",
+    "cmd": "/usr/bin/python3 /content/MTGCLM/src/train.py --h5 /content/mtg_train_v2.h5 --outdir /content/drive/MyDrive/MTGCLM/artifacts --no_f16 --split /content/MTGCLM/splits/split_v1_compact.npz --model Medium_Flat --seed 3 --results /content/drive/MyDrive/MTGCLM/artifacts/A_sat_s3.json"
+  },
+  "B_full_s3": {
+    "stage": "modality",
+    "ok": true,
+    "minutes": 49.4,
+    "finished": "2026-09-20 04:08:35",
+    "cmd": "/usr/bin/python3 /content/MTGCLM/src/train.py --h5 /content/mtg_train_v2.h5 --outdir /content/drive/MyDrive/MTGCLM/artifacts --no_f16 --split /content/MTGCLM/splits/split_v1_compact.npz --model Medium_Flat --aux --seed 3 --results /content/drive/MyDrive/MTGCLM/artifacts/B_full_s3.json"
+  },
+  "C_noawos_s3": {
+    "stage": "modality",
+    "ok": true,
+    "minutes": 63.3,
+    "finished": "2026-09-20 05:11:54",
+    "cmd": "/usr/bin/python3 /content/MTGCLM/src/train.py --h5 /content/mtg_train_v2.h5 --outdir /content/drive/MyDrive/MTGCLM/artifacts --no_f16 --split /content/MTGCLM/splits/split_v1_compact.npz --model Medium_Flat --aux --aux_channels cos_sza,elev,radar_cov --seed 3 --results /content/drive/MyDrive/MTGCLM/artifacts/C_noawos_s3.json"
+  },
+  "D_unet_s1": {
+    "stage": "unet",
+    "ok": true,
+    "minutes": 79.5,
+    "finished": "2026-09-20 06:31:22",
+    "cmd": "/usr/bin/python3 /content/MTGCLM/src/train_unet.py --h5 /content/mtg_train_v2.h5 --outdir /content/drive/MyDrive/MTGCLM/artifacts --no_f16 --split /content/MTGCLM/splits/split_v1_compact.npz --model unet --aux --seed 1 --results /content/drive/MyDrive/MTGCLM/artifacts/D_unet_s1.json"
+  },
+  "D_unet_s2": {
+    "stage": "unet",
+    "ok": true,
+    "minutes": 47.5,
+    "finished": "2026-09-20 07:55:44",
+    "cmd": "/usr/bin/python3 /content/MTGCLM/src/train_unet.py --h5 /content/mtg_train_v2.h5 --outdir /content/drive/MyDrive/MTGCLM/artifacts --no_f16 --split /content/MTGCLM/splits/split_v1_compact.npz --model unet --aux --seed 2 --results /content/drive/MyDrive/MTGCLM/artifacts/D_unet_s2.json"
+  },
+  "D_unet_s3": {
+    "stage": "unet",
+    "ok": true,
+    "minutes": 78.0,
+    "finished": "2026-09-20 09:13:45",
+    "cmd": "/usr/bin/python3 /content/MTGCLM/src/train_unet.py --h5 /content/mtg_train_v2.h5 --outdir /content/drive/MyDrive/MTGCLM/artifacts --no_f16 --split /content/MTGCLM/splits/split_v1_compact.npz --model unet --aux --seed 3 --results /content/drive/MyDrive/MTGCLM/artifacts/D_unet_s3.json"
+  },
+  "CV_f0_s1": {
+    "stage": "cv",
+    "ok": true,
+    "minutes": 65.4,
+    "finished": "2026-09-20 10:19:07",
+    "cmd": "/usr/bin/python3 /content/MTGCLM/src/train.py --h5 /content/mtg_train_v2.h5 --outdir /content/drive/MyDrive/MTGCLM/artifacts --no_f16 --split /content/MTGCLM/splits/cv5_fold0.npz --model Medium_Flat --aux --seed 1 --results /content/drive/MyDrive/MTGCLM/artifacts/CV_f0_s1.json"
+  },
+  "CV_f1_s1": {
+    "stage": "cv",
+    "ok": true,
+    "minutes": 66.3,
+    "finished": "2026-09-20 11:25:27",
+    "cmd": "/usr/bin/python3 /content/MTGCLM/src/train.py --h5 /content/mtg_train_v2.h5 --outdir /content/drive/MyDrive/MTGCLM/artifacts --no_f16 --split /content/MTGCLM/splits/cv5_fold1.npz --model Medium_Flat --aux --seed 1 --results /content/drive/MyDrive/MTGCLM/artifacts/CV_f1_s1.json"
+  },
+  "CV_f2_s1": {
+    "stage": "cv",
+    "ok": true,
+    "minutes": 66.8,
+    "finished": "2026-09-20 12:32:14",
+    "cmd": "/usr/bin/python3 /content/MTGCLM/src/train.py --h5 /content/mtg_train_v2.h5 --outdir /content/drive/MyDrive/MTGCLM/artifacts --no_f16 --split /content/MTGCLM/splits/cv5_fold2.npz --model Medium_Flat --aux --seed 1 --results /content/drive/MyDrive/MTGCLM/artifacts/CV_f2_s1.json"
+  },
+  "CV_f3_s1": {
+    "stage": "cv",
+    "ok": true,
+    "minutes": 64.7,
+    "finished": "2026-09-20 13:36:54",
+    "cmd": "/usr/bin/python3 /content/MTGCLM/src/train.py --h5 /content/mtg_train_v2.h5 --outdir /content/drive/MyDrive/MTGCLM/artifacts --no_f16 --split /content/MTGCLM/splits/cv5_fold3.npz --model Medium_Flat --aux --seed 1 --results /content/drive/MyDrive/MTGCLM/artifacts/CV_f3_s1.json"
+  },
+  "CV_f4_s1": {
+    "stage": "cv",
+    "ok": true,
+    "minutes": 66.6,
+    "finished": "2026-09-20 14:43:30",
+    "cmd": "/usr/bin/python3 /content/MTGCLM/src/train.py --h5 /content/mtg_train_v2.h5 --outdir /content/drive/MyDrive/MTGCLM/artifacts --no_f16 --split /content/MTGCLM/splits/cv5_fold4.npz --model Medium_Flat --aux --seed 1 --results /content/drive/MyDrive/MTGCLM/artifacts/CV_f4_s1.json"
+  },
+  "Z_baselines_s1": {
+    "stage": "baselines",
+    "ok": true,
+    "minutes": 18.7,
+    "finished": "2026-09-20 15:02:12",
+    "cmd": "/usr/bin/python3 /content/MTGCLM/src/baselines.py --h5 /content/mtg_train_v2.h5 --split /content/MTGCLM/splits/split_v1_compact.npz --aux --models majority,threshold,threshold2,logreg,rf,hgb --seed 1 --results /content/drive/MyDrive/MTGCLM/artifacts/Z_baselines_s1.json"
+  }
+}

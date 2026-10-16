@@ -1,0 +1,80 @@
+\begin{table}[ht]
+\centering
+\caption{MTGCLM sonuçları (test_time), ortalama $\pm$ standart sapma}
+\label{tab:results_test_time}
+\begin{tabular}{lrrrrrrr}
+\hline
+Model & BalAcc & MCC & F1(cloudy) & F1(clear) & P(cloudy) & R(cloudy) & Majority \\
+\hline
+ARCH & 0.932 $\pm$ 0.001 & 0.862 $\pm$ 0.003 & 0.935 $\pm$ 0.002 & 0.926 $\pm$ 0.001 & 0.957 $\pm$ 0.003 & 0.914 $\pm$ 0.005 & 0.543 \\
+A\_sat & 0.935 $\pm$ 0.001 & 0.868 $\pm$ 0.003 & 0.938 $\pm$ 0.002 & 0.929 $\pm$ 0.002 & 0.958 $\pm$ 0.002 & 0.918 $\pm$ 0.005 & 0.543 \\
+B\_full & 0.933 $\pm$ 0.001 & 0.864 $\pm$ 0.003 & 0.936 $\pm$ 0.001 & 0.927 $\pm$ 0.001 & 0.958 $\pm$ 0.001 & 0.915 $\pm$ 0.003 & 0.543 \\
+CV & 0.913 $\pm$ 0.021 & 0.812 $\pm$ 0.040 & 0.932 $\pm$ 0.017 & 0.878 $\pm$ 0.030 & 0.954 $\pm$ 0.016 & 0.911 $\pm$ 0.021 & 0.654 \\
+C\_noawos & 0.937 $\pm$ 0.001 & 0.872 $\pm$ 0.002 & 0.939 $\pm$ 0.001 & 0.931 $\pm$ 0.001 & 0.961 $\pm$ 0.000 & 0.919 $\pm$ 0.003 & 0.543 \\
+D\_unet & 0.936 $\pm$ 0.001 & 0.869 $\pm$ 0.002 & 0.939 $\pm$ 0.001 & 0.930 $\pm$ 0.001 & 0.957 $\pm$ 0.001 & 0.921 $\pm$ 0.001 & 0.543 \\
+RESNET & 0.936 & 0.870 & 0.940 & 0.930 & 0.952 & 0.928 & 0.543 \\
+Z\_baselines & 0.806 $\pm$ 0.166 & 0.611 $\pm$ 0.331 & 0.845 $\pm$ 0.098 & 0.715 $\pm$ 0.358 & 0.834 $\pm$ 0.156 & 0.880 $\pm$ 0.098 & 0.542 \\
+\_check & 0.897 & 0.790 & 0.893 & 0.887 & 0.965 & 0.831 & 0.552 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\caption{MTGCLM sonuçları (test_station), ortalama $\pm$ standart sapma}
+\label{tab:results_test_station}
+\begin{tabular}{lrrrrrrr}
+\hline
+Model & BalAcc & MCC & F1(cloudy) & F1(clear) & P(cloudy) & R(cloudy) & Majority \\
+\hline
+ARCH & 0.919 $\pm$ 0.001 & 0.804 $\pm$ 0.003 & 0.937 $\pm$ 0.002 & 0.861 $\pm$ 0.003 & 0.971 $\pm$ 0.002 & 0.905 $\pm$ 0.005 & 0.711 \\
+A\_sat & 0.918 $\pm$ 0.002 & 0.800 $\pm$ 0.007 & 0.935 $\pm$ 0.003 & 0.859 $\pm$ 0.005 & 0.972 $\pm$ 0.001 & 0.901 $\pm$ 0.007 & 0.711 \\
+B\_full & 0.918 $\pm$ 0.000 & 0.801 $\pm$ 0.002 & 0.936 $\pm$ 0.001 & 0.859 $\pm$ 0.001 & 0.970 $\pm$ 0.001 & 0.904 $\pm$ 0.003 & 0.711 \\
+C\_noawos & 0.918 $\pm$ 0.001 & 0.799 $\pm$ 0.001 & 0.935 $\pm$ 0.000 & 0.858 $\pm$ 0.000 & 0.971 $\pm$ 0.001 & 0.901 $\pm$ 0.001 & 0.711 \\
+D\_unet & 0.923 $\pm$ 0.001 & 0.819 $\pm$ 0.002 & 0.943 $\pm$ 0.001 & 0.872 $\pm$ 0.002 & 0.969 $\pm$ 0.001 & 0.919 $\pm$ 0.001 & 0.711 \\
+RESNET & 0.914 & 0.797 & 0.935 & 0.857 & 0.967 & 0.906 & 0.711 \\
+Z\_baselines & 0.809 $\pm$ 0.161 & 0.605 $\pm$ 0.317 & 0.901 $\pm$ 0.051 & 0.673 $\pm$ 0.339 & 0.896 $\pm$ 0.096 & 0.916 $\pm$ 0.062 & 0.710 \\
+\_check & 0.878 & 0.687 & 0.876 & 0.771 & 0.984 & 0.789 & 0.720 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\caption{MTGCLM sonuçları (test_both), ortalama $\pm$ standart sapma}
+\label{tab:results_test_both}
+\begin{tabular}{lrrrrrrr}
+\hline
+Model & BalAcc & MCC & F1(cloudy) & F1(clear) & P(cloudy) & R(cloudy) & Majority \\
+\hline
+ARCH & 0.942 $\pm$ 0.001 & 0.876 $\pm$ 0.003 & 0.946 $\pm$ 0.001 & 0.929 $\pm$ 0.002 & 0.973 $\pm$ 0.002 & 0.919 $\pm$ 0.003 & 0.584 \\
+A\_sat & 0.946 $\pm$ 0.003 & 0.883 $\pm$ 0.006 & 0.949 $\pm$ 0.003 & 0.933 $\pm$ 0.004 & 0.975 $\pm$ 0.002 & 0.924 $\pm$ 0.005 & 0.584 \\
+B\_full & 0.942 $\pm$ 0.001 & 0.876 $\pm$ 0.003 & 0.946 $\pm$ 0.001 & 0.928 $\pm$ 0.001 & 0.973 $\pm$ 0.001 & 0.920 $\pm$ 0.002 & 0.584 \\
+C\_noawos & 0.946 $\pm$ 0.000 & 0.885 $\pm$ 0.001 & 0.949 $\pm$ 0.000 & 0.933 $\pm$ 0.000 & 0.978 $\pm$ 0.002 & 0.922 $\pm$ 0.002 & 0.584 \\
+D\_unet & 0.943 $\pm$ 0.001 & 0.879 $\pm$ 0.003 & 0.947 $\pm$ 0.001 & 0.930 $\pm$ 0.001 & 0.970 $\pm$ 0.002 & 0.925 $\pm$ 0.000 & 0.584 \\
+RESNET & 0.939 & 0.871 & 0.944 & 0.926 & 0.970 & 0.918 & 0.584 \\
+Z\_baselines & 0.810 $\pm$ 0.172 & 0.617 $\pm$ 0.342 & 0.864 $\pm$ 0.093 & 0.709 $\pm$ 0.359 & 0.851 $\pm$ 0.148 & 0.895 $\pm$ 0.088 & 0.584 \\
+\_check & 0.898 & 0.787 & 0.894 & 0.880 & 0.973 & 0.828 & 0.576 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\caption{MTGCLM sonuçları (val), ortalama $\pm$ standart sapma}
+\label{tab:results_val}
+\begin{tabular}{lrrrrrrr}
+\hline
+Model & BalAcc & MCC & F1(cloudy) & F1(clear) & P(cloudy) & R(cloudy) & Majority \\
+\hline
+ARCH & 0.901 $\pm$ 0.003 & 0.776 $\pm$ 0.007 & 0.925 $\pm$ 0.003 & 0.846 $\pm$ 0.004 & 0.956 $\pm$ 0.004 & 0.897 $\pm$ 0.007 & nan \\
+A\_sat & 0.893 $\pm$ 0.001 & 0.761 $\pm$ 0.004 & 0.921 $\pm$ 0.002 & 0.836 $\pm$ 0.003 & 0.949 $\pm$ 0.002 & 0.895 $\pm$ 0.006 & nan \\
+B\_full & 0.904 $\pm$ 0.001 & 0.781 $\pm$ 0.002 & 0.927 $\pm$ 0.001 & 0.850 $\pm$ 0.002 & 0.958 $\pm$ 0.001 & 0.898 $\pm$ 0.002 & nan \\
+CV & 0.904 $\pm$ 0.019 & 0.808 $\pm$ 0.027 & 0.900 $\pm$ 0.034 & 0.906 $\pm$ 0.018 & 0.927 $\pm$ 0.025 & 0.874 $\pm$ 0.045 & nan \\
+C\_noawos & 0.903 $\pm$ 0.001 & 0.782 $\pm$ 0.004 & 0.929 $\pm$ 0.002 & 0.850 $\pm$ 0.003 & 0.954 $\pm$ 0.000 & 0.905 $\pm$ 0.003 & nan \\
+D\_unet & 0.910 $\pm$ 0.001 & 0.795 $\pm$ 0.002 & 0.932 $\pm$ 0.001 & 0.859 $\pm$ 0.001 & 0.959 $\pm$ 0.001 & 0.907 $\pm$ 0.002 & nan \\
+RESNET & 0.909 & 0.799 & 0.935 & 0.862 & 0.956 & 0.915 & nan \\
+\_check & 0.862 & 0.672 & 0.881 & 0.769 & 0.956 & 0.817 & nan \\
+\hline
+\end{tabular}
+\end{table}
