@@ -26,6 +26,7 @@ best_model_*.pth
 
 # --- çıktı ---
 artifacts/*.png
+artifacts/status/
 scratch/
 sonuç1/
 graphify-out/
