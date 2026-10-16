@@ -37,6 +37,8 @@ class MTGH5Dataset(Dataset):
             self.wmoids = f['wmoids'][:]
             self.labels = f['labels'][:]
             self.okta = f['okta'][:] if 'okta' in f else None
+            # Gözlem zamanı (unix s): dakika 0 = SYNOP, değilse METAR -> SYNOP-only metrikler için (K16)
+            self.obs_time = f['obs_time'][:] if 'obs_time' in f else None
             self.pre_shuffled = bool(f.attrs.get('pre_shuffled', 0))
             self.base_channels = int(f['patches'].shape[1])
             self.has_scalars = 'scalars' in f
