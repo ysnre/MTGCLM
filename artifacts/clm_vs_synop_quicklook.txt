@@ -1,0 +1,27 @@
+eşleşen SYNOP–CLM örneği: 203340  bulutlu oranı: 0.717
+
+=== C  n=43116  bulutlu=0.659
+merkez, bulaşmış=bulutlu : BalAcc 0.856  R(bulutlu) 0.887  R(açık) 0.826
+merkez, yalnız dolu      : BalAcc 0.720  R(bulutlu) 0.507  R(açık) 0.932
+c1  : AUC(bulaşmış+dolu oranı) 0.856  AUC(dolu oranı) 0.720  en iyi eşik BalAcc 0.856 @ 0.95
+3x3 : AUC(bulaşmış+dolu oranı) 0.908  AUC(dolu oranı) 0.791  en iyi eşik BalAcc 0.869 @ 0.40
+r5  : AUC(bulaşmış+dolu oranı) 0.909  AUC(dolu oranı) 0.793  en iyi eşik BalAcc 0.871 @ 0.45
+r10 : AUC(bulaşmış+dolu oranı) 0.925  AUC(dolu oranı) 0.832  en iyi eşik BalAcc 0.879 @ 0.45
+r20 : AUC(bulaşmış+dolu oranı) 0.934  AUC(dolu oranı) 0.857  en iyi eşik BalAcc 0.883 @ 0.45
+r30 : AUC(bulaşmış+dolu oranı) 0.937  AUC(dolu oranı) 0.869  en iyi eşik BalAcc 0.884 @ 0.50
+  gece          n= 18647  merkez BalAcc 0.813
+  alacakaranlık n=  2909  merkez BalAcc 0.857
+  gündüz        n= 21431  merkez BalAcc 0.897
+
+=== O  n=160224  bulutlu=0.733
+merkez, bulaşmış=bulutlu : BalAcc 0.880  R(bulutlu) 0.889  R(açık) 0.871
+merkez, yalnız dolu      : BalAcc 0.755  R(bulutlu) 0.563  R(açık) 0.946
+c1  : AUC(bulaşmış+dolu oranı) 0.880  AUC(dolu oranı) 0.755  en iyi eşik BalAcc 0.880 @ 0.95
+3x3 : AUC(bulaşmış+dolu oranı) 0.922  AUC(dolu oranı) 0.834  en iyi eşik BalAcc 0.888 @ 0.40
+r5  : AUC(bulaşmış+dolu oranı) 0.922  AUC(dolu oranı) 0.835  en iyi eşik BalAcc 0.889 @ 0.40
+r10 : AUC(bulaşmış+dolu oranı) 0.939  AUC(dolu oranı) 0.883  en iyi eşik BalAcc 0.894 @ 0.35
+r20 : AUC(bulaşmış+dolu oranı) 0.948  AUC(dolu oranı) 0.913  en iyi eşik BalAcc 0.898 @ 0.40
+r30 : AUC(bulaşmış+dolu oranı) 0.951  AUC(dolu oranı) 0.922  en iyi eşik BalAcc 0.900 @ 0.40
+  gece          n= 68069  merkez BalAcc 0.847
+  alacakaranlık n= 17090  merkez BalAcc 0.890
+  gündüz        n= 75064  merkez BalAcc 0.910
