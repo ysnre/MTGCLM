@@ -347,8 +347,17 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   USB 3.0 4 TB disk, conda base Python 3.11.5. **Plan:** Medium_Flat modalite + CV, U-Net, ResNet-ImageNet ve baselines yerel
   CPU'da; ResNet-CIFAR Colab T4'te. Çıktı `artifacts_v3/` (v2 `artifacts/` karşılaştırma için korunur).
 - **Hız:** `src/bench_speed.py` (sentetik batch, veri gerekmez). Bulut ortamının 2 çekirdeğinde koşu başına: Medium_Flat ~76 dk,
-  U-Net ~6,3 sa, ResNet-ImageNet ~5,6 sa, ResNet-CIFAR ~26 sa → i7-12700'de birkaç kat hızlı beklenir; kesin değerler
-  kullanıcının ölçümüyle buraya yazılacak.
+  U-Net ~6,3 sa, ResNet-ImageNet ~5,6 sa, ResNet-CIFAR ~26 sa.
+  **i7-12700 ölçümü (20 Eki, `bench_speed.py`, dk/koşu, 8/12/20 iş parçacığı):** Medium_Flat 25/24/25, U-Net 162/129/147,
+  ResNet-ImageNet 258/252/265, ResNet-CIFAR 862/665/624 → **`--threads 12`** (fiziksel çekirdek sayısı; 20 yalnız CIFAR'da
+  hafif hızlı). **Güncel iş bölümü:** yerel CPU = modalite (12 × ~24 dk) + CV (20 × ~29 dk) + baselines ≈ 15 sa;
+  Colab T4 = U-Net × 3 + ResNet-ImageNet × 3 + ResNet-CIFAR × 3 (`--stage unet,resnet`).
+- **1 epoch gerçek deneme (20 Eki):** boş RAM yalnız 6,4 GB → auto `stream` seçti; H5 USB diskten akınca epoch 372 s (hesap ~90 s,
+  geri kalanı her epoch tüm dosyayı iki kez okumak, ~140 MB/s). Çözüm: **H5'i NVMe'ye kopyala** (`C:/mtg/mtg_train_v2.h5`, `--h5` ile ver)
+  — CV katları dahil her bölme için çalışır; ek önbellek gerekmez. (1 epoch skoru, verify etiketleri: val 0,938, test_time 0,953 —
+  v2 sayılarıyla doğrudan kıyaslanamaz, etiket kümesi farklı.)
+- **Ortam (20 Eki):** Windows'ta `python` conda dışındaki Python 3.14'ü buluyordu → torch import'ta çöküyordu. Çözüm: ayrı
+  conda ortamı `mtgclm` (Python 3.11, torch CPU); her pencerede `conda activate mtgclm`.
 - Ayrıntı: proje dokümanı `claude/mtgclm_run_hazirlik_2026-10-16.md`.
 
 ---
@@ -466,21 +475,21 @@ python src\bench_speed.py --threads 8,12,20
 
 :: 3) 1 epoch gerçek deneme (yükleme MB/s ve epoch süresi log'da)
 python src\train.py --h5 F:/radar/mtg_train_v2.h5 --split splits/split_v2_verify.npz --model medium_flat --aux ^
-    --epochs 1 --loader auto --threads 8 --outdir artifacts_bench --results artifacts_bench/BENCH_B_s1.json
+    --epochs 1 --loader auto --threads 12 --outdir artifacts_bench --results artifacts_bench/BENCH_B_s1.json
 
 :: 4) v3 matrisi (yerel; ResNet-CIFAR hariç). Kesilirse aynı komut kaldığı yerden sürer.
-python src\run_all.py --h5 F:/radar/mtg_train_v2.h5 --outdir artifacts_v3 --stage v3 --skip RESNET_CIFAR ^
-    --loader auto --threads 8
+python src\run_all.py --h5 C:/mtg/mtg_train_v2.h5 --outdir artifacts_v3 --stage modality,cv,baselines ^
+    --loader auto --threads 12
 ::    isteğe bağlı: --cache_dir C:/mtg_cache  (NVMe'de >= 20 GB boş yer varsa; yüklemeyi hızlandırır)
 
 :: 5) Rapor
 python src\aggregate_results.py --dir artifacts_v3 --out artifacts_v3/summary --plot
 ```
 ```python
-# Colab — ResNet-CIFAR (3 koşu). 1. hücre §3.2 ile aynı (Drive, H5 kopyası, git pull).
-!python src/run_all.py --h5 {H5} --outdir {DRIVE}/artifacts_v3 --stage resnet --only RESNET_CIFAR \
+# Colab — U-Net + iki ResNet (9 koşu). 1. hücre §3.2 ile aynı (Drive, H5 kopyası, git pull).
+!python src/run_all.py --h5 {H5} --outdir {DRIVE}/artifacts_v3 --stage unet,resnet \
     --loader auto --cache_dir /content/cache
-# Bitince Drive'daki artifacts_v3/RESNET_CIFAR_s*.json + preds/RESNET_CIFAR_* dosyalarını yerel artifacts_v3/'e kopyalayın.
+# Bitince Drive'daki artifacts_v3/{D_unet,RESNET}*.json + preds/ dosyalarını yerel artifacts_v3/'e kopyalayın.
 ```
 
 ---
