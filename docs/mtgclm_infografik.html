@@ -282,14 +282,13 @@
     <table class="tbl">
       <thead><tr><th>Koşu grubu</th><th>Nerede</th><th class="num">Koşu</th><th>Kaba süre</th></tr></thead>
       <tbody>
-        <tr><td>Modalite A / B / C / C+t2m × 3 seed (Medium_Flat)</td><td>Yerel PC (CPU)</td><td class="num">12</td><td>~15–20 dk / koşu</td></tr>
-        <tr><td>Bloklu CV: 5 kat × 4 modalite</td><td>Yerel PC (CPU)</td><td class="num">20</td><td>~20 dk / koşu</td></tr>
-        <tr><td>U-Net × 3, ResNet (ImageNet girişi) × 3</td><td>Yerel PC (CPU)</td><td class="num">6</td><td>~1–1,5 sa / koşu</td></tr>
-        <tr><td>ResNet (CIFAR girişi) × 3</td><td>Colab T4</td><td class="num">3</td><td>~45 dk / koşu</td></tr>
+        <tr><td>Modalite A / B / C / C+t2m × 3 seed (Medium_Flat)</td><td>Yerel PC (CPU)</td><td class="num">12</td><td>~24 dk / koşu</td></tr>
+        <tr><td>Bloklu CV: 5 kat × 4 modalite</td><td>Yerel PC (CPU)</td><td class="num">20</td><td>~29 dk / koşu</td></tr>
+        <tr><td>U-Net × 3, ResNet (ImageNet ve CIFAR girişi) × 3+3</td><td>Colab T4</td><td class="num">9</td><td>CPU’da 2–11 sa / koşu olurdu</td></tr>
         <tr><td>Klasik modeller (HGB, RF, eşikler) — tüm veri</td><td>Yerel PC</td><td class="num">1</td><td>~30 dk</td></tr>
       </tbody>
     </table>
-    <p class="note">Süreler tahmindir; ilk deneme ölçümüyle (<code>bench_speed.py</code> + 1 epoch) kesinleşir. Yerel toplam ≈ 18 saat (iki gece).</p>
+    <p class="note">Yerel süreler i7-12700 ölçümünden (<code>bench_speed.py</code>, 12 iş parçacığı, 20 Eki). Yerel toplam ≈ 15 saat; ağır modeller GPU’ya bırakıldı.</p>
   </div>
 </section>
 
