@@ -356,6 +356,9 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   geri kalanı her epoch tüm dosyayı iki kez okumak, ~140 MB/s). Çözüm: **H5'i NVMe'ye kopyala** (`C:/mtg/mtg_train_v2.h5`, `--h5` ile ver)
   — CV katları dahil her bölme için çalışır; ek önbellek gerekmez. (1 epoch skoru, verify etiketleri: val 0,938, test_time 0,953 —
   v2 sayılarıyla doğrudan kıyaslanamaz, etiket kümesi farklı.)
+- **NVMe ile tekrar (22 Eki):** boş RAM 18,2 GB → train+val RAM'e (10,7 GB, 38 s, ~504 MB/s), testler NVMe'den akış.
+  **Epoch 102 s** (USB akışında 372 s). Kayıp/metrikler USB akışlı koşuyla birebir aynı → memory/stream eşdeğerliği gerçek
+  veride de doğrulandı. Medium_Flat koşusu ≈ 26 dk.
 - **Ortam (20 Eki):** Windows'ta `python` conda dışındaki Python 3.14'ü buluyordu → torch import'ta çöküyordu. Çözüm: ayrı
   conda ortamı `mtgclm` (Python 3.11, torch CPU); her pencerede `conda activate mtgclm`.
 - Ayrıntı: proje dokümanı `claude/mtgclm_run_hazirlik_2026-10-16.md`.
