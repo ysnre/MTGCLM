@@ -1,6 +1,6 @@
 import numpy as np
 from torch.utils.data import DataLoader, Subset
-from dataset import MTGCloudDataset
+# MTGCloudDataset (eski NetCDF yolu, xarray gerektirir) yalnız get_dataloaders(h5_path=None) içinde yüklenir.
 from h5_dataset import MTGH5Dataset
 
 def get_train_val_split(dataset, val_ratio: float = 0.2):
@@ -260,6 +260,7 @@ def get_dataloaders(mtg_dir: str = None,
         full_dataset = MTGH5Dataset(h5_path, use_aux=use_aux, aux_channels=aux_channels)
     else:
         # Initialize full dataset
+        from dataset import MTGCloudDataset   # tembel import: H5 eğitimi xarray istemez
         full_dataset = MTGCloudDataset(
             mtg_dir=mtg_dir,
             radar_dir=radar_dir,
