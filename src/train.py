@@ -1,5 +1,12 @@
 import os
 import sys
+# Windows'ta çıktı bir boruya/dosyaya yönlendirilince (run_all.py) kodlama cp1254 olur; kodlanamayan bir
+# karakter koşuyu eğitim bittikten sonra düşürüyordu (22 Eki, K17). Artık kaçış dizisiyle yazılır.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(errors="backslashreplace")
+    except Exception:
+        pass
 # Deterministik cuBLAS için CUDA başlamadan önce ayarlanmalı (K16; CPU'da etkisiz).
 os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
 
@@ -530,7 +537,7 @@ def run_experiment(name: str, conv_blocks: list, train_loader, val_loader, epoch
                 pr, p = evaluate_partial(model, tloader, DEVICE, limit_batches, return_probs=True)
                 test_results[tname] = pr
                 preds[f"{tname}_rows"] = rows[:len(p)].astype(np.int32); preds[f"{tname}_prob"] = p
-                print("  [test_partial] " + ", ".join(f"{k}: p̄={v['mean_prob']:.2f} cloudy%={v['frac_cloudy']*100:.0f} (n={v['n']})" for k, v in pr.items()))
+                print("  [test_partial] " + ", ".join(f"{k}: p_ort={v['mean_prob']:.2f} cloudy%={v['frac_cloudy']*100:.0f} (n={v['n']})" for k, v in pr.items()))
                 continue
             _, tm, p, y = validate(model, tloader, criterion, DEVICE, limit_batches, return_outputs=True)
             key = "val_best" if tname == "val" else tname
