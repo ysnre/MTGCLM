@@ -294,8 +294,10 @@ def main():
             with open(log_path, "a", encoding="utf-8", buffering=1) as lf:
                 lf.write(f"\n===== {time.strftime('%Y-%m-%d %H:%M:%S')} deneme {attempt} =====\n")
                 lf.write(" ".join(cmd) + "\n")
+                # Alt süreç UTF-8 yazsın ve biz UTF-8 okuyalım (Windows'ta varsayılan cp1254 koşuları düşürüyordu, K17)
                 proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                        text=True, bufsize=1, cwd=os.path.dirname(SRC) or ".")
+                                        encoding="utf-8", errors="replace", bufsize=1, cwd=os.path.dirname(SRC) or ".",
+                                        env=dict(os.environ, PYTHONIOENCODING="utf-8"))
                 for line in proc.stdout:
                     lf.write(line)
                     if any(k in line for k in ("Epoch ", "Val   Loss", "[test", "HATA", "Error", "Traceback",
@@ -313,10 +315,10 @@ def main():
         os.replace(manifest_path + ".tmp", manifest_path)
         if ok:
             open(os.path.join(status_dir, name + ".done"), "w").write(time.strftime("%Y-%m-%d %H:%M:%S"))
-            print(f"    ✓ bitti ({dt:.1f} dk)")
+            print(f"    [OK] bitti ({dt:.1f} dk)")
         else:
             failed.append(name)
-            print(f"    ✗ BAŞARISIZ ({dt:.1f} dk) — ayrıntı: {log_path}")
+            print(f"    [HATA] BAŞARISIZ ({dt:.1f} dk) — ayrıntı: {log_path}")
 
     print("\n" + "=" * 72)
     print(f"Bitti. Başarılı: {len(todo) - len(failed)}/{len(todo)}")
