@@ -27,6 +27,13 @@ import json
 import os
 import sys
 import time
+# Windows'ta çıktı bir boruya/dosyaya yönlendirilince (run_all.py) kodlama cp1254 olur; kodlanamayan bir
+# karakter koşuyu eğitim bittikten sonra düşürüyordu (22 Eki, K17). Artık kaçış dizisiyle yazılır.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(errors="backslashreplace")
+    except Exception:
+        pass
 
 import h5py
 import numpy as np
