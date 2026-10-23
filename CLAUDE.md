@@ -23,7 +23,8 @@ MTG (Meteosat Third Generation) FCI uydu verisi + TMM C-bandı radar + yer gözl
 > **Durum (5 Eki 2026): v2 koşu matrisi tamamlandı.** ARCH/RESNET/modalite/U-Net/CV/baseline
 > sonuçları `artifacts/` altında; özet `artifacts/summary.md|csv|tex` + grafikler. Detay §2/K6, K12.
 >
-> **Durum (16 Eki 2026): v3 hazır, koşulmadı.** Etiket politikası "verify" (`splits/split_v2_verify.npz`,
+> **Durum (23 Eki 2026): v3 koşuldu (K17);** yerel 28 koşunun yalnız değerlendirmesi tekrarlanacak.
+> **(16 Eki 2026): v3 hazır.** Etiket politikası "verify" (`splits/split_v2_verify.npz`,
 > `splits/cv5_verify_*`), hızlı yükleyici, örnek bazlı tahmin kaydı. Koşular yerel PC (CPU) + Colab (ResNet-CIFAR),
 > çıktı `artifacts_v3/`. Detay §2/K16, komutlar §3.4.
 
@@ -362,6 +363,23 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
 - **Ortam (20 Eki):** Windows'ta `python` conda dışındaki Python 3.14'ü buluyordu → torch import'ta çöküyordu. Çözüm: ayrı
   conda ortamı `mtgclm` (Python 3.11, torch CPU); her pencerede `conda activate mtgclm`.
 - Ayrıntı: proje dokümanı `claude/mtgclm_run_hazirlik_2026-10-16.md`.
+
+### K17 — 23 Eki 2026: v3 koşuları — Windows kodlama hatası ve ön sonuçlar
+- **Durum:** Colab 9/9 tamam (U-Net, ResNet-ImageNet, ResNet-CIFAR × 3; T4; U-Net ~39 dk, ResNet ~34 dk, CIFAR ~89 dk/koşu).
+  Yerel 33 koşunun **28'i eğitimi (15 epoch) bitirdikten sonra çöktü**: `run_all` çıktıyı boruya aldığında Windows kodlaması cp1254
+  oluyor, `test_partial` satırındaki "p̄" karakteri yazılamıyordu → JSON ve preds yazılmadı. test_partial'ı boş olan CV fold 3 ve
+  baselines etkilenmedi. **Eğitim kaybı yok:** checkpoint'ler 15. epoch'ta duruyor; düzeltilmiş kodla aynı komut yalnız
+  değerlendirmeyi yapar (sonuçlar kesintisiz koşuyla birebir aynı — container'da cp1254 ile yeniden üretilip doğrulandı).
+- **Düzeltme:** `train*.py` ve `baselines.py` stdout/stderr'i `errors="backslashreplace"` ile açar; "p̄" → "p_ort"; `run_all.py`
+  alt süreçleri `PYTHONIOENCODING=utf-8` ile başlatıp UTF-8 okur; ✓/✗ → [OK]/[HATA].
+- **Ön sonuçlar (log'lardan; değerlendirme deterministik, tekrar koşunca aynı çıkacak), verify etiketleri, test_time BalAcc:**
+  A_sat 0,958, B_full 0,956, C_noawos 0,959, C_t2m 0,958, U-Net 0,957, ResNet-IN 0,958, ResNet-CIFAR 0,957 (s.s. ≤ 0,002);
+  **hgb_aux 0,959**, rf 0,954, logreg 0,948, eşikler 0,78–0,80. Yalnız-SYNOP test_time: modeller 0,954–0,955 (CLM r30 0,904,
+  NWC r30 0,919 aynı SYNOP satırlarında — verify yalnız METAR satırı çıkardığı için SYNOP alt kümesi v2 ile aynı).
+  test_station: tüm derin modeller 0,937–0,941; HGB 0,940. → K12'deki tablo deseni korunuyor: ~0,96 tavan, HGB ≈ CNN.
+- **AWOS bulgusu CV'de netleşiyor:** kat bazında eşleştirilmiş farklar (test_time BalAcc) B−C +0,0013/+0,0044/+0,0005/+0,0050/+0,0013
+  (5/5 pozitif, ort. +0,0025); C_t2m−C 5/5 pozitif (ort. +0,0011); B−A ort. +0,0028 (4/5). Tek bölmede B < A görünmesi (K12) küçük
+  test kümesine özgü olabilir. Örnek bazlı McNemar / blok bootstrap ile sınanacak (`analyze_preds.py`).
 
 ---
 
