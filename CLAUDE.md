@@ -4,7 +4,7 @@ Bu dosya, Claude Code / Cowork oturumlarının projeyi sıfırdan anlamadan kald
 devam edebilmesi için tutulur. **Yeni bir karar alındığında (model seçimi, veri bölme,
 etiket politikası, eğitim komutu) bu dosyaya birkaç satır ekleyin.**
 
-Son güncelleme: 2026-10-16
+Son güncelleme: 2026-10-23
 
 ---
 
@@ -23,7 +23,7 @@ MTG (Meteosat Third Generation) FCI uydu verisi + TMM C-bandı radar + yer gözl
 > **Durum (5 Eki 2026): v2 koşu matrisi tamamlandı.** ARCH/RESNET/modalite/U-Net/CV/baseline
 > sonuçları `artifacts/` altında; özet `artifacts/summary.md|csv|tex` + grafikler. Detay §2/K6, K12.
 >
-> **Durum (23 Eki 2026): v3 koşuldu (K17);** yerel 28 koşunun yalnız değerlendirmesi tekrarlanacak.
+> **Durum (23 Eki 2026): v3 tamamlandı (K17, K18);** analiz `artifacts_v3/analysis/` (analyze_preds.py).
 > **(16 Eki 2026): v3 hazır.** Etiket politikası "verify" (`splits/split_v2_verify.npz`,
 > `splits/cv5_verify_*`), hızlı yükleyici, örnek bazlı tahmin kaydı. Koşular yerel PC (CPU) + Colab (ResNet-CIFAR),
 > çıktı `artifacts_v3/`. Detay §2/K16, komutlar §3.4.
@@ -381,6 +381,22 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   (5/5 pozitif, ort. +0,0025); C_t2m−C 5/5 pozitif (ort. +0,0011); B−A ort. +0,0028 (4/5). Tek bölmede B < A görünmesi (K12) küçük
   test kümesine özgü olabilir. Örnek bazlı McNemar / blok bootstrap ile sınanacak (`analyze_preds.py`).
 
+### K18 — 23 Eki 2026: v3 tamamlandı — anlamlılık analizi (`src/analyze_preds.py`)
+- Yerel değerlendirme tekrarı 28/28 başarılı (1–5 dk/koşu); 41 koşu + baselines: hepsi 15 epoch, `label_policy=verify`, preds dosyası var.
+  Colab koşuları git `4a69c7b` (kod a29b27b ile aynı), yerel eğitim `b68d201`, değerlendirme tekrarı `e2ff6d2` (yalnız çıktı düzeltmesi).
+- `src/analyze_preds.py`: örnek bazlı tahminlerden ana tablo (BalAcc/MCC ± s.s., %95 blok-bootstrap GA, Brier, ECE, son epoch),
+  eşleştirilmiş farklar (gün blokları; test_station istasyon blokları), CV kat + birleşik farklar, kırılımlar (gündüz/alacakaranlık/
+  gece — güneş yüksekliği istasyon konumundan; SYNOP/METAR; yükseklik; ay; okta başına yakalama) ve `--refs` ile CLM/NWC'ye karşı
+  aynı kapsanan örneklerde kıyas (eşik yalnız train'de: CLM r30 ≥ 0,45, NWC r30 ≥ 0,50). Yalnız numpy + pandas; ~20 s.
+  McNemar yalnız CSV'de (kümelenme nedeniyle aşırı iyimser); çıkarım blok-bootstrap'a dayanır.
+- **Bulgular (test_time, verify):** tüm derin modeller 0,957–0,959, HGB 0,959; model çiftleri arası farkların GA'ları sıfırı içeriyor
+  (HGB − B_full +0,003 [+0,000, +0,006] sınırda). test_station 0,937–0,941. Gece (BalAcc ~0,94) gündüzden (~0,97) zor.
+- **AWOS:** CV birleşik B − C +0,0027 [+0,0015, +0,0041] (5/5 kat), C_t2m − C +0,0013 [+0,0004, +0,0022] (5/5), SYNOP-only de
+  aynı yönde; test_station'da B − C +0,0031 [+0,0009, +0,0059]. Tek bölmenin test_time'ında fark yok. → K1/K12'deki "AWOS katkısı
+  yok" yargısı **düzeltildi**: küçük ama tutarlı pozitif katkı (özellikle CV ve görülmemiş istasyonlar).
+- **Referanslar (yalnız SYNOP, aynı örnekler):** test_time model 0,953–0,955 vs CLM r30 0,908, NWC r30 0,923 (NWC kapsamında model
+  0,947–0,951; fark +0,023…+0,026, GA sıfırı dışlıyor); test_station model 0,932–0,936 vs NWC r30 0,903, CLM r30 0,896.
+
 ---
 
 ## 3. Komutlar
@@ -505,6 +521,7 @@ python src\run_all.py --h5 C:/mtg/mtg_train_v2.h5 --outdir artifacts_v3 --stage 
 
 :: 5) Rapor
 python src\aggregate_results.py --dir artifacts_v3 --out artifacts_v3/summary --plot
+python src\analyze_preds.py --dir artifacts_v3 --out artifacts_v3/analysis --refs
 ```
 ```python
 # Colab — U-Net + iki ResNet (9 koşu). 1. hücre §3.2 ile aynı (Drive, H5 kopyası, git pull).
@@ -536,6 +553,7 @@ python src\aggregate_results.py --dir artifacts_v3 --out artifacts_v3/summary --
 | `src/fast_loader.py` | Hızlı yükleyici (K16): blok okuma, `memory/stream/auto`, `.npy` önbellek, batch çevirme |
 | `src/run_utils.py` | Tekrarlanabilirlik (seed, deterministik, RNG checkpoint), ortam bilgisi, SYNOP-only metrik, tahmin kaydı |
 | `src/make_label_policy.py` | METAR NSC politikası (keep/verify/ignore) → `split_v2_<politika>.npz`, `cv5_<politika>_fold*.npz` |
+| `src/analyze_preds.py` | v3 örnek bazlı analiz: blok-bootstrap GA, eşleştirilmiş farklar, CV, kırılımlar, CLM/NWC kıyası (K18) |
 | `src/bench_speed.py` | Model başına eğitim/değerlendirme hızı (sentetik), koşu süresi tahmini, iş parçacığı seçimi |
 | `src/model.py` | `MTGConvNet` (Shallow/Medium/Deep × GAP/Flatten), `MTGResNet18` (stem: imagenet / cifar), `MTGUNet` |
 | `src/extract_fci_clm.py` | FCI CLM → istasyon çevresi sınıf sayımları (merkez, 3×3, r5–r30 km); indeks `data/clm_station_index.npz` |
@@ -572,11 +590,10 @@ geç-füzyon planıdır — **arşiv**, güncel hattı temsil etmez. `notebooks/
 - [x] ~~NWC SAF CT projeksiyonu~~ — MGM köşeleri alındı, çıkarım yapıldı (K13/K14).
 - [x] ~~METAR NSC politikası~~ — **verify** seçildi, `split_v2_verify` + `cv5_verify` üretildi; H5 yeniden üretimi gerekmedi (K16).
 - [x] ~~Örnek bazlı tahmin kaydı, SYNOP-only metrik, determinizm, hızlı yükleyici~~ — K16.
-- [ ] **v3 matrisini koş:** önce `bench_speed.py` + 1 epoch deneme (§3.4), sonra yerel `run_all --stage v3 --skip RESNET_CIFAR`,
-      Colab'da `--only RESNET_CIFAR`; ölçülen süreleri K16'ya yaz.
-- [ ] `src/analyze_preds.py`: McNemar + blok bootstrap (gün/istasyon blokları), gündüz/gece, ay, yükseklik kırılımı; CLM/NWC ile
-      aynı SYNOP-only örneklerde kıyas — preds dosyaları hazır olunca.
-- [ ] AWOS-t2m'nin CNN'deki etkisi: CV × {A, B, C, C_t2m} sonuçlarıyla (K14, K16).
+- [x] ~~v3 matrisini koş~~ — 22–23 Eki 2026 tamamlandı (K17, K18).
+- [x] ~~`src/analyze_preds.py`~~ — yazıldı ve gerçek veride denendi (K18).
+- [x] ~~AWOS-t2m'nin CNN'deki etkisi~~ — CV'de küçük ama anlamlı pozitif (K18).
+- [ ] Analiz raporunu makale bulgularına dönüştür; gece hataları (alçak bulut/sis) için ayrıntı.
 - [ ] U-Net tam harita için hedef-piksel jitter (49×49 çıkar → 33×33 rastgele kırp).
 - [ ] `infer_scene.py`: tek NetCDF sahne + radar + aux → 800×1000 olasılık haritası (GeoTIFF/PNG) — henüz yok.
 - [ ] Kanal permütasyon önemi / Integrated Gradients (17→22 kanal için asıl bilimsel soru).
