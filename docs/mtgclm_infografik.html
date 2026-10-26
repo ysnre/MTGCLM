@@ -115,7 +115,7 @@
 <div class="wrap">
 
 <header>
-  <span class="badge"><span class="dot"></span> Durum: v3 eğitimleri bitti (41 koşu) · yerel değerlendirme tekrarı ve özet bekleniyor</span>
+  <span class="badge"><span class="dot"></span> Durum: v3 tamam (41 koşu + klasik modeller) · anlamlılık analizi hazır</span>
   <h1>MTGCLM — <span class="g">Türkiye üzerinde uydu tabanlı bulut maskesi</span></h1>
   <p class="lede">MTG (Meteosat Third Generation) FCI uydusu, C-bandı radar ve yer gözlemlerini birleştirerek
   istasyon noktalarında ve tam harita üzerinde bulut var/yok tahmini yapan bir derin öğrenme çalışması.</p>
@@ -124,7 +124,7 @@
     <div class="stat"><div class="n">16+1+5<small> kanal</small></div><div class="l">FCI + radar + yardımcı (toplam 22)</div></div>
     <div class="stat"><div class="n">~400<small> bin</small></div><div class="l">etiketli yama (33×33 piksel)</div></div>
     <div class="stat"><div class="n">132</div><div class="l">yer istasyonu</div></div>
-    <div class="stat"><div class="n">0,937</div><div class="l">en iyi test BalAcc (görülmemiş haftalar)</div></div>
+    <div class="stat"><div class="n">~0,96</div><div class="l">test BalAcc, tüm modeller (v3, görülmemiş haftalar)</div></div>
     <div class="stat"><div class="n">15</div><div class="l">ay veri (Mar 2025 – Haz 2026)</div></div>
   </div>
 </header>
@@ -170,22 +170,25 @@
 
 <!-- SONUÇLAR -->
 <section id="sonuclar">
-  <div class="sec-h"><h2>Sonuçlar</h2><span class="k">test_time dengeli doğruluk (görülmemiş haftalar)</span></div>
+  <div class="sec-h"><h2>Sonuçlar (v3)</h2><span class="k">test_time dengeli doğruluk · doğrulanmış etiketler · 3 seed ortalaması</span></div>
   <div class="card">
-    <div class="axis"><span>0,85</span><span>0,90</span><span>0,95</span></div>
+    <div class="axis"><span>0,88</span><span>0,93</span><span>0,98</span></div>
     <div class="bars">
-      <div class="bar"><div class="nm">C_noawos <small>CNN, AWOS’suz aux</small></div><div class="track"><div class="fill good" style="width:87.4%"></div></div><div class="v">0,937</div></div>
-      <div class="bar"><div class="nm">D_unet <small>U-Net (segmentasyon)</small></div><div class="track"><div class="fill good" style="width:86.4%"></div></div><div class="v">0,936</div></div>
-      <div class="bar"><div class="nm">ResNet18 <small>11,2 M parametre</small></div><div class="track"><div class="fill good" style="width:86.4%"></div></div><div class="v">0,936</div></div>
-      <div class="bar"><div class="nm">A_sat <small>yalnız uydu+radar</small></div><div class="track"><div class="fill good" style="width:85.4%"></div></div><div class="v">0,935</div></div>
-      <div class="bar"><div class="nm">B_full <small>tüm aux (AWOS dahil)</small></div><div class="track"><div class="fill" style="width:83.4%"></div></div><div class="v">0,933</div></div>
-      <div class="bar"><div class="nm">HGB <small>klasik ağaç modeli</small></div><div class="track"><div class="fill" style="width:82.4%"></div></div><div class="v">0,932</div></div>
-      <div class="bar"><div class="nm">Bloklu 5-katlı CV <small>ortalama ± 0,021</small></div><div class="track"><div class="fill" style="width:63.3%"></div></div><div class="v">0,913</div></div>
-      <div class="bar"><div class="nm">Çoğunluk tahmini <small>referans taban</small></div><div class="track"><div class="fill ref" style="width:4.3%"></div></div><div class="v">0,543</div></div>
+      <div class="bar"><div class="nm">HGB <small>klasik ağaç modeli</small></div><div class="track"><div class="fill good" style="width:79.4%"></div></div><div class="v">0,959</div></div>
+      <div class="bar"><div class="nm">C_noawos <small>CNN, AWOS’suz aux</small></div><div class="track"><div class="fill good" style="width:78.5%"></div></div><div class="v">0,959</div></div>
+      <div class="bar"><div class="nm">A_sat <small>yalnız uydu+radar</small></div><div class="track"><div class="fill good" style="width:78.0%"></div></div><div class="v">0,958</div></div>
+      <div class="bar"><div class="nm">C_t2m <small>C + yalnız t2m</small></div><div class="track"><div class="fill good" style="width:77.9%"></div></div><div class="v">0,958</div></div>
+      <div class="bar"><div class="nm">ResNet18 <small>ImageNet girişi, 11,2 M</small></div><div class="track"><div class="fill good" style="width:77.8%"></div></div><div class="v">0,958</div></div>
+      <div class="bar"><div class="nm">U-Net <small>segmentasyon</small></div><div class="track"><div class="fill good" style="width:77.4%"></div></div><div class="v">0,957</div></div>
+      <div class="bar"><div class="nm">ResNet18 <small>CIFAR girişi</small></div><div class="track"><div class="fill good" style="width:77.4%"></div></div><div class="v">0,957</div></div>
+      <div class="bar"><div class="nm">B_full <small>tüm aux (AWOS dahil)</small></div><div class="track"><div class="fill good" style="width:76.4%"></div></div><div class="v">0,956</div></div>
+      <div class="bar"><div class="nm">Bloklu 5-katlı CV <small>B_full, ort. ± 0,012</small></div><div class="track"><div class="fill" style="width:65.8%"></div></div><div class="v">0,946</div></div>
+      <div class="bar"><div class="nm">NWC SAF CT <small>30 km alan, aynı örnekler</small></div><div class="track"><div class="fill ref" style="width:44.2%"></div></div><div class="v">0,924</div></div>
+      <div class="bar"><div class="nm">FCI CLM <small>30 km alan, aynı örnekler</small></div><div class="track"><div class="fill ref" style="width:32.2%"></div></div><div class="v">0,912</div></div>
     </div>
-    <p class="note">Ölçek 0,85–0,95 (çoğunluk tabanı 0,50’den başlar). Derin modellerin tamamı ~0,93’te kümeleniyor;
-    mimari, kapasite ve aux farkları ≤ 0,006. Bloklu CV, tek bölmenin iyimser olduğunu gösteriyor.
-    <b>Bunlar v2 sonuçları (eski etiketler);</b> v3 doğrulanmış etiketlerle yeniden koşulacak.</p>
+    <p class="note">Ölçek 0,88–0,98. Derin modeller ve HGB 0,956–0,959 aralığında; hiçbir model çifti arasındaki fark %95 blok-bootstrap
+    güven aralığında sıfırdan ayrışmıyor (HGB − B_full +0,003 sınırda). Referans çubukları kapsanan örneklerde ölçüldü
+    (NWC %82, CLM %98). v2 (eski etiketler) ~0,935’ti; etiket kümesi farklı olduğu için doğrudan kıyaslanmaz.</p>
   </div>
 </section>
 
@@ -194,43 +197,49 @@
   <div class="sec-h"><h2>Öne çıkan bulgular</h2><span class="k">rakamların söylediği</span></div>
   <div class="grid g2">
     <div class="card">
-      <h3><span class="ic" style="background:rgba(245,183,51,.16);color:var(--amber)">▲</span> Performans tavanı ~0,93</h3>
-      <p>29 bin parametreli küçük ağdan 11 milyon parametreli ResNet’e kadar herkes aynı yerde duruyor. Sınır büyük olasılıkla
-      etiket ve eşleştirme gürültüsü (gözlemcinin tüm gökyüzü ↔ 2 km piksel, ±9 dk).</p>
+      <h3><span class="ic" style="background:rgba(245,183,51,.16);color:var(--amber)">▲</span> Performans tavanı ~0,96</h3>
+      <p>230 bin parametreli CNN’den 11 milyonluk ResNet’e ve U-Net’e kadar herkes aynı yerde; aralarındaki farklar istatistiksel
+      olarak ayırt edilemiyor. Etiketleri temizlemek tavanı ~0,935’ten ~0,958’e taşıdı — sınırın kaynağı model değil etiket.</p>
     </div>
     <div class="card">
       <h3><span class="ic" style="background:rgba(183,156,255,.16);color:var(--violet)">≈</span> Klasik model = CNN</h3>
-      <p>Histogram tabanlı gradyan artırma (HGB) 0,932 ile CNN’lerle başa baş. Bu yüzden katkı “tam harita, uzaysal tutarlılık,
-      U-Net’in istasyon-dışı genellemesi” üzerine kurulmalı.</p>
+      <p>HGB 0,959 ile CNN’lerle başa baş ve en iyi kalibre model (ECE 0,024). Katkı “tam harita, uzaysal tutarlılık,
+      U-Net’in segmentasyon çıktısı” üzerine kurulmalı.</p>
     </div>
     <div class="card">
-      <h3><span class="ic" style="background:rgba(82,208,138,.16);color:var(--green)">↕</span> AWOS belirsiz</h3>
-      <p>Yer sıcaklığı/nemi val’de +0,01 kazandırıyor ama kolay test haftalarında ≈0. Tek kanal AUC’de BT10.5−T2m (0,932),
-      yalnız BT10.5’ten (0,893) iyi — bilgi gerçek, ama CNN bunu uydu bağlamından zaten çıkarıyor olabilir.</p>
+      <h3><span class="ic" style="background:rgba(82,208,138,.16);color:var(--green)">↕</span> AWOS: küçük ama gerçek</h3>
+      <p>Bloklu CV’de tüm aux (AWOS dahil) AWOS’suz sürümü 5/5 katta geçiyor: +0,0027 [+0,0015, +0,0041]; yalnız t2m bile
+      +0,0013. Görülmemiş istasyonlarda da +0,003. Tek bölmenin test haftalarında fark yok — etki küçük, ama yön tutarlı.</p>
     </div>
     <div class="card">
       <h3><span class="ic" style="background:rgba(255,107,127,.16);color:var(--rose)">⚑</span> Etiket gürültüsü (METAR)</h3>
-      <p>METAR “açık” (NSC/CAVOK) orta ve yüksek bulutları raporlamaz. SYNOP ile çakışan çiftlerin %13’ü aslında bulutlu.
-      Çözüm: bulutlu METAR’ı tut, “açık”ı SYNOP ile doğrula.</p>
+      <p>METAR “açık” (NSC/CAVOK) orta ve yüksek bulutları raporlamaz. v3’te METAR “açık” yalnız aynı saatteki SYNOP N=0 ise
+      tutuldu; bütün modellerin skoru ~0,02 arttı.</p>
+    </div>
+    <div class="card">
+      <h3><span class="ic" style="background:rgba(73,167,240,.15);color:var(--sky2)">☾</span> Gece daha zor</h3>
+      <p>Görülmemiş haftalarda gündüz BalAcc ~0,971, gece ~0,940. Görünür kanallar gece yok; alçak bulut/sis ve sıcaklık
+      terselmesi kızılötesinde zor. AWOS’un gece katkısı tutarsız: test haftalarında yok, görülmemiş istasyonlarda +0,005.</p>
     </div>
   </div>
 </section>
 
 <!-- REFERANS -->
 <section id="referans">
-  <div class="sec-h"><h2>Operasyonel ürünlerle karşılaştırma</h2><span class="k">aynı örnekler, aynı etiketler</span></div>
+  <div class="sec-h"><h2>Operasyonel ürünlerle karşılaştırma</h2><span class="k">yalnız SYNOP etiketleri · aynı (kapsanan) örnekler · v3</span></div>
   <div class="card" style="overflow-x:auto">
     <table class="tbl">
-      <thead><tr><th>Yöntem</th><th class="num">test_time</th><th class="num">test_station</th><th class="num">val (zor)</th></tr></thead>
+      <thead><tr><th>Yöntem</th><th class="num">test_time</th><th class="num">test_station</th></tr></thead>
       <tbody>
-        <tr><td><b>Modellerimiz</b> (CNN / U-Net)</td><td class="num hl">0,933–0,937</td><td class="num hl">0,918–0,923</td><td class="num">~0,89–0,91</td></tr>
-        <tr><td>FCI CLM (EUMETSAT) — 30 km alan</td><td class="num">0,884</td><td class="num">0,853</td><td class="num">0,801</td></tr>
-        <tr><td>NWC SAF Cloud Type (MGM) — 30 km alan</td><td class="num">0,893</td><td class="num">0,865</td><td class="num">0,810</td></tr>
-        <tr><td>FCI CLM — merkez piksel</td><td class="num">0,869</td><td class="num">0,841</td><td class="num">0,785</td></tr>
+        <tr><td><b>Modellerimiz</b> (CNN / U-Net / ResNet / HGB)</td><td class="num hl">0,953–0,955</td><td class="num hl">0,932–0,936</td></tr>
+        <tr><td>NWC SAF Cloud Type (MGM) — 30 km alan</td><td class="num">0,923</td><td class="num">0,903</td></tr>
+        <tr><td>FCI CLM (EUMETSAT) — 30 km alan</td><td class="num">0,908</td><td class="num">0,896</td></tr>
+        <tr><td>FCI CLM — merkez piksel</td><td class="num">0,889</td><td class="num">0,877</td></tr>
       </tbody>
     </table>
-    <p class="note">Modeller iki operasyonel üründen de yüksek. <b>Uyarı:</b> modeller METAR etiketleriyle eğitildi; adil kıyas yalnız SYNOP
-    etiketlerinde yapılmalı (orada referanslar belirgin güçleniyor). Alan büyüdükçe referans uyumu artıyor — etiketin bir alan büyüklüğü olduğunun kanıtı.</p>
+    <p class="note">Model − NWC (30 km) farkı test_time’da +0,023…+0,026, test_station’da +0,026…+0,030; %95 blok-bootstrap güven aralıkları
+    sıfırı dışlıyor. NWC görüntüleri test_time örneklerinin %84’ünü kapsıyor; model skorları her satırda referansla aynı örneklerde
+    hesaplandı. Alan büyüdükçe referans uyumu artıyor — etiketin bir alan büyüklüğü olduğunun kanıtı.</p>
   </div>
 </section>
 
@@ -254,6 +263,7 @@
         <div class="it"><div class="k">K15 · 16 Eki</div><div class="t">İnfografik + 3 çalışma kuralı</div><div class="d">Dosya başına commit, CLAUDE.md ve bu sayfanın güncel tutulması.</div></div>
         <div class="it good"><div class="k">K16 · 16 Eki</div><div class="t">v3 hazırlığı</div><div class="d">Etiket politikası “verify”; hızlı yükleyici (GPU %1 sorunu); örnek bazlı tahmin + SYNOP-only metrik; yerel PC + Colab planı.</div></div>
         <div class="it warn"><div class="k">K17 · 23 Eki</div><div class="t">v3 koşuldu; Windows kodlama hatası</div><div class="d">Yerel 28 koşu eğitimden sonra çıktı yazarken düştü; düzeltildi, yalnız değerlendirme tekrarlanacak. Ön sonuç: tüm modeller ~0,957–0,959, HGB 0,959; AWOS CV’de 5/5 katta küçük artı.</div></div>
+        <div class="it good"><div class="k">K18 · 23 Eki</div><div class="t">v3 tamam + anlamlılık analizi</div><div class="d">Tüm modeller ~0,958, farklar anlamsız; AWOS CV’de küçük ama anlamlı; operasyonel ürünlerden net üstün. <code>analyze_preds.py</code>.</div></div>
       </div>
     </div>
   </div>
@@ -289,7 +299,7 @@
         <tr><td>Klasik modeller (HGB, RF, eşikler) — tüm veri</td><td>Yerel PC</td><td class="num">1</td><td>~30 dk</td></tr>
       </tbody>
     </table>
-    <p class="note">Yerel süreler i7-12700 ölçümünden (<code>bench_speed.py</code>, 12 iş parçacığı, 20 Eki). Yerel toplam ≈ 15 saat; ağır modeller GPU’ya bırakıldı.</p>
+    <p class="note">Yerel süreler i7-12700 ölçümünden (<code>bench_speed.py</code>, 12 iş parçacığı, 20 Eki). Yerel toplam ≈ 15 saat; ağır modeller GPU’ya bırakıldı. <b>Tamamlandı:</b> 22–23 Eki 2026.</p>
   </div>
 </section>
 
@@ -300,10 +310,10 @@
     <div class="card">
       <h3>Olmazsa olmaz</h3>
       <ul class="lst">
-        <li>v3 matrisini koş (yerel PC + Colab) ve özetle</li>
-        <li>Anlamlılık testleri (McNemar, blok bootstrap) — tahminler artık kaydediliyor</li>
-        <li>Modalite (A/B/C/C+t2m) ve HGB’yi CV katlarında eşleştirilmiş karşılaştır</li>
-        <li>Gündüz/gece, ay, yükseklik kırılımları</li>
+        <li>Analiz raporunu makale bulgularına dönüştür (yöntem, tablolar, şekiller)</li>
+        <li>Gece performansı: alçak bulut/sis hataları, AWOS’un gece rolü</li>
+        <li>Danışman sunumu: model karşılaştırması + operasyonel ürün kıyası</li>
+        <li>Sınırlılıklar: Tem–Kas verisi yok, paralaks düzeltmesiz, ölçek farkı</li>
       </ul>
     </div>
     <div class="card">
@@ -324,8 +334,8 @@
 </section>
 
 <footer>
-  MTGCLM proje infografiği · güncelleme: <b>16 Ekim 2026</b> · Bu sayfa projedeki her anlamlı değişiklikte güncellenir.
-  Sayılar <code>artifacts/summary.md</code>, <code>artifacts/clm_on_splits.json</code> ve <code>artifacts/nwc_metar_on_splits.json</code>’dan türetilmiştir.
+  MTGCLM proje infografiği · güncelleme: <b>23 Ekim 2026</b> · Bu sayfa projedeki her anlamlı değişiklikte güncellenir.
+  Sayılar <code>artifacts_v3/analysis/analysis.md</code>, <code>artifacts/summary.md</code>, <code>artifacts/clm_on_splits.json</code> ve <code>artifacts/nwc_metar_on_splits.json</code>’dan türetilmiştir.
 </footer>
 
 </div>
