@@ -1,0 +1,233 @@
+{
+  "A_sat_s1": {
+    "stage": "modality",
+    "ok": false,
+    "minutes": 28.8,
+    "finished": "2026-10-22 18:10:18",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\split_v2_verify.npz --model medium_flat --seed 1 --results E:\\belgeler\\MTGCLM\\artifacts_v3\\A_sat_s1.json"
+  },
+  "B_full_s1": {
+    "stage": "modality",
+    "ok": false,
+    "minutes": 35.3,
+    "finished": "2026-10-22 18:45:38",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\split_v2_verify.npz --model medium_flat --seed 1 --aux --results E:\\belgeler\\MTGCLM\\artifacts_v3\\B_full_s1.json"
+  },
+  "C_noawos_s1": {
+    "stage": "modality",
+    "ok": false,
+    "minutes": 35.0,
+    "finished": "2026-10-22 19:20:35",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\split_v2_verify.npz --model medium_flat --seed 1 --aux --aux_channels cos_sza,elev,radar_cov --results E:\\belgeler\\MTGCLM\\artifacts_v3\\C_noawos_s1.json"
+  },
+  "C_t2m_s1": {
+    "stage": "modality",
+    "ok": false,
+    "minutes": 35.1,
+    "finished": "2026-10-22 19:55:41",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\split_v2_verify.npz --model medium_flat --seed 1 --aux --aux_channels cos_sza,elev,radar_cov,t2m --results E:\\belgeler\\MTGCLM\\artifacts_v3\\C_t2m_s1.json"
+  },
+  "A_sat_s2": {
+    "stage": "modality",
+    "ok": false,
+    "minutes": 26.7,
+    "finished": "2026-10-22 20:22:21",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\split_v2_verify.npz --model medium_flat --seed 2 --results E:\\belgeler\\MTGCLM\\artifacts_v3\\A_sat_s2.json"
+  },
+  "B_full_s2": {
+    "stage": "modality",
+    "ok": false,
+    "minutes": 35.2,
+    "finished": "2026-10-22 20:57:34",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\split_v2_verify.npz --model medium_flat --seed 2 --aux --results E:\\belgeler\\MTGCLM\\artifacts_v3\\B_full_s2.json"
+  },
+  "C_noawos_s2": {
+    "stage": "modality",
+    "ok": false,
+    "minutes": 34.5,
+    "finished": "2026-10-22 21:32:02",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\split_v2_verify.npz --model medium_flat --seed 2 --aux --aux_channels cos_sza,elev,radar_cov --results E:\\belgeler\\MTGCLM\\artifacts_v3\\C_noawos_s2.json"
+  },
+  "C_t2m_s2": {
+    "stage": "modality",
+    "ok": false,
+    "minutes": 35.8,
+    "finished": "2026-10-22 22:07:50",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\split_v2_verify.npz --model medium_flat --seed 2 --aux --aux_channels cos_sza,elev,radar_cov,t2m --results E:\\belgeler\\MTGCLM\\artifacts_v3\\C_t2m_s2.json"
+  },
+  "A_sat_s3": {
+    "stage": "modality",
+    "ok": false,
+    "minutes": 27.5,
+    "finished": "2026-10-22 22:35:19",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\split_v2_verify.npz --model medium_flat --seed 3 --results E:\\belgeler\\MTGCLM\\artifacts_v3\\A_sat_s3.json"
+  },
+  "B_full_s3": {
+    "stage": "modality",
+    "ok": false,
+    "minutes": 35.6,
+    "finished": "2026-10-22 23:10:55",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\split_v2_verify.npz --model medium_flat --seed 3 --aux --results E:\\belgeler\\MTGCLM\\artifacts_v3\\B_full_s3.json"
+  },
+  "C_noawos_s3": {
+    "stage": "modality",
+    "ok": false,
+    "minutes": 28.3,
+    "finished": "2026-10-22 23:39:11",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\split_v2_verify.npz --model medium_flat --seed 3 --aux --aux_channels cos_sza,elev,radar_cov --results E:\\belgeler\\MTGCLM\\artifacts_v3\\C_noawos_s3.json"
+  },
+  "C_t2m_s3": {
+    "stage": "modality",
+    "ok": false,
+    "minutes": 31.6,
+    "finished": "2026-10-23 00:10:50",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\split_v2_verify.npz --model medium_flat --seed 3 --aux --aux_channels cos_sza,elev,radar_cov,t2m --results E:\\belgeler\\MTGCLM\\artifacts_v3\\C_t2m_s3.json"
+  },
+  "CV_A_f0_s1": {
+    "stage": "cv",
+    "ok": false,
+    "minutes": 29.5,
+    "finished": "2026-10-23 00:40:20",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\cv5_verify_fold0.npz --model medium_flat --seed 1 --results E:\\belgeler\\MTGCLM\\artifacts_v3\\CV_A_f0_s1.json"
+  },
+  "CV_A_f1_s1": {
+    "stage": "cv",
+    "ok": false,
+    "minutes": 29.2,
+    "finished": "2026-10-23 01:09:32",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\cv5_verify_fold1.npz --model medium_flat --seed 1 --results E:\\belgeler\\MTGCLM\\artifacts_v3\\CV_A_f1_s1.json"
+  },
+  "CV_A_f2_s1": {
+    "stage": "cv",
+    "ok": false,
+    "minutes": 29.0,
+    "finished": "2026-10-23 01:38:34",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\cv5_verify_fold2.npz --model medium_flat --seed 1 --results E:\\belgeler\\MTGCLM\\artifacts_v3\\CV_A_f2_s1.json"
+  },
+  "CV_A_f3_s1": {
+    "stage": "cv",
+    "ok": true,
+    "minutes": 27.0,
+    "finished": "2026-10-23 02:05:32",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\cv5_verify_fold3.npz --model medium_flat --seed 1 --results E:\\belgeler\\MTGCLM\\artifacts_v3\\CV_A_f3_s1.json"
+  },
+  "CV_A_f4_s1": {
+    "stage": "cv",
+    "ok": false,
+    "minutes": 28.2,
+    "finished": "2026-10-23 02:33:42",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\cv5_verify_fold4.npz --model medium_flat --seed 1 --results E:\\belgeler\\MTGCLM\\artifacts_v3\\CV_A_f4_s1.json"
+  },
+  "CV_B_f0_s1": {
+    "stage": "cv",
+    "ok": false,
+    "minutes": 32.9,
+    "finished": "2026-10-23 03:06:37",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\cv5_verify_fold0.npz --model medium_flat --seed 1 --aux --results E:\\belgeler\\MTGCLM\\artifacts_v3\\CV_B_f0_s1.json"
+  },
+  "CV_B_f1_s1": {
+    "stage": "cv",
+    "ok": false,
+    "minutes": 33.4,
+    "finished": "2026-10-23 03:39:59",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\cv5_verify_fold1.npz --model medium_flat --seed 1 --aux --results E:\\belgeler\\MTGCLM\\artifacts_v3\\CV_B_f1_s1.json"
+  },
+  "CV_B_f2_s1": {
+    "stage": "cv",
+    "ok": false,
+    "minutes": 32.6,
+    "finished": "2026-10-23 04:12:32",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\cv5_verify_fold2.npz --model medium_flat --seed 1 --aux --results E:\\belgeler\\MTGCLM\\artifacts_v3\\CV_B_f2_s1.json"
+  },
+  "CV_B_f3_s1": {
+    "stage": "cv",
+    "ok": true,
+    "minutes": 29.0,
+    "finished": "2026-10-23 04:41:30",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\cv5_verify_fold3.npz --model medium_flat --seed 1 --aux --results E:\\belgeler\\MTGCLM\\artifacts_v3\\CV_B_f3_s1.json"
+  },
+  "CV_B_f4_s1": {
+    "stage": "cv",
+    "ok": false,
+    "minutes": 32.4,
+    "finished": "2026-10-23 05:13:55",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\cv5_verify_fold4.npz --model medium_flat --seed 1 --aux --results E:\\belgeler\\MTGCLM\\artifacts_v3\\CV_B_f4_s1.json"
+  },
+  "CV_C_f0_s1": {
+    "stage": "cv",
+    "ok": false,
+    "minutes": 29.3,
+    "finished": "2026-10-23 05:43:14",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\cv5_verify_fold0.npz --model medium_flat --seed 1 --aux --aux_channels cos_sza,elev,radar_cov --results E:\\belgeler\\MTGCLM\\artifacts_v3\\CV_C_f0_s1.json"
+  },
+  "CV_C_f1_s1": {
+    "stage": "cv",
+    "ok": false,
+    "minutes": 29.9,
+    "finished": "2026-10-23 06:13:06",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\cv5_verify_fold1.npz --model medium_flat --seed 1 --aux --aux_channels cos_sza,elev,radar_cov --results E:\\belgeler\\MTGCLM\\artifacts_v3\\CV_C_f1_s1.json"
+  },
+  "CV_C_f2_s1": {
+    "stage": "cv",
+    "ok": false,
+    "minutes": 29.8,
+    "finished": "2026-10-23 06:42:56",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\cv5_verify_fold2.npz --model medium_flat --seed 1 --aux --aux_channels cos_sza,elev,radar_cov --results E:\\belgeler\\MTGCLM\\artifacts_v3\\CV_C_f2_s1.json"
+  },
+  "CV_C_f3_s1": {
+    "stage": "cv",
+    "ok": true,
+    "minutes": 28.3,
+    "finished": "2026-10-23 07:11:12",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\cv5_verify_fold3.npz --model medium_flat --seed 1 --aux --aux_channels cos_sza,elev,radar_cov --results E:\\belgeler\\MTGCLM\\artifacts_v3\\CV_C_f3_s1.json"
+  },
+  "CV_C_f4_s1": {
+    "stage": "cv",
+    "ok": false,
+    "minutes": 29.8,
+    "finished": "2026-10-23 07:41:00",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\cv5_verify_fold4.npz --model medium_flat --seed 1 --aux --aux_channels cos_sza,elev,radar_cov --results E:\\belgeler\\MTGCLM\\artifacts_v3\\CV_C_f4_s1.json"
+  },
+  "CV_Ct2m_f0_s1": {
+    "stage": "cv",
+    "ok": false,
+    "minutes": 29.9,
+    "finished": "2026-10-23 08:10:53",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\cv5_verify_fold0.npz --model medium_flat --seed 1 --aux --aux_channels cos_sza,elev,radar_cov,t2m --results E:\\belgeler\\MTGCLM\\artifacts_v3\\CV_Ct2m_f0_s1.json"
+  },
+  "CV_Ct2m_f1_s1": {
+    "stage": "cv",
+    "ok": false,
+    "minutes": 31.5,
+    "finished": "2026-10-23 08:42:23",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\cv5_verify_fold1.npz --model medium_flat --seed 1 --aux --aux_channels cos_sza,elev,radar_cov,t2m --results E:\\belgeler\\MTGCLM\\artifacts_v3\\CV_Ct2m_f1_s1.json"
+  },
+  "CV_Ct2m_f2_s1": {
+    "stage": "cv",
+    "ok": false,
+    "minutes": 30.0,
+    "finished": "2026-10-23 09:12:24",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\cv5_verify_fold2.npz --model medium_flat --seed 1 --aux --aux_channels cos_sza,elev,radar_cov,t2m --results E:\\belgeler\\MTGCLM\\artifacts_v3\\CV_Ct2m_f2_s1.json"
+  },
+  "CV_Ct2m_f3_s1": {
+    "stage": "cv",
+    "ok": true,
+    "minutes": 30.4,
+    "finished": "2026-10-23 09:42:50",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\cv5_verify_fold3.npz --model medium_flat --seed 1 --aux --aux_channels cos_sza,elev,radar_cov,t2m --results E:\\belgeler\\MTGCLM\\artifacts_v3\\CV_Ct2m_f3_s1.json"
+  },
+  "CV_Ct2m_f4_s1": {
+    "stage": "cv",
+    "ok": false,
+    "minutes": 34.3,
+    "finished": "2026-10-23 10:17:05",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\cv5_verify_fold4.npz --model medium_flat --seed 1 --aux --aux_channels cos_sza,elev,radar_cov,t2m --results E:\\belgeler\\MTGCLM\\artifacts_v3\\CV_Ct2m_f4_s1.json"
+  },
+  "Z_baselines_s1": {
+    "stage": "baselines",
+    "ok": true,
+    "minutes": 3.7,
+    "finished": "2026-10-23 10:20:47",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\baselines.py --h5 C:\\mtg\\mtg_train_v2.h5 --split E:\\belgeler\\MTGCLM\\splits\\split_v2_verify.npz --aux --models majority,threshold,threshold2,logreg,rf,hgb --seed 1 --max_train 0 --max_eval 0 --results E:\\belgeler\\MTGCLM\\artifacts_v3\\Z_baselines_s1.json"
+  }
+}

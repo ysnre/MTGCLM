@@ -1,0 +1,65 @@
+{
+  "D_unet_s1": {
+    "stage": "unet",
+    "ok": true,
+    "minutes": 40.6,
+    "finished": "2026-10-22 19:49:54",
+    "cmd": "/usr/bin/python3 /content/MTGCLM/src/train_unet.py --h5 /content/mtg_train_v2.h5 --outdir /content/drive/MyDrive/MTGCLM/artifacts_v3 --loader auto --split /content/MTGCLM/splits/split_v2_verify.npz --cache_dir /content/cache --model unet --aux --seed 1 --results /content/drive/MyDrive/MTGCLM/artifacts_v3/D_unet_s1.json"
+  },
+  "D_unet_s2": {
+    "stage": "unet",
+    "ok": true,
+    "minutes": 38.8,
+    "finished": "2026-10-22 20:28:41",
+    "cmd": "/usr/bin/python3 /content/MTGCLM/src/train_unet.py --h5 /content/mtg_train_v2.h5 --outdir /content/drive/MyDrive/MTGCLM/artifacts_v3 --loader auto --split /content/MTGCLM/splits/split_v2_verify.npz --cache_dir /content/cache --model unet --aux --seed 2 --results /content/drive/MyDrive/MTGCLM/artifacts_v3/D_unet_s2.json"
+  },
+  "D_unet_s3": {
+    "stage": "unet",
+    "ok": true,
+    "minutes": 37.0,
+    "finished": "2026-10-22 21:05:43",
+    "cmd": "/usr/bin/python3 /content/MTGCLM/src/train_unet.py --h5 /content/mtg_train_v2.h5 --outdir /content/drive/MyDrive/MTGCLM/artifacts_v3 --loader auto --split /content/MTGCLM/splits/split_v2_verify.npz --cache_dir /content/cache --model unet --aux --seed 3 --results /content/drive/MyDrive/MTGCLM/artifacts_v3/D_unet_s3.json"
+  },
+  "RESNET_s1": {
+    "stage": "resnet",
+    "ok": true,
+    "minutes": 33.9,
+    "finished": "2026-10-22 21:39:37",
+    "cmd": "/usr/bin/python3 /content/MTGCLM/src/train.py --h5 /content/mtg_train_v2.h5 --outdir /content/drive/MyDrive/MTGCLM/artifacts_v3 --loader auto --split /content/MTGCLM/splits/split_v2_verify.npz --cache_dir /content/cache --model resnet18 --aux --seed 1 --results /content/drive/MyDrive/MTGCLM/artifacts_v3/RESNET_s1.json"
+  },
+  "RESNET_s2": {
+    "stage": "resnet",
+    "ok": true,
+    "minutes": 34.0,
+    "finished": "2026-10-22 22:13:37",
+    "cmd": "/usr/bin/python3 /content/MTGCLM/src/train.py --h5 /content/mtg_train_v2.h5 --outdir /content/drive/MyDrive/MTGCLM/artifacts_v3 --loader auto --split /content/MTGCLM/splits/split_v2_verify.npz --cache_dir /content/cache --model resnet18 --aux --seed 2 --results /content/drive/MyDrive/MTGCLM/artifacts_v3/RESNET_s2.json"
+  },
+  "RESNET_s3": {
+    "stage": "resnet",
+    "ok": true,
+    "minutes": 34.0,
+    "finished": "2026-10-22 22:47:35",
+    "cmd": "/usr/bin/python3 /content/MTGCLM/src/train.py --h5 /content/mtg_train_v2.h5 --outdir /content/drive/MyDrive/MTGCLM/artifacts_v3 --loader auto --split /content/MTGCLM/splits/split_v2_verify.npz --cache_dir /content/cache --model resnet18 --aux --seed 3 --results /content/drive/MyDrive/MTGCLM/artifacts_v3/RESNET_s3.json"
+  },
+  "RESNET_CIFAR_s1": {
+    "stage": "resnet",
+    "ok": true,
+    "minutes": 89.2,
+    "finished": "2026-10-23 00:16:45",
+    "cmd": "/usr/bin/python3 /content/MTGCLM/src/train.py --h5 /content/mtg_train_v2.h5 --outdir /content/drive/MyDrive/MTGCLM/artifacts_v3 --loader auto --split /content/MTGCLM/splits/split_v2_verify.npz --cache_dir /content/cache --model resnet18_cifar --aux --seed 1 --results /content/drive/MyDrive/MTGCLM/artifacts_v3/RESNET_CIFAR_s1.json"
+  },
+  "RESNET_CIFAR_s2": {
+    "stage": "resnet",
+    "ok": true,
+    "minutes": 89.1,
+    "finished": "2026-10-23 01:45:54",
+    "cmd": "/usr/bin/python3 /content/MTGCLM/src/train.py --h5 /content/mtg_train_v2.h5 --outdir /content/drive/MyDrive/MTGCLM/artifacts_v3 --loader auto --split /content/MTGCLM/splits/split_v2_verify.npz --cache_dir /content/cache --model resnet18_cifar --aux --seed 2 --results /content/drive/MyDrive/MTGCLM/artifacts_v3/RESNET_CIFAR_s2.json"
+  },
+  "RESNET_CIFAR_s3": {
+    "stage": "resnet",
+    "ok": true,
+    "minutes": 89.4,
+    "finished": "2026-10-23 03:15:21",
+    "cmd": "/usr/bin/python3 /content/MTGCLM/src/train.py --h5 /content/mtg_train_v2.h5 --outdir /content/drive/MyDrive/MTGCLM/artifacts_v3 --loader auto --split /content/MTGCLM/splits/split_v2_verify.npz --cache_dir /content/cache --model resnet18_cifar --aux --seed 3 --results /content/drive/MyDrive/MTGCLM/artifacts_v3/RESNET_CIFAR_s3.json"
+  }
+}
