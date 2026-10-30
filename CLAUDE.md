@@ -4,7 +4,7 @@ Bu dosya, Claude Code / Cowork oturumlarının projeyi sıfırdan anlamadan kald
 devam edebilmesi için tutulur. **Yeni bir karar alındığında (model seçimi, veri bölme,
 etiket politikası, eğitim komutu) bu dosyaya birkaç satır ekleyin.**
 
-Son güncelleme: 2026-10-23
+Son güncelleme: 2026-10-30
 
 ---
 
@@ -397,6 +397,17 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
 - **Referanslar (yalnız SYNOP, aynı örnekler):** test_time model 0,953–0,955 vs CLM r30 0,908, NWC r30 0,923 (NWC kapsamında model
   0,947–0,951; fark +0,023…+0,026, GA sıfırı dışlıyor); test_station model 0,932–0,936 vs NWC r30 0,903, CLM r30 0,896.
 
+### K19 — 30 Eki 2026: kod haritası (ikinci infografik)
+- `docs/mtgclm_kod_haritasi.html`: bütün `src/*.py` ve `notebooks/*.ipynb` dosyalarının, sınıflarının, metotlarının ve
+  fonksiyonlarının birbirine bağlantısı. Üç görünüm: **Modül haritası** (iş akışı sütunları; import, fonksiyon çağrısı,
+  alt süreçle betik çalıştırma, veri okur/yazar okları), **Fonksiyon ağı** (seçilen fonksiyonu çağıranlar / çağırdıkları),
+  **Dizin** (aranabilir, sıralanabilir tüm sınıf ve fonksiyonlar). Harici bağımlılık yok, açık/koyu tema.
+- **Otomatik üretilir:** `python src/make_code_map.py` (stdlib `ast`; ~1 sn). Modül grupları, açıklamalar ve "eski" işaretleri
+  `MODULE_INFO`'da; dizeden çıkarılamayan veri bağlantıları `EXTRA_DATA`'da. Elle düzenlenmez.
+- Kural 3 genişletildi: kod değişikliğinden sonra kod haritası yeniden üretilir ve ayrı commit edilir.
+- İlk üretim: 52 dosya, 14 sınıf, 252 fonksiyon/metot, 297 çağrı bağlantısı. Statik çözümleme sınırı: nesne üzerinden
+  dolaylı çağrılar (ör. `model(x)`, `loader.dataset`) görünmez; veri okur/yazar yönü sezgiseldir.
+
 ---
 
 ## 3. Komutlar
@@ -561,6 +572,8 @@ python src\analyze_preds.py --dir artifacts_v3 --out artifacts_v3/analysis --ref
 | `src/eval_clm_on_splits.py`, `src/eval_nwc_and_metar.py` | Referansları split örneklerinde değerlendirme; METAR NSC doğrulaması; bulut tipi kırılımı |
 | `src/clm_vs_synop_quicklook.py` | CLM ↔ ham SYNOP ön bakış (merkez vs alan) |
 | `docs/mtgclm_infografik.html` | Proje geneli insan-okur HTML infografik (her anlamlı değişiklikte güncellenir, K15) |
+| `docs/mtgclm_kod_haritasi.html` | Kod haritası: dosya/sınıf/fonksiyon bağlantıları (otomatik, `src/make_code_map.py`; K19) |
+| `src/make_code_map.py` | Kodu `ast` ile tarayıp kod haritasını üretir; `MODULE_INFO` (grup/açıklama/eski), `EXTRA_DATA` |
 | `src/loss.py` | `MaskedBCELoss` — yalnız (16,16) pikselinde, `-1` yok sayılır |
 | `src/train.py`, `src/train_unet.py` | Eğitim; `--h5 --split --aux --aux_channels --seed --epochs --limit_batches --results --outdir --model` + K16: `--loader --mem_splits --cache_dir --threads --no_deterministic --no_last_preds` |
 | `src/config.py` | Colab/yerel yollar, `MTGCLM_H5`, PATCH_SIZE 33, BATCH_SIZE 64, LR 1e-3 |
@@ -636,5 +649,6 @@ Yereldeki diğer notlar: `MTG Cloud Phase Web Service Development.md`,
   karşılaştırma için kullanma.
 - Yeni bir karar alındığında bu dosyanın §2'sine ekle (Kural 2 / `.agent/rules/rule_update_claude_md.md`).
 - İş paketi bitince dosya başına ayrı İngilizce commit komutları üret, çalıştırma (Kural 1 / `.agent/rules/rule_commit_per_file.md`).
-- Anlamlı her değişiklikte `docs/mtgclm_infografik.html`'i güncelle (Kural 3 / `.agent/rules/rule_update_infographic.md`).
+- Anlamlı her değişiklikte `docs/mtgclm_infografik.html`'i güncelle; her kod değişikliğinden sonra `python src/make_code_map.py`
+  ile `docs/mtgclm_kod_haritasi.html`'i yeniden üret (Kural 3 / `.agent/rules/rule_update_infographic.md`).
 - `.agent/` ve `archive_v1/` .gitignore'da; bu dosyalar için commit komutu verme, yerelde kalır.
