@@ -408,6 +408,25 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
 - İlk üretim: 52 dosya, 14 sınıf, 252 fonksiyon/metot, 297 çağrı bağlantısı. Statik çözümleme sınırı: nesne üzerinden
   dolaylı çağrılar (ör. `model(x)`, `loader.dataset`) görünmez; veri okur/yazar yönü sezgiseldir.
 
+### K20 — 30 Eki 2026: makale hedefi, şekil kuralı, yazım kararları
+- **Hedef dergiler:** Theoretical and Applied Climatology (TAAC, birincil) ve Meteorology and Atmospheric Physics
+  (MAP, yedek); ikisi de Springer Wien, hibrit (abonelik yolu ücretsiz). Tek makale gövdesi, dergiye özel kısımlar
+  LaTeX'te `\ifTAAC` anahtarıyla. TAAC için bulut sıklığı haritaları zorunlu; MAP için kanal önem analizi zorunlu.
+- **Ana model:** tam harita ürünü **U-Net** (`D_unet`); nokta tablolarında **CNN, tüm girdiler** (`B_full`) odak satır.
+- **Zaman:** ≥ 1 ay → yol haritasındaki S1–S6'nın tamamı ilk gönderime girer; yalnız P20 (U-Net jitter) opsiyonel.
+- **Yazım:** LaTeX (Springer Nature şablonu) + İngiliz yazımı (centre, colour); ondalık ayırıcı nokta.
+- **Şekil kuralı:** `docs/paper/sekil_stil_kurali.md` + `paper/figures/springer_fig.py` + `springer_taac_map.mplstyle`;
+  Kural 4 (`.agent/rules/rule_figure_style.md`). Demo: referans kıyası şekli (yalnız SYNOP, kontrol raporu OK).
+- **Makale dokümanları:** `docs/paper/` (yol haritası, bölüm iş listesi, eksik promptlar P0–P20, literatür).
+- **Veri politikası (araştırma notu):** WMO Unified Data Policy (Res. 1, Cg-Ext 2021) çekirdek (core) veriyi serbest ve
+  kısıtsız değişime bağlar; çekirdek yüzey verisi GBON ve WIGOS El Kitabı'nda tanımlanan gözlemlerdir (ör. RBSN
+  istasyonlarının ana sinoptik saatleri). 1982 AWOS istasyonunun çoğu ve radar hacim verisi açıkça çekirdek listede
+  görünmüyor → büyük olasılıkla "recommended" (koşullu olabilir); türetilmiş veri kaynağının koşulunu taşır.
+  Karar: SYNOP/METAR türevleri UDP gereği paylaşılabilir; radar ve AWOS türevleri için MGM'den kısa yazılı teyit
+  alınır (Springer gönderiminde kurum onayı zaten beyan ediliyor). Ayrıntı: `docs/paper/makale_yol_haritasi.md` §5.
+- **Not:** CLAUDE.md §5'teki "49×49 çıkar → 33×33 kırp" jitter maddesi §7'deki "yamaları yeniden çıkarma" kuralıyla
+  çelişiyor; P20 bunun yerine 33×33 içinde 25×25 rastgele kırpma öneriyor.
+
 ---
 
 ## 3. Komutlar
