@@ -66,4 +66,7 @@ Thumbs.db
 
 # --- kişisel öğrenme sayfaları (projeyle ilgisiz) ---
 _kisisel/
+
+# --- makale ile ilgili ---
 docs/paper/
+paper/
