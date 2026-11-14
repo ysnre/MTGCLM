@@ -497,6 +497,30 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   (kayıt); makalede "IR10.5 ve IR13.3" yazılıyor (Fig. 4 altyazısı, Yöntem, Bulgular). Sinir ağları/HGB/RF/LogReg etkilenmez (tüm kanallar).
 - P3 (kanal önemi) bu sırayı kullanmalı. Not: `baselines.py --ch2 vis_06` artık gerçek VIS0.6'yı seçer (önceki koşudan farklı model).
 
+### K25 — 15 Kas 2026: P1–P3 kodu hazır (radarsız ablasyon, HGB/doku kontrolü, kanal önemi) — gece koşusu bekliyor
+- **Tek kaynak kanal sırası:** `src/channels.py` (`FCI_CHANNELS`, `BASE_CHANNELS`, `WAVELENGTH`, P3 `GROUPS`); `baselines.py` buradan alır.
+- **P1 — `train.py --base_channels`** (`fci` = 16 FCI, radarsız; virgüllü adlar; varsayılan `all`). Seçim yükleyicide değil
+  `prep_features`'ta (aux z-skorundan sonra `index_select`) yapılır → önbellek/yükleyici değişmez. **Doğrulandı:** argümansız koşu ile
+  17 kanalın açıkça seçildiği koşu mini H5'te bit bit aynı tahmin üretiyor. JSON `config.base_channels` (ad listesi | "all").
+  `run_all.py` modaliteleri: `A_norad` (16 FCI), `B_norad` (16 FCI + t2m, rh2m, elev, cos_sza; radar_cov yok); CV varyantı `Bnorad`.
+- **P2 — `train.py --spatial_shuffle`:** örnek başına 33×33 piksel konumları karıştırılır, merkez sabit, tüm kanallarda aynı permütasyon,
+  eğitim ve değerlendirmede (birim testleri: merkez korunur, kanal başına değer kümesi korunur). Modalite `B_full_shuf`.
+  **`baselines.py --feature_sets center1,center5,current,texture`** (texture = current + yüzdelik 10/90 + merkez−ortalama + Sobel);
+  `current` eski özniteliklerle bit bit aynı ve `hgb_current` olasılıkları eski `hgb_aux` ile birebir (mini H5). Aşama `hgbfs` → `Z_hgbfs_s1`.
+- **P3 — `src/channel_importance.py`:** B_full s1–3 checkpoint'leri, test_time; permütasyon önemi (22 kanal + 10 grup × 5 tekrar) ve IG
+  (5000 tabakalı örnek, 32 adım, taban 0, hedef logit farkı). **Güvenlik kontrolü:** yeniden hesaplanan olasılıklar kayıtlı tahminlerle
+  karşılaştırılır, fark > 1e-3 ise durur (mini testte fark 0). Aşama `importance` → `analysis/channel_importance*.csv`, `ig_summary.csv`.
+  Şekil: `paper/figures/make_fig07_channel_importance.py` (make_all.py'de; çıktı yoksa atlanır).
+- **`analyze_preds.py`:** yeni deneyler ORDER sonuna (mevcut tablo sırası değişmez), çiftler A_sat−A_norad, B_full−B_norad,
+  B_full−B_full_shuf, hgb_texture−hgb_current, hgb_current−hgb_center1, hgb_center5−hgb_center1, B_full−hgb_texture; CV B−Bnorad;
+  radar kapsamı kırılımı (`--aux_h5` bir kez → `data/processed/radar_cov_center.npy`). **Yeni koşu yokken mevcut 6 CSV birebir yeniden
+  üretildi** (bootstrap ağırlıkları deney döngüsünden önce çekiliyor → makaledeki sayılar değişmez).
+- **Koşu (~8,5–9 sa; bölünebilir, kaldığı yerden sürer):**
+  `python src\run_all.py --h5 C:/mtg/mtg_train_v2.h5 --outdir artifacts_v3 --stage modality,cv,hgbfs,importance
+  --modalities A_norad,B_norad,B_full_shuf --cv_variants Bnorad --loader auto --threads 12`
+  Sonra: `python src\analyze_preds.py --dir artifacts_v3 --out artifacts_v3/analysis --refs --aux_h5 C:/mtg/mtg_train_v2.h5`,
+  `python paper\tools\verify_numbers.py` (mevcut 178 sayı hâlâ 0 hata olmalı), `python paper\figures\make_all.py`.
+
 ---
 
 ## 3. Komutlar
@@ -668,6 +692,8 @@ python src\analyze_preds.py --dir artifacts_v3 --out artifacts_v3/analysis --ref
 | `src/config.py` | Colab/yerel yollar, `MTGCLM_H5`, PATCH_SIZE 33, BATCH_SIZE 64, LR 1e-3 |
 | `paper/main.tex`, `preamble.tex`, `frontmatter.tex`, `backmatter.tex`, `sections/`, `supplementary.tex` | Makale LaTeX iskeleti (sn-jnl, sn-basic; `\ifTAAC`) — K22 |
 | `paper/tools/verify_numbers.py`, `derived_facts.py` | `% src:` yorumlarını CSV hücreleriyle denetler; metin için ek kaynak CSV'leri üretir — K23 |
+| `src/channels.py` | Doğrulanmış H5 kanal sırası (tek kaynak), dalga boyları, P3 grupları — K24/K25 |
+| `src/channel_importance.py` | P3: permütasyon önemi + Integrated Gradients, kayıtlı tahminlerle güvenlik kontrolü — K25 |
 | `src/verify_channel_order.py` | Kompakt H5 kanal sırasını ham NetCDF ile eşleştirir (salt okuma) — K23 |
 | `paper/tools/build.py`, `count_chars.py`, `captions2tex.py` | Derleme (TAAC/MAP, taslak/gönderim), TAAC karakter sayımı, altyazı dönüşümü — K22 |
 | `paper/figures/make_*.py`, `figdata.py`, `make_all.py` | Makale şekilleri (Fig. 1, 4, 5, 6, 10) ve tabloları (Tab. 2–5, S1–S2); `make_all.py` hepsini üretip kontrol raporlarını özetler (K21) |
@@ -691,8 +717,7 @@ geç-füzyon planıdır — **arşiv**, güncel hattı temsil etmez. `notebooks/
       görselleştirme) gerekebilir.
 - [ ] Bloklu CV'nin tek-bölme test_time'dan daha düşük/değişken çıkmasını makalede tartış
       (K12) — hangi haftalar/katlar düşürüyor, incele.
-- [ ] Uydu-only (radar hariç) ablasyonu için `MTGH5Dataset`'e kanal seçme parametresi ekle
-      (`base_channels` alt kümesi) — henüz yok.
+- [x] ~~Uydu-only (radar hariç) ablasyonu için kanal seçimi~~ — K25 (`train.py --base_channels`; koşu bekliyor).
 - [ ] FCI CLM karşılaştırması: çıkarım `src/extract_fci_clm.py` ile (K13); aynı örneklerde merkez + alan bazlı, C/O dönemleri ayrı.
 - [x] ~~NWC SAF CT projeksiyonu~~ — MGM köşeleri alındı, çıkarım yapıldı (K13/K14).
 - [x] ~~METAR NSC politikası~~ — **verify** seçildi, `split_v2_verify` + `cv5_verify` üretildi; H5 yeniden üretimi gerekmedi (K16).
@@ -711,7 +736,7 @@ geç-füzyon planıdır — **arşiv**, güncel hattı temsil etmez. `notebooks/
 - [ ] Analiz raporunu makale bulgularına dönüştür; gece hataları (alçak bulut/sis) için ayrıntı.
 - [ ] U-Net tam harita için hedef-piksel jitter (49×49 çıkar → 33×33 rastgele kırp).
 - [ ] `infer_scene.py`: tek NetCDF sahne + radar + aux → 800×1000 olasılık haritası (GeoTIFF/PNG) — henüz yok.
-- [ ] Kanal permütasyon önemi / Integrated Gradients (17→22 kanal için asıl bilimsel soru).
+- [ ] Kanal permütasyon önemi / Integrated Gradients — kod hazır (K25), koşu bekliyor.
 - [ ] Metrikleri gündüz/gece ve mevsim kırılımıyla raporla.
 - [ ] `src/make_public_sample.py` ile paylaşılabilir örneklem (`data/mtg_sample.h5`) üret — henüz çalıştırılmadı.
 - [ ] Zenodo DOI al, README'ye ekle; eğitilmiş ağırlıkları (artık `artifacts/checkpoints/*.pth`
