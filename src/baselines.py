@@ -41,11 +41,9 @@ import numpy as np
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from metrics import compute_metrics, format_metrics
 
-# DUZELTILDI (15 Kas 2026, K24): onceki liste baska bir NetCDF dosyasinin anahtar sirasiydi ve gercek H5 sirasiyla
-# yalniz indeks 3'te (ir_105) cakisiyordu. Gercek sira src/verify_channel_order.py ile ham NetCDF'ten dogrulandi
-# (artifacts_v3/channel_order.json). Eski listeyle kosulan "threshold2_ir_105+vis_06" aslinda ir_105 + ir_133 kullandi.
-CHANNEL_NAMES = ["ir_87", "vis_09", "wv_73", "ir_105", "nir_22", "ir_123", "wv_63", "vis_08",
-                 "ir_97", "ir_38", "vis_06", "nir_16", "nir_13", "ir_133", "vis_05", "vis_04", "radar"]
+# Kanal sirasi tek kaynaktan (src/channels.py, K24). Onceki liste yalniz indeks 3'te (ir_105) dogruydu;
+# eski "threshold2_ir_105+vis_06" kosusu aslinda ir_105 + ir_133 kullandi.
+from channels import BASE_CHANNELS as CHANNEL_NAMES  # noqa: E402
 SUBSETS = ("test_time", "test_station", "test_both")
 
 
@@ -57,10 +55,42 @@ def channel_index(name: str) -> int:
     return CHANNEL_NAMES.index(name)
 
 
-def load_features(h5, idx: np.ndarray, use_aux: bool, aux_idx, block: int = 4096):
-    """idx (artan) -> X [n, 4*C] öznitelik, y [n], ayrıca merkez piksel ham değerleri [n, C].
-    K16: dosya ardışık bloklarla okunur (h5py'nin dağınık indeksli okuması tüm veride çok yavaştı)."""
-    feats, centers, ys = [], [], []
+FEATURE_SETS = ("center1", "center5", "current", "texture")
+
+
+def _sobel_mean(p):
+    """Kanal başına Sobel gradyan büyüklüğünün yama içi ortalaması (kenar pikselleri hariç). p: [n, C, 33, 33]."""
+    gx = (p[:, :, :-2, 2:] + 2 * p[:, :, 1:-1, 2:] + p[:, :, 2:, 2:]) - (p[:, :, :-2, :-2] + 2 * p[:, :, 1:-1, :-2] + p[:, :, 2:, :-2])
+    gy = (p[:, :, 2:, :-2] + 2 * p[:, :, 2:, 1:-1] + p[:, :, 2:, 2:]) - (p[:, :, :-2, :-2] + 2 * p[:, :, :-2, 1:-1] + p[:, :, :-2, 2:])
+    return np.sqrt(gx * gx + gy * gy).mean(axis=(2, 3))
+
+
+def _features(p, fs):
+    """P2 öznitelik setleri (kanal başına):
+    center1 : merkez piksel
+    center5 : merkez 5x5 ortalaması
+    current : merkez + 5x5 ort. + yama ort. + yama s.s.   (K9/K16'daki tanım; hgb_aux bununla koşuldu)
+    texture : current + yama 10./90. yüzdelik + (merkez - yama ort.) + Sobel gradyan büyüklüğü ortalaması"""
+    c = p[:, :, 16, 16]
+    if fs == "center1":
+        return c
+    m5 = p[:, :, 14:19, 14:19].mean(axis=(2, 3))
+    if fs == "center5":
+        return m5
+    mu = p.mean(axis=(2, 3))
+    cur = np.concatenate([c, m5, mu, p.std(axis=(2, 3))], axis=1)
+    if fs == "current":
+        return cur
+    flat = p.reshape(p.shape[0], p.shape[1], -1)
+    q10, q90 = np.percentile(flat, [10, 90], axis=2)
+    return np.concatenate([cur, q10, q90, c - mu, _sobel_mean(p)], axis=1)
+
+
+def load_features(h5, idx: np.ndarray, use_aux: bool, aux_idx, block: int = 4096, feature_sets=("current",)):
+    """idx (artan) -> ({set: X}, y [n], merkez piksel ham değerleri [n, C]).
+    K16: dosya ardışık bloklarla okunur (h5py'nin dağınık indeksli okuması tüm veride çok yavaştı).
+    P2: birden çok öznitelik seti aynı okumadan üretilir; 'current' önceki tanımla birebir aynıdır."""
+    feats, centers, ys = {fs: [] for fs in feature_sets}, [], []
     idx = np.asarray(idx, dtype=np.int64)
     labels_all = h5["labels"]
     for b in np.unique(idx // block):
@@ -71,14 +101,13 @@ def load_features(h5, idx: np.ndarray, use_aux: bool, aux_idx, block: int = 4096
         if use_aux:
             a = h5["aux"][lo:hi][sel - lo].astype(np.float32)[:, aux_idx]
             p = np.concatenate([p, a], axis=1)
-        c = p[:, :, 16, 16]
-        m5 = p[:, :, 14:19, 14:19].mean(axis=(2, 3))
-        mu = p.mean(axis=(2, 3))
-        sd = p.std(axis=(2, 3))
-        feats.append(np.concatenate([c, m5, mu, sd], axis=1))
-        centers.append(c)
+        for fs in feature_sets:
+            sub = 512 if fs == "texture" else len(p)          # doku öznitelikleri bellekte büyük; alt bloklarla
+            feats[fs].append(np.concatenate([_features(p[i:i + sub], fs) for i in range(0, len(p), sub)]))
+        centers.append(p[:, :, 16, 16])
         ys.append(labels_all[lo:hi][sel - lo])
-    return np.concatenate(feats), np.concatenate(ys).astype(np.int64), np.concatenate(centers)
+    return ({fs: np.concatenate(v) for fs, v in feats.items()}, np.concatenate(ys).astype(np.int64),
+            np.concatenate(centers))
 
 
 def best_threshold(values: np.ndarray, y: np.ndarray, n_grid: int = 200):
@@ -108,8 +137,15 @@ def main():
     ap.add_argument("--max_eval", type=int, default=30000, help="Her test kümesi için değerlendirme örneklemi (0 = tümü)")
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--results", default="artifacts/baselines.json")
+    ap.add_argument("--feature_sets", default=None,
+                    help="P2: virgüllü öznitelik setleri (" + ",".join(FEATURE_SETS) + "). Verilirse sklearn modelleri "
+                         "<model>_<set> adıyla her set için ayrı eğitilir; verilmezse 'current' ve eski ad (<model>_aux).")
     args = ap.parse_args()
     models = [m.strip() for m in args.models.split(",") if m.strip()]
+    fsets = [x.strip() for x in args.feature_sets.split(",")] if args.feature_sets else ["current"]
+    bad = [x for x in fsets if x not in FEATURE_SETS]
+    if bad:
+        raise SystemExit(f"Bilinmeyen öznitelik seti {bad}. Seçenekler: {FEATURE_SETS}")
     rng = np.random.default_rng(args.seed)
 
     split = np.load(args.split)
@@ -134,17 +170,18 @@ def main():
         t0 = time.time()
         tr_idx = sample("train", args.max_train)
         print(f"Öznitelik çıkarımı: train {len(tr_idx)}...")
-        Xtr, ytr, Ctr = load_features(f, tr_idx, args.aux, aux_idx)
+        Xtr, ytr, Ctr = load_features(f, tr_idx, args.aux, aux_idx, feature_sets=fsets)
         evals, eval_rows = {}, {}
         for s in SUBSETS:
             if s in split.files and len(split[s]):
                 i = sample(s, args.max_eval)
-                evals[s] = load_features(f, i, args.aux, aux_idx)
+                evals[s] = load_features(f, i, args.aux, aux_idx, feature_sets=fsets)
                 eval_rows[s] = i
                 print(f"  {s}: {len(i)} örnek")
-        print(f"Öznitelikler hazır ({time.time()-t0:.0f} s), boyut {Xtr.shape}")
+        print(f"Öznitelikler hazır ({time.time()-t0:.0f} s), boyut " + ", ".join(f"{k} {v.shape}" for k, v in Xtr.items()))
 
     results = {}
+    cur_fs = [fsets[0]]   # record() yapılandırmasına yazılan öznitelik seti
     preds = {f"{s}_rows": eval_rows[s].astype(np.int32) for s in evals}
     preds.update({f"{s}_label": evals[s][1].astype(np.int8) for s in evals})
 
@@ -153,7 +190,7 @@ def main():
                  "best_val_balanced_accuracy": float("nan"), "test": {},
                  "config": {"model": name, "aux": args.aux, "split": args.split, "seed": args.seed,
                             "max_train": args.max_train, "max_eval": args.max_eval, "n_train": int(len(ytr)),
-                            "baseline": True}}
+                            "baseline": True, "feature_set": cur_fs[0]}}
         for s, (pred, prob) in preds_probs.items():
             m = compute_metrics(pred, evals[s][1], probs=prob)
             entry["test"][s] = m
@@ -237,18 +274,21 @@ def main():
                         class_weight="balanced", random_state=args.seed),
             "knn": lambda: make_pipeline(StandardScaler(), KNeighborsClassifier(n_neighbors=25, n_jobs=-1)),
         }
-        n_par = {"logreg": Xtr.shape[1] + 1, "rf": 300, "hgb": 300, "knn": len(Xtr)}
-        for name in sk_models:
-            print(f"\n== {name} ==")
-            t0 = time.time()
-            clf = builders[name]().fit(Xtr, ytr)
-            print(f"  eğitildi ({time.time()-t0:.0f} s)")
-            out = {}
-            for s in evals:
-                X = evals[s][0]
-                prob = clf.predict_proba(X)[:, 1]
-                out[s] = ((prob >= 0.5).astype(np.int64), prob)
-            record(name + ("_aux" if args.aux else ""), n_par[name], out)
+        for fs in fsets:
+            cur_fs[0] = fs
+            Xf = Xtr[fs]
+            n_par = {"logreg": Xf.shape[1] + 1, "rf": 300, "hgb": 300, "knn": len(Xf)}
+            for name in sk_models:
+                print(f"\n== {name} [{fs}, {Xf.shape[1]} öznitelik] ==")
+                t0 = time.time()
+                clf = builders[name]().fit(Xf, ytr)
+                print(f"  eğitildi ({time.time()-t0:.0f} s)")
+                out = {}
+                for s in evals:
+                    prob = clf.predict_proba(evals[s][0][fs])[:, 1]
+                    out[s] = ((prob >= 0.5).astype(np.int64), prob)
+                tag = f"_{fs}" if args.feature_sets else ("_aux" if args.aux else "")
+                record(name + tag, n_par[name], out)
 
     os.makedirs(os.path.dirname(args.results) or ".", exist_ok=True)
     prev = {}
