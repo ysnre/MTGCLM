@@ -22,7 +22,7 @@ gözlem istasyonundan (AWOS) enterpolasyonla üretilir.
 ## Kurulum
 
 ```bash
-git clone https://github.com/<kullanıcı>/MTGCLM.git
+git clone https://github.com/ysnre/MTGCLM.git
 cd MTGCLM
 python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
@@ -117,8 +117,16 @@ depoda paylaşılmamaktadır.
 
 Bu depoda bulunanlar: veri setini ham kaynaklardan yeniden üretmek için gereken **tüm kod**,
 bölme dosyaları (`splits/*.npz`, ~2 MB) ve koşu sonuçları (`artifacts/*.json`). Türetilmiş
-veri seti (`mtg_train_v2.h5`, 19 GB) GitHub boyut sınırlarını aştığından Zenodo'da arşivlenir;
-DOI yayımlandığında buraya eklenecektir. Ayrıca doğrulama ve hızlı deneme için ~2.000 yamalık
+veri seti (`mtg_train_v2.h5`, 19 GB) GitHub boyut sınırlarını aştığından Zenodo'da arşivlenir:
+
+> **Zenodo DOI:** [10.5281/zenodo.24112650](https://doi.org/10.5281/zenodo.24112650)
+
+Kayıt şu anda taslak hâlindedir; bölme dosyaları ve koşu sonuçları yüklenmiştir.
+
+Türetilmiş veri seti iki katman hâlinde paylaşılır: **katman (a)** 16 FCI kanalı, statik alanlar
+(yükseklik, cos SZA) ve SYNOP/METAR etiketleri — açık erişim, Zenodo kaydında; **katman (b)**
+radar kanalı, `radar_cov`, t2m ve rh2m — MGM'ye aittir, talep üzerine MGM'den temin edilir.
+Katman (a) dosyaları makale kabulünden sonra kayda eklenecektir. Ayrıca doğrulama ve hızlı deneme için ~2.000 yamalık
 bir örneklem (`mtg_sample.h5`, ~100 MB) `src/make_public_sample.py` ile üretilebilir.
 
 Eğitilmiş model ağırlıkları (`best_model_*.pth`) sürüm (release) eklerinde yayımlanır.
