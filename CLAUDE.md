@@ -488,6 +488,15 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   tek anlamsız fark logreg − NWC r30 (test_both). Güvenilirlik eğrileri köşegen üstünde → dengeli sınıf ağırlıkları (train.py) ile tutarlı.
 - Taslak: TAAC 18 + 3 sayfa, MAP 19 + 2; ~35 700 karakter (kaynaklar hariç); 56 `\todo` (liste: P14 yanıtı / CLAUDE.md §5).
 
+### K24 — 15 Kas 2026: H5 kanal sırası doğrulandı; çift eşik modelinin adı düzeltildi
+- `src/verify_channel_order.py` (200 örnek, ham `F:/turkiye_kesitler` ile): **gerçek H5 sırası** `ir_87, vis_09, wv_73, ir_105, nir_22,
+  ir_123, wv_63, vis_08, ir_97, ir_38, vis_06, nir_16, nir_13, ir_133, vis_05, vis_04` (+ 16 = radar). 8 IR kanalı %99–100 oy;
+  güneş kanalları %70–93 çünkü gece hepsi ≈0 (ayırt edilemez) → betik artık yalnız ayırt edici eşleşmeleri oylar; teyit için yeniden koşulacak.
+- `baselines.CHANNEL_NAMES` bu sırayla değiştirildi (eskisi yalnız indeks 3'te tutuyordu). Etki: **tek eşik (ir_105) doğruydu**;
+  **"threshold2_ir_105+vis_06" aslında ir_105 + ir_133 kullandı** → sonuç geçerli, adı yanlıştı. JSON/preds anahtarları değiştirilmedi
+  (kayıt); makalede "IR10.5 ve IR13.3" yazılıyor (Fig. 4 altyazısı, Yöntem, Bulgular). Sinir ağları/HGB/RF/LogReg etkilenmez (tüm kanallar).
+- P3 (kanal önemi) bu sırayı kullanmalı. Not: `baselines.py --ch2 vis_06` artık gerçek VIS0.6'yı seçer (önceki koşudan farklı model).
+
 ---
 
 ## 3. Komutlar
@@ -697,8 +706,7 @@ geç-füzyon planıdır — **arşiv**, güncel hattı temsil etmez. `notebooks/
       Tab. 2 dipnotundaki kalibrasyon şekli atfı çapraz referansa; gönderimde FigXX dosyalarını dergiye göre yeniden adlandır;
       `Bechini2007`/`Liu2020` (P16); Code availability metnini depo dışı makale klasörlerine göre uyarla; eşleştirilmiş farklar 4 ondalık (K21 istisnası).
 - [x] ~~P14 Bölüm 2–4 taslakları~~ — K23.
-- [ ] **ÖNCELİKLİ: kanal sırasını doğrula** (`src/verify_channel_order.py`); sonuca göre `baselines.CHANNEL_NAMES` düzelt, eşik modellerini
-      yeniden koş (yalnız `threshold*`), Fig. 4 altyazısı ve metindeki kanal adlarını güncelle; P3'ten önce şart.
+- [x] ~~Kanal sırasını doğrula~~ — K24 (IR kesin; güneş kanalları için güncellenmiş betikle bir kez daha koş, `TAMAM` beklenir).
 - [ ] Bölüm 2.2: "5–30 km komşuluk" ifadesi — sonuçlarda yalnız merkez ve 30 km var (5–20 km ekle ya da cümleyi daralt).
 - [ ] Analiz raporunu makale bulgularına dönüştür; gece hataları (alçak bulut/sis) için ayrıntı.
 - [ ] U-Net tam harita için hedef-piksel jitter (49×49 çıkar → 33×33 rastgele kırp).
