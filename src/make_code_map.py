@@ -117,6 +117,8 @@ MODULE_INFO = {
     "eval_nwc_and_metar": ("referans", "NWC değerlendirmesi, METAR NSC doğrulaması, bulut tipi kırılımı (betik)", None),
     "clm_vs_synop_quicklook": ("referans", "CLM ↔ ham SYNOP ön bakış (merkez vs alan)", None),
     # 10 araç
+    "channels": ("model", "Doğrulanmış H5 kanal sırası (tek kaynak), dalga boyları, P3 fiziksel grupları (K24–K25)", None),
+    "channel_importance": ("analiz", "P3: permütasyon önemi + Integrated Gradients (B_full, test_time; kayıtlı tahminlerle güvenlik kontrolü)", None),
     "verify_compact_h5": ("arac", "Yeniden üretilen kompakt H5'i h5meta_train_v2.npz ile birebir karşılaştırır (12 Kas 2026)", None),
     "verify_channel_order": ("arac", "Kompakt H5 kanal sırasını ham NetCDF ile eşleştirip doğrular (salt okuma; K23)", None),
     "make_code_map": ("arac", "Bu sayfayı üretir: kodu tarar, bağlantıları çıkarır, HTML yazar", None),
