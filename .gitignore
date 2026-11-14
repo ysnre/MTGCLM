@@ -70,3 +70,6 @@ _kisisel/
 # --- makale ile ilgili ---
 docs/paper/
 paper/
+
+# Natural Earth 10 m kiyi/sinir dosyalari (Fig. 1 icin yerel kopya; github.com/nvkelso/natural-earth-vector)
+data/natural_earth/
