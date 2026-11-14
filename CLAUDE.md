@@ -4,7 +4,7 @@ Bu dosya, Claude Code / Cowork oturumlarının projeyi sıfırdan anlamadan kald
 devam edebilmesi için tutulur. **Yeni bir karar alındığında (model seçimi, veri bölme,
 etiket politikası, eğitim komutu) bu dosyaya birkaç satır ekleyin.**
 
-Son güncelleme: 2026-11-14
+Son güncelleme: 2026-11-15
 
 ---
 
@@ -467,6 +467,27 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
 - İlk derleme: TAAC 12 + 3 sayfa, MAP 13 + 2 sayfa; tanımsız referans 0, taşan kutu 0; 58 `\todo`. Şekil dosya adları (FigXX) sabit, LaTeX
   numarası dergiye göre değişir (TAAC: sahne 7, sıklık 8; MAP: kanal önemi 6 … kalibrasyon 9) → gönderimde dosyalar yeniden adlandırılır.
 
+### K23 — 15 Kas 2026: P14 — Bölüm 2–4 taslakları, sayı denetimi, **kanal sırası sorunu**
+- `paper/sections/02_data.tex` (section2 md'den dönüştürüldü), `03_methods.tex`, `results/*.tex` yazıldı. Her sayı satır sonunda
+  `% src: <csv>[anahtarlar] <sütun>` ile kaynağına bağlı (satır no yerine anahtar: P1 satır ekleyince kaymaz); `% ref:` = tasarım sabiti.
+  **`python paper/tools/verify_numbers.py`** bütün kaynakları CSV hücreleriyle karşılaştırır (ilk çalıştırmada 2 yanlış GA'yı yakaladı);
+  şu an 178 değer, 0 hata. Ek kaynak CSV'ler `paper/tools/derived_facts.py` → `artifacts_v3/analysis/{dataset_facts,cv_summary,
+  okta_consistency,baselines_extra}.csv`.
+- **Bölüm 2 düzeltmeleri (md'deki eski bilgiler):** METAR payı %55 → **%43,8**, açıkların METAR payı %61–68 → **%17,0–28,1**
+  (K14 sayıları verify öncesi etiket kümesindendi); okta-9 %0,2–0,3 → %0,35; "altı güneş kanalı" → **sekiz** (5 VIS + 3 NIR gece ~0);
+  radar "5 dk döngü" → uydu zamanının ±5 dk'sı içindeki tekil radar görüntülerinin piksel bazında maksimumu, `radar_cov` etkin
+  radarlar üzerinde maksimum; bölme dışındaki 65 842 satır "kopya" değil, **doğrulanmamış METAR açık** raporları; 132 istasyon
+  (90 yalnız SYNOP + 42 METAR'lı havalimanı) eklendi. md dosyası değiştirilmedi.
+- **Kanal sırası (açık sorun):** `create_patch_dataset.get_channel_names()` sırayı İLK NetCDF'in h5py anahtar sırasından alıyor; sıra
+  dosyadan dosyaya değişiyor (`data/raw_mtg`'de 3 farklı sıra). Kanallar adla okunduğu için **veri tutarlı**, ama sıra kaydedilmemiş.
+  `baselines.CHANNEL_NAMES` başka bir dosyanın sırasını varsayıyor ve gece istatistikleriyle çelişiyor ("vis_06" = kanal 13 gece ~249 K).
+  → Eşik modellerinin kanal adları (Fig. 4 altyazısı "10.5 µm / 0.6 µm") ve **P3 kanal önemi** doğrulanana kadar güvenilmez.
+  Doğrulama: `python src\verify_channel_order.py --h5 C:/mtg/mtg_train_v2.h5 --nc_dir F:/turkiye_kesitler --n 200` (salt okuma).
+- Bulgu notları: HGB − B_full test_time +0,0030 [+0,0003, +0,0062] GA sıfırı dışlıyor (K18'deki "[+0,000" yuvarlamaydı), ama B_full
+  test_time'da en düşük ağ; HGB − A_sat anlamsız. RESNET_CIFAR − A_sat test_both −0,0051 [−0,0104, −0,0006] anlamlı. Referans kıyasında
+  tek anlamsız fark logreg − NWC r30 (test_both). Güvenilirlik eğrileri köşegen üstünde → dengeli sınıf ağırlıkları (train.py) ile tutarlı.
+- Taslak: TAAC 18 + 3 sayfa, MAP 19 + 2; ~35 700 karakter (kaynaklar hariç); 56 `\todo` (liste: P14 yanıtı / CLAUDE.md §5).
+
 ---
 
 ## 3. Komutlar
@@ -637,6 +658,8 @@ python src\analyze_preds.py --dir artifacts_v3 --out artifacts_v3/analysis --ref
 | `src/train.py`, `src/train_unet.py` | Eğitim; `--h5 --split --aux --aux_channels --seed --epochs --limit_batches --results --outdir --model` + K16: `--loader --mem_splits --cache_dir --threads --no_deterministic --no_last_preds` |
 | `src/config.py` | Colab/yerel yollar, `MTGCLM_H5`, PATCH_SIZE 33, BATCH_SIZE 64, LR 1e-3 |
 | `paper/main.tex`, `preamble.tex`, `frontmatter.tex`, `backmatter.tex`, `sections/`, `supplementary.tex` | Makale LaTeX iskeleti (sn-jnl, sn-basic; `\ifTAAC`) — K22 |
+| `paper/tools/verify_numbers.py`, `derived_facts.py` | `% src:` yorumlarını CSV hücreleriyle denetler; metin için ek kaynak CSV'leri üretir — K23 |
+| `src/verify_channel_order.py` | Kompakt H5 kanal sırasını ham NetCDF ile eşleştirir (salt okuma) — K23 |
 | `paper/tools/build.py`, `count_chars.py`, `captions2tex.py` | Derleme (TAAC/MAP, taslak/gönderim), TAAC karakter sayımı, altyazı dönüşümü — K22 |
 | `paper/figures/make_*.py`, `figdata.py`, `make_all.py` | Makale şekilleri (Fig. 1, 4, 5, 6, 10) ve tabloları (Tab. 2–5, S1–S2); `make_all.py` hepsini üretip kontrol raporlarını özetler (K21) |
 | `README.md`, `LICENSE`, `CITATION.cff`, `.gitignore` | Depo iskeleti + veri bulunabilirliği beyanı |
@@ -673,6 +696,10 @@ geç-füzyon planıdır — **arşiv**, güncel hattı temsil etmez. `notebooks/
 - [ ] **Ertelenen işler (unutma):** P1 sonrası Tab. 4'e radarsız satırlar + Fig. 4 yeniden; P4 sonrası Tab. 5'e sahne başına çıkarım süresi;
       Tab. 2 dipnotundaki kalibrasyon şekli atfı çapraz referansa; gönderimde FigXX dosyalarını dergiye göre yeniden adlandır;
       `Bechini2007`/`Liu2020` (P16); Code availability metnini depo dışı makale klasörlerine göre uyarla; eşleştirilmiş farklar 4 ondalık (K21 istisnası).
+- [x] ~~P14 Bölüm 2–4 taslakları~~ — K23.
+- [ ] **ÖNCELİKLİ: kanal sırasını doğrula** (`src/verify_channel_order.py`); sonuca göre `baselines.CHANNEL_NAMES` düzelt, eşik modellerini
+      yeniden koş (yalnız `threshold*`), Fig. 4 altyazısı ve metindeki kanal adlarını güncelle; P3'ten önce şart.
+- [ ] Bölüm 2.2: "5–30 km komşuluk" ifadesi — sonuçlarda yalnız merkez ve 30 km var (5–20 km ekle ya da cümleyi daralt).
 - [ ] Analiz raporunu makale bulgularına dönüştür; gece hataları (alçak bulut/sis) için ayrıntı.
 - [ ] U-Net tam harita için hedef-piksel jitter (49×49 çıkar → 33×33 rastgele kırp).
 - [ ] `infer_scene.py`: tek NetCDF sahne + radar + aux → 800×1000 olasılık haritası (GeoTIFF/PNG) — henüz yok.
