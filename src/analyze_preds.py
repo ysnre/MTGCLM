@@ -46,20 +46,32 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 RUN_RE = re.compile(r"^(?P<exp>.+?)(?:_f(?P<fold>\d+))?_s(?P<seed>\d+)$")
 SUBSETS = ["test_time", "test_station", "test_both"]
-PROB_BASELINES = ("logreg_aux", "rf_aux", "hgb_aux")       # olasılık üreten klasik modeller
+PROB_BASELINES = ("logreg_aux", "rf_aux", "hgb_aux")       # olasılık üreten klasik modeller (v3)
+
+
+def is_prob_baseline(name):
+    """Olasılık üreten klasik modeller: logreg_/rf_/hgb_ önekli adlar (P2: hgb_center1, hgb_texture, ...)."""
+    return name in PROB_BASELINES or name.split("_")[0] in ("logreg", "rf", "hgb")
 ORDER = ["A_sat", "B_full", "C_noawos", "C_t2m", "D_unet", "RESNET", "RESNET_CIFAR",
-         "hgb_aux", "rf_aux", "logreg_aux"]
+         "hgb_aux", "rf_aux", "logreg_aux",
+         # P1/P2 (15 Kas 2026) — sonda: mevcut tablo sırası değişmez
+         "A_norad", "B_norad", "B_full_shuf", "hgb_center1", "hgb_center5", "hgb_current", "hgb_texture"]
 LABEL = {"A_sat": "A_sat (uydu+radar)", "B_full": "B_full (+tüm aux)", "C_noawos": "C_noawos (aux, AWOS'suz)",
          "C_t2m": "C_t2m (C + t2m)", "D_unet": "U-Net", "RESNET": "ResNet18 (ImageNet girişi)",
          "RESNET_CIFAR": "ResNet18 (CIFAR girişi)", "hgb_aux": "HGB", "rf_aux": "Rastgele orman",
-         "logreg_aux": "Lojistik regresyon"}
+         "logreg_aux": "Lojistik regresyon", "A_norad": "A_norad (yalnız uydu)", "B_norad": "B_norad (uydu + aux, radarsız)",
+         "B_full_shuf": "B_full (uzamsal karıştırma)", "hgb_center1": "HGB (merkez piksel)", "hgb_center5": "HGB (merkez 5x5)",
+         "hgb_current": "HGB (mevcut öznitelikler)", "hgb_texture": "HGB (+ doku)"}
 DEFAULT_PAIRS = ("B_full-A_sat,C_noawos-A_sat,B_full-C_noawos,C_t2m-C_noawos,"
-                 "D_unet-A_sat,RESNET-A_sat,RESNET_CIFAR-A_sat,D_unet-RESNET_CIFAR,hgb_aux-A_sat,hgb_aux-B_full")
-CV_PAIRS = "B-A,C-A,B-C,Ct2m-C"
+                 "D_unet-A_sat,RESNET-A_sat,RESNET_CIFAR-A_sat,D_unet-RESNET_CIFAR,hgb_aux-A_sat,hgb_aux-B_full,"
+                 # P1: radarın katkısı (aux yokken / aux varken); P2: uzamsal yapı ve doku
+                 "A_sat-A_norad,B_full-B_norad,B_full-B_full_shuf,hgb_texture-hgb_current,hgb_current-hgb_center1,"
+                 "hgb_center5-hgb_center1,B_full-hgb_texture")
+CV_PAIRS = "B-A,C-A,B-C,Ct2m-C,B-Bnorad"
 GROUPS = ["c1", "3x3", "r5", "r10", "r20", "r30"]
 BLOCK = {"test_time": "day", "test_both": "day", "test_station": "wmoid"}
 LEVEL_ORDER = {"illum": ["gündüz", "alacakaranlık", "gece"], "elev_bin": ["<250 m", "250–750 m", "750–1250 m", "≥1250 m"],
-               "src": ["SYNOP", "METAR"], "açık etiket": ["SYNOP", "METAR"]}
+               "src": ["SYNOP", "METAR"], "açık etiket": ["SYNOP", "METAR"], "radar": ["kapsam içi", "kapsam dışı"]}
 
 
 # ----------------------------------------------------------------------------- metrikler
@@ -151,6 +163,32 @@ def load_meta(meta_path, h5_path, station_csv):
     return meta
 
 
+def radar_cov_center(path, h5_path, n):
+    """İstasyon pikselindeki (16,16) radar_cov — radar kapsamı içi/dışı kırılımı için (P1). Önbellek .npy."""
+    if path and os.path.exists(path):
+        v = np.load(path)
+        if len(v) == n:
+            return v
+        print(f"  {path}: satır sayısı uyuşmuyor ({len(v)} != {n}); yok sayıldı")
+    if not h5_path:
+        return None
+    import h5py
+    with h5py.File(h5_path, "r") as f:
+        names = json.loads(f.attrs["aux_channels"])
+        j = names.index("radar_cov")
+        N = f["aux"].shape[0]
+        if N != n:
+            raise SystemExit(f"--aux_h5 satır sayısı {N} != meta {n}")
+        v = np.empty(N, np.float32)
+        for lo in range(0, N, 8192):
+            v[lo:lo + 8192] = f["aux"][lo:lo + 8192, j, 16, 16]
+    if path:
+        os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+        np.save(path, v)
+        print(f"  radar_cov merkez değerleri kaydedildi -> {path} (kapsam dışı payı {np.mean(v <= 0):.3f})")
+    return v
+
+
 def solar_elevation(t, lat, lon):
     """Güneş yükseklik açısı (derece); t UTC. NOAA yaklaşık formülü (±0,5°)."""
     t = pd.DatetimeIndex(t)
@@ -185,7 +223,7 @@ def load_runs(d):
                 continue
             cfg = res["config"]
             if cfg.get("baseline"):
-                if name not in PROB_BASELINES:
+                if not is_prob_baseline(name):
                     continue
                 pf, exp, pref = os.path.join(d, "preds", stem + ".npz"), name, f"{name}__"
             else:
@@ -353,7 +391,7 @@ def breakdowns(E, meta):
                 rr, y, p = r["sets"][s]
                 pred = (p >= 0.5).astype(int)
                 M = meta.iloc[rr]
-                for fac in ("illum", "src", "elev_bin", "month"):
+                for fac in ("illum", "src", "elev_bin", "month") + (("radar", "illum_radar") if "radar" in M.columns else ()):
                     for lev, idx in M.groupby(fac).indices.items():
                         if len(idx) < 200:
                             continue
@@ -558,6 +596,9 @@ def main():
     ap.add_argument("--out", default=None, help="Varsayılan: <dir>/analysis")
     ap.add_argument("--meta", default="data/processed/h5meta_train_v2.npz")
     ap.add_argument("--h5", default=None, help="--meta yoksa meta buradan okunur")
+    ap.add_argument("--radar_cov", default="data/processed/radar_cov_center.npy",
+                    help="P1: istasyon pikselindeki radar_cov (satır başına). Yoksa ve --aux_h5 verilmişse üretilip kaydedilir.")
+    ap.add_argument("--aux_h5", default=None, help="radar_cov'u okumak için kompakt H5 (yalnız bir kez gerekir)")
     ap.add_argument("--stations", default="data/raw_observation/station_list.csv")
     ap.add_argument("--split", default="splits/split_v2_verify.npz", help="--refs eşik seçimi için train satırları")
     ap.add_argument("--pairs", default=DEFAULT_PAIRS)
@@ -573,6 +614,10 @@ def main():
     t0 = time.time()
 
     meta = load_meta(a.meta, a.h5, a.stations)
+    rc = radar_cov_center(a.radar_cov, a.aux_h5, len(meta))
+    if rc is not None:
+        meta["radar"] = np.where(rc > 0, "kapsam içi", "kapsam dışı")
+        meta["illum_radar"] = meta["illum"] + " / " + meta["radar"]
     runs = load_runs(a.dir)
     E_all = by_exp(runs)
     E = {e: v for e, v in E_all.items() if not e.startswith("CV_")}
