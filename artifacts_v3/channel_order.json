@@ -1,0 +1,153 @@
+{
+ "n_samples": 400,
+ "order": [
+  "ir_87",
+  "vis_09",
+  "wv_73",
+  "ir_105",
+  "nir_22",
+  "ir_123",
+  "wv_63",
+  "vis_08",
+  "ir_97",
+  "ir_38",
+  "vis_06",
+  "nir_16",
+  "nir_13",
+  "ir_133",
+  "vis_05",
+  "vis_04"
+ ],
+ "unique": true,
+ "confident": true,
+ "channels": [
+  {
+   "channel": 0,
+   "name": "ir_87",
+   "vote_share": 1.0,
+   "decisive": 377,
+   "skipped": 23,
+   "median_abs_err": 0.0016448888927698135
+  },
+  {
+   "channel": 1,
+   "name": "vis_09",
+   "vote_share": 1.0,
+   "decisive": 202,
+   "skipped": 198,
+   "median_abs_err": 0.0010794475674629211
+  },
+  {
+   "channel": 2,
+   "name": "wv_73",
+   "vote_share": 1.0,
+   "decisive": 393,
+   "skipped": 7,
+   "median_abs_err": 0.0005895327776670456
+  },
+  {
+   "channel": 3,
+   "name": "ir_105",
+   "vote_share": 1.0,
+   "decisive": 380,
+   "skipped": 20,
+   "median_abs_err": 0.0016940198838710785
+  },
+  {
+   "channel": 4,
+   "name": "nir_22",
+   "vote_share": 1.0,
+   "decisive": 216,
+   "skipped": 184,
+   "median_abs_err": 0.0008989870548248291
+  },
+  {
+   "channel": 5,
+   "name": "ir_123",
+   "vote_share": 1.0,
+   "decisive": 382,
+   "skipped": 18,
+   "median_abs_err": 0.0016443557105958462
+  },
+  {
+   "channel": 6,
+   "name": "wv_63",
+   "vote_share": 1.0,
+   "decisive": 399,
+   "skipped": 1,
+   "median_abs_err": 0.0004107644781470299
+  },
+  {
+   "channel": 7,
+   "name": "vis_08",
+   "vote_share": 1.0,
+   "decisive": 204,
+   "skipped": 196,
+   "median_abs_err": 0.00145502551458776
+  },
+  {
+   "channel": 8,
+   "name": "ir_97",
+   "vote_share": 1.0,
+   "decisive": 397,
+   "skipped": 3,
+   "median_abs_err": 0.000734478235244751
+  },
+  {
+   "channel": 9,
+   "name": "ir_38",
+   "vote_share": 1.0,
+   "decisive": 388,
+   "skipped": 12,
+   "median_abs_err": 0.0018181554041802883
+  },
+  {
+   "channel": 10,
+   "name": "vis_06",
+   "vote_share": 1.0,
+   "decisive": 204,
+   "skipped": 196,
+   "median_abs_err": 0.0009387116879224777
+  },
+  {
+   "channel": 11,
+   "name": "nir_16",
+   "vote_share": 1.0,
+   "decisive": 204,
+   "skipped": 196,
+   "median_abs_err": 0.001029600971378386
+  },
+  {
+   "channel": 12,
+   "name": "nir_13",
+   "vote_share": 1.0,
+   "decisive": 211,
+   "skipped": 189,
+   "median_abs_err": 0.00013669440522789955
+  },
+  {
+   "channel": 13,
+   "name": "ir_133",
+   "vote_share": 1.0,
+   "decisive": 396,
+   "skipped": 4,
+   "median_abs_err": 0.001011740998364985
+  },
+  {
+   "channel": 14,
+   "name": "vis_05",
+   "vote_share": 1.0,
+   "decisive": 206,
+   "skipped": 194,
+   "median_abs_err": 0.001123523572459817
+  },
+  {
+   "channel": 15,
+   "name": "vis_04",
+   "vote_share": 1.0,
+   "decisive": 215,
+   "skipped": 185,
+   "median_abs_err": 0.0010909147094935179
+  }
+ ]
+}
