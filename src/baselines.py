@@ -41,9 +41,11 @@ import numpy as np
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from metrics import compute_metrics, format_metrics
 
-# create_patch_dataset.py'deki kanal sırası (get_channel_names, h5py key sırası):
-CHANNEL_NAMES = ["nir_22", "ir_97", "vis_05", "ir_105", "nir_13", "ir_87", "vis_09", "ir_38",
-                 "vis_04", "nir_16", "ir_133", "wv_73", "ir_123", "vis_06", "vis_08", "wv_63", "radar"]
+# DUZELTILDI (15 Kas 2026, K24): onceki liste baska bir NetCDF dosyasinin anahtar sirasiydi ve gercek H5 sirasiyla
+# yalniz indeks 3'te (ir_105) cakisiyordu. Gercek sira src/verify_channel_order.py ile ham NetCDF'ten dogrulandi
+# (artifacts_v3/channel_order.json). Eski listeyle kosulan "threshold2_ir_105+vis_06" aslinda ir_105 + ir_133 kullandi.
+CHANNEL_NAMES = ["ir_87", "vis_09", "wv_73", "ir_105", "nir_22", "ir_123", "wv_63", "vis_08",
+                 "ir_97", "ir_38", "vis_06", "nir_16", "nir_13", "ir_133", "vis_05", "vis_04", "radar"]
 SUBSETS = ("test_time", "test_station", "test_both")
 
 
