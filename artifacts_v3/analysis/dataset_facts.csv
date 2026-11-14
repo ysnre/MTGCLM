@@ -1,0 +1,25 @@
+anahtar,deger,kaynak
+n_total,400209,h5meta_train_v2.npz
+n_scenes,12767,h5meta timestamps
+n_days,183,h5meta timestamps
+n_stations,132,h5meta wmoids
+n_stations_synop_only,90,obs minute == 0 for all reports
+n_stations_with_metar,42,station has :20/:50 reports
+n_in_splits,334367,split_v2_verify.npz
+n_unverified_metar_clear,65842,rows in no split
+n_unverified_metar_clear_all_metar_clear,True,check
+n_labelled,317426,train+val+test_*
+pct_metar_labelled,43.8,labelled rows
+pct_okta9_labelled,0.35,labelled rows
+pct_metar_clear_train,26.4,train
+pct_metar_clear_val,28.1,val
+pct_metar_clear_test_time,27.4,test_time
+pct_metar_clear_test_station,18.2,test_station
+pct_metar_clear_test_both,17.0,test_both
+pixel_km_ew_39N,1.73,0.02 deg at 39N
+pixel_km_ns,1.11,0.01 deg
+patch_km_ew,57,33 px
+patch_km_ns,37,33 px
+n_solar_channels_zero_at_night,8,"_mini_test.h5 night means (5 VIS + 3 NIR), 14 Kas 2026"
+thr_clm_r30,0.45,analysis.json reference_thresholds
+thr_nwc_r30,0.5,analysis.json reference_thresholds
