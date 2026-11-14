@@ -39,7 +39,7 @@ def main():
         index.setdefault(os.path.basename(p)[14:28], p)
     print(f"NetCDF: {len(index)} dosya")
 
-    votes, errs = defaultdict(Counter), defaultdict(list)
+    votes, errs, skipped = defaultdict(Counter), defaultdict(list), Counter()
     used = 0
     with h5py.File(a.h5, "r") as f:
         N = f["patches"].shape[0]
@@ -60,18 +60,29 @@ def main():
                 continue
             used += 1
             for c in range(16):
-                name, v = min(vals.items(), key=lambda kv: abs(kv[1] - raw[c]))
-                votes[c][name] += 1
-                errs[c].append(abs(v - raw[c]))
+                ranked = sorted(vals.items(), key=lambda kv: abs(kv[1] - raw[c]))
+                (name, v), (_, v2) = ranked[0], ranked[1]
+                e1, e2 = abs(v - raw[c]), abs(v2 - raw[c])
+                # Yalniz ayirt edici eslesme oy verir: gece butun gunes kanallari ~0 oldugundan en iyi ve ikinci en iyi
+                # aday ayni kalir; bu ornekler o kanal icin oylamaya katilmaz (BELIRSIZ sonucun nedeni, 15 Kas 2026).
+                if e2 > max(10 * e1, 0.05):
+                    votes[c][name] += 1
+                    errs[c].append(e1)
+                else:
+                    skipped[c] += 1
     if not used:
         raise SystemExit("Eslesen ornek yok: --nc_dir ve dosya adlarini kontrol edin.")
     order, report = [], []
     for c in range(16):
+        if not votes[c]:
+            raise SystemExit(f"kanal {c}: ayirt edici eslesme yok (gunduz ornegi icin --n'i artirin)")
         name, k = votes[c].most_common(1)[0]
+        dec = sum(votes[c].values())
         order.append(name)
-        report.append({"channel": c, "name": name, "vote_share": k / used, "median_abs_err": float(np.median(errs[c]))})
-        print(f"{c:2d} {name:7s} oy {k / used:5.1%}  medyan |fark| {np.median(errs[c]):.4f}")
-    ok = len(set(order)) == 16 and min(r["vote_share"] for r in report) > 0.9
+        report.append({"channel": c, "name": name, "vote_share": k / dec, "decisive": dec, "skipped": skipped[c],
+                       "median_abs_err": float(np.median(errs[c]))})
+        print(f"{c:2d} {name:7s} oy {k / dec:6.1%} ({k}/{dec} ayirt edici, {skipped[c]} atlandi)  medyan |fark| {np.median(errs[c]):.4f}")
+    ok = len(set(order)) == 16 and min(r["vote_share"] for r in report) > 0.99 and min(r["decisive"] for r in report) >= 20
     out = {"n_samples": used, "order": order, "unique": len(set(order)) == 16, "confident": ok, "channels": report}
     os.makedirs(os.path.dirname(a.out) or ".", exist_ok=True)
     with open(a.out, "w", encoding="utf-8") as fh:
