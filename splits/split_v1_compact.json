@@ -265,7 +265,7 @@
       "n": 16941
     }
   },
-  "compact_h5": "F:\\radar\\mtg_train_v2.h5",
+  "compact_h5": "C:\\mtg\\mtg_train_v2.h5",
   "source_split": "E:\\belgeler\\MTGCLM\\splits\\split_v1.npz",
   "n_compact": 400209,
   "pre_shuffled": true
