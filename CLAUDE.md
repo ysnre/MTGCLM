@@ -4,7 +4,7 @@ Bu dosya, Claude Code / Cowork oturumlarının projeyi sıfırdan anlamadan kald
 devam edebilmesi için tutulur. **Yeni bir karar alındığında (model seçimi, veri bölme,
 etiket politikası, eğitim komutu) bu dosyaya birkaç satır ekleyin.**
 
-Son güncelleme: 2026-10-30
+Son güncelleme: 2026-11-14
 
 ---
 
@@ -427,6 +427,25 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
 - **Not:** CLAUDE.md §5'teki "49×49 çıkar → 33×33 kırp" jitter maddesi §7'deki "yamaları yeniden çıkarma" kuralıyla
   çelişiyor; P20 bunun yerine 33×33 içinde 25×25 rastgele kırpma öneriyor.
 
+### K21 — 14 Kas 2026: P11 + P12a — şekil altyapısı doğrulandı, Fig. 1/4/5/6/10 ve Tab. 2–5 (+S1–S2) üretildi
+- **P11:** `springer_fig` import OK. `check_figure()` artık çözümlenen yazı tipini de denetler: Arial/Helvetica değilse rapor
+  OK vermez (Linux önizlemesinde Liberation Sans → "yalnız önizleme"). **Son sürüm Arial'lı Windows'ta** `python paper/figures/make_all.py` ile.
+- **Betikler (`paper/figures/`):** `figdata.py` (ortak yollar/meta; `analyze_preds.load_meta` yeniden kullanılır), `make_fig01_study_area.py`,
+  `make_fig04_main_results.py`, `make_fig05_references.py`, `make_fig06_breakdowns.py`, `make_fig10_calibration.py`, `make_tables.py`,
+  `make_all.py`. Her şekil `FigXX_caption.txt` üretir; tablolar `paper/tables/*.tex|csv`.
+- **Fig. 6:** `breakdowns.csv` aydınlanma × ay çapraz tablosunu içermiyor → betik tahmin dosyalarından **aynı tanımla** hesaplıyor,
+  marjinalleri `breakdowns.csv` ile birebir doğruluyor (uyuşmazsa durur) ve `artifacts_v3/analysis/breakdowns_illum_month.csv`'ye yazıyor.
+- **Tablo düzeni (yol haritasına göre):** Tab. 3 ana tablo, Tab. 4 modalite farkları (tek bölme + CV birleşik; P1 satırları `\todo`),
+  Tab. 5 hesaplama maliyeti (sahne çıkarımı P4'te `\todo`), Tab. S1 mimari çiftleri, Tab. S2 CV kat başına BalAcc.
+  **İstisna:** eşleştirilmiş farklar ve seed s.s. 4 ondalık (3 ondalık sıfırı dışlayan GA'ları "±0.000" yapıyordu).
+- **Fig. 1:** istasyon türü gözlem dakikasından: 90 sinoptik (yalnız tam saat) + 42 havalimanı (:20/:50 METAR da var) = 132; 30 holdout.
+  Radar kapsamı `radar_circle_masks` ile 19 radarın azami menzilinden (nominal; zamanla değişen `radar_cov` değil). Natural Earth
+  10 m dosyaları `data/natural_earth/` (GitHub nvkelso aynası; .gitignore'da).
+- **Gözlem (P14 için):** Fig. 10a'da bütün modellerin güvenilirlik eğrisi köşegenin **üstünde** — orta olasılıklarda bulutluluğu
+  olduğundan düşük tahmin ediyorlar (ECE 0.024–0.047). 1–4 okta örneklerinde ortalama olasılık okta ile monoton artıyor (0.10 → 0.58).
+- Doğrulama: Tab. 2 sayıları bölme dosyasından, B_full test_time BalAcc ve bir Fig. 6 hücresi (test_station, gece, Ara 2025: 0.838, n = 565)
+  bağımsız kodla yeniden hesaplandı — birebir.
+
 ---
 
 ## 3. Komutlar
@@ -596,6 +615,7 @@ python src\analyze_preds.py --dir artifacts_v3 --out artifacts_v3/analysis --ref
 | `src/loss.py` | `MaskedBCELoss` — yalnız (16,16) pikselinde, `-1` yok sayılır |
 | `src/train.py`, `src/train_unet.py` | Eğitim; `--h5 --split --aux --aux_channels --seed --epochs --limit_batches --results --outdir --model` + K16: `--loader --mem_splits --cache_dir --threads --no_deterministic --no_last_preds` |
 | `src/config.py` | Colab/yerel yollar, `MTGCLM_H5`, PATCH_SIZE 33, BATCH_SIZE 64, LR 1e-3 |
+| `paper/figures/make_*.py`, `figdata.py`, `make_all.py` | Makale şekilleri (Fig. 1, 4, 5, 6, 10) ve tabloları (Tab. 2–5, S1–S2); `make_all.py` hepsini üretip kontrol raporlarını özetler (K21) |
 | `README.md`, `LICENSE`, `CITATION.cff`, `.gitignore` | Depo iskeleti + veri bulunabilirliği beyanı |
 
 Arşiv: `archive_v1/` (v1 sonuçları + ağırlıkları — not: alt klasör adı yerelde `artifacts 06 2026`
@@ -625,6 +645,7 @@ geç-füzyon planıdır — **arşiv**, güncel hattı temsil etmez. `notebooks/
 - [x] ~~v3 matrisini koş~~ — 22–23 Eki 2026 tamamlandı (K17, K18).
 - [x] ~~`src/analyze_preds.py`~~ — yazıldı ve gerçek veride denendi (K18).
 - [x] ~~AWOS-t2m'nin CNN'deki etkisi~~ — CV'de küçük ama anlamlı pozitif (K18).
+- [x] ~~P11 şekil altyapısı + P12a (Fig. 1, 4, 5, 6, 10; Tab. 2–5, S1–S2)~~ — K21. **Kalan:** Arial'lı makinede `make_all.py` ile son üretim.
 - [ ] Analiz raporunu makale bulgularına dönüştür; gece hataları (alçak bulut/sis) için ayrıntı.
 - [ ] U-Net tam harita için hedef-piksel jitter (49×49 çıkar → 33×33 rastgele kırp).
 - [ ] `infer_scene.py`: tek NetCDF sahne + radar + aux → 800×1000 olasılık haritası (GeoTIFF/PNG) — henüz yok.
