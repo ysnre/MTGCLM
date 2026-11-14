@@ -446,6 +446,27 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
 - Doğrulama: Tab. 2 sayıları bölme dosyasından, B_full test_time BalAcc ve bir Fig. 6 hücresi (test_station, gece, Ara 2025: 0.838, n = 565)
   bağımsız kodla yeniden hesaplandı — birebir.
 
+### K22 — 14 Kas 2026: P13 — LaTeX iskeleti (`paper/`), makale klasörleri depo dışında
+- **Kullanıcı kararı:** makale yazımıyla ilgili hiçbir şey GitHub'a gitmez; `paper/` ve `docs/paper/` .gitignore'da. Bu klasörlerdeki
+  dosyalar için commit komutu üretilmez. (Code availability beyanı buna göre uyarlanacak — `backmatter.tex`'te `\todo`.)
+- **Şablon:** Springer Nature `sn-jnl` (Aralık 2024, zip `docs/paper/`'de; açılmış kopya `paper/template_sn/`). **Kaynak stili `sn-basic`
+  (author-year):** TAAC kılavuzu "name and year in parentheses", alfabetik liste ve Springer Basic biçimini istiyor (doğrulandı, 14 Kas).
+- **Yapı:** `main.tex` (`\ifTAAC`; MAP için `\def\MAPversion{}`, gönderim için `\def\FINALversion{}` → `\todo` gizli, satır no yok),
+  `preamble.tex` (ortak makrolar: `\todo`, `\fig{stem}{genişlik}{label}` altyazıyı `figures/<stem>_caption.tex`'ten okur, `\figpending`),
+  `frontmatter.tex` (başlık/öz/anahtar kelime dergiye göre; yazar bloğu `declarations_taac.md`'den), `sections/01–06` + `sections/results/*`
+  (Bulgular sırası dergiye göre `04_results.tex`'te), `backmatter.tex` (beyanlar), `supplementary.tex` (Tab. S1–S3, ek şekiller).
+  Tablo numaraları yol haritasıyla aynı: Tab. 1 kanallar (P14), 2 bölmeler, 3 ana, 4 ablasyon, 5 maliyet (MAP ana metin; TAAC'ta Tab. S3).
+- **Araçlar:** `python tools/build.py [--journal taac|map|both] [--final]` (pdflatex + bibtex, latexmk/Perl gerekmez; sayfa, tanımsız
+  atıf/etiket, taşan kutu, kalan `\todo` raporu), `python tools/count_chars.py [--journal map]` (100 000 sınır / 80 000 hedef; öz, metin,
+  altyazılar, tablolar, beyanlar, kaynaklar), `tools/captions2tex.py` (`_caption.txt` → `.tex`, kalın panel harfi; `make_all.py` sonunda da çalışır).
+- **refs.bib:** bağlandı (`\bibliography{../docs/paper/refs}`); 134 girdinin hepsine `verified = {no}` eklendi (yedek `refs.bib.bak_20261114`).
+  Derlemeyi bozan veri düzeltildi: Huckle2009 bozuk karakter, μ → `{\textmu}`, Shao2017 `journal = {Remote Sensing}`. T1 fontenc eklendi.
+  **Bozuk kayıt kaldı:** `Bechini2007` (başlık dosya adı, dergi yok) → P16'da düzelt/çıkar. Liu2020 konu dışı (bulut bilişim) → P16.
+- `make_tables.py` sn-jnl tablo düzenine geçirildi (`\footnotetext`, `\botrule`, iki satırlı başlık); Tab. 4/S1 "çift başına grup, küme başına
+  satır" düzeni (metin genişliği 31 pc). Fig. 4/6 altyazılarında panel harfinden sonra büyük harf (betik + `.txt` birlikte düzeltildi).
+- İlk derleme: TAAC 12 + 3 sayfa, MAP 13 + 2 sayfa; tanımsız referans 0, taşan kutu 0; 58 `\todo`. Şekil dosya adları (FigXX) sabit, LaTeX
+  numarası dergiye göre değişir (TAAC: sahne 7, sıklık 8; MAP: kanal önemi 6 … kalibrasyon 9) → gönderimde dosyalar yeniden adlandırılır.
+
 ---
 
 ## 3. Komutlar
@@ -615,6 +636,8 @@ python src\analyze_preds.py --dir artifacts_v3 --out artifacts_v3/analysis --ref
 | `src/loss.py` | `MaskedBCELoss` — yalnız (16,16) pikselinde, `-1` yok sayılır |
 | `src/train.py`, `src/train_unet.py` | Eğitim; `--h5 --split --aux --aux_channels --seed --epochs --limit_batches --results --outdir --model` + K16: `--loader --mem_splits --cache_dir --threads --no_deterministic --no_last_preds` |
 | `src/config.py` | Colab/yerel yollar, `MTGCLM_H5`, PATCH_SIZE 33, BATCH_SIZE 64, LR 1e-3 |
+| `paper/main.tex`, `preamble.tex`, `frontmatter.tex`, `backmatter.tex`, `sections/`, `supplementary.tex` | Makale LaTeX iskeleti (sn-jnl, sn-basic; `\ifTAAC`) — K22 |
+| `paper/tools/build.py`, `count_chars.py`, `captions2tex.py` | Derleme (TAAC/MAP, taslak/gönderim), TAAC karakter sayımı, altyazı dönüşümü — K22 |
 | `paper/figures/make_*.py`, `figdata.py`, `make_all.py` | Makale şekilleri (Fig. 1, 4, 5, 6, 10) ve tabloları (Tab. 2–5, S1–S2); `make_all.py` hepsini üretip kontrol raporlarını özetler (K21) |
 | `README.md`, `LICENSE`, `CITATION.cff`, `.gitignore` | Depo iskeleti + veri bulunabilirliği beyanı |
 
@@ -646,6 +669,10 @@ geç-füzyon planıdır — **arşiv**, güncel hattı temsil etmez. `notebooks/
 - [x] ~~`src/analyze_preds.py`~~ — yazıldı ve gerçek veride denendi (K18).
 - [x] ~~AWOS-t2m'nin CNN'deki etkisi~~ — CV'de küçük ama anlamlı pozitif (K18).
 - [x] ~~P11 şekil altyapısı + P12a (Fig. 1, 4, 5, 6, 10; Tab. 2–5, S1–S2)~~ — K21. **Kalan:** Arial'lı makinede `make_all.py` ile son üretim.
+- [x] ~~P13 LaTeX iskeleti~~ — K22.
+- [ ] **Ertelenen işler (unutma):** P1 sonrası Tab. 4'e radarsız satırlar + Fig. 4 yeniden; P4 sonrası Tab. 5'e sahne başına çıkarım süresi;
+      Tab. 2 dipnotundaki kalibrasyon şekli atfı çapraz referansa; gönderimde FigXX dosyalarını dergiye göre yeniden adlandır;
+      `Bechini2007`/`Liu2020` (P16); Code availability metnini depo dışı makale klasörlerine göre uyarla; eşleştirilmiş farklar 4 ondalık (K21 istisnası).
 - [ ] Analiz raporunu makale bulgularına dönüştür; gece hataları (alçak bulut/sis) için ayrıntı.
 - [ ] U-Net tam harita için hedef-piksel jitter (49×49 çıkar → 33×33 rastgele kırp).
 - [ ] `infer_scene.py`: tek NetCDF sahne + radar + aux → 800×1000 olasılık haritası (GeoTIFF/PNG) — henüz yok.
