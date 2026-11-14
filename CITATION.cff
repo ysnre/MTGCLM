@@ -3,11 +3,21 @@ title: "MTGCLM: Meteosat Third Generation, radar ve yer gözlemleriyle Türkiye 
 message: "Bu yazılımı veya veri setini kullanırsanız lütfen aşağıdaki gibi atıf yapın."
 type: software
 authors:
+  - given-names: Sabri
+    family-names: "Koçer"
+    affiliation: "Department of Computer Engineering, Faculty of Engineering, Necmettin Erbakan University, Konya, Türkiye"
+    orcid: "https://orcid.org/0000-0002-4849-747X"
   - given-names: Yasin
-    family-names: "Er"        
-    affiliation: "Necmettin Erbakan Unversity"         
-    orcid: "0000-0001-6729-5278"               
-repository-code: "https://github.com/ysn_re/MTGCLM"   
+    family-names: "Er"
+    affiliation: "Department of Computer Engineering, Faculty of Engineering, Necmettin Erbakan University, Konya, Türkiye"
+    orcid: "https://orcid.org/0000-0001-6729-5278"
+repository-code: "https://github.com/ysnre/MTGCLM"
+url: "https://github.com/ysnre/MTGCLM"
+doi: "10.5281/zenodo.24112650"
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.24112650"
+    description: "Zenodo archive of the dataset and the released code"
 license: MIT
 version: "2.0.0"
 date-released: "2026-09-17"
