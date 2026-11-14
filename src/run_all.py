@@ -22,6 +22,9 @@ hızlı yükleyici (--loader), örnek bazlı tahmin kaydı (<outdir>/preds/), SY
   resnet   : RESNET_s* (ImageNet stem) + RESNET_CIFAR_s* (CIFAR stem)
   cv       : CV_<A|B|C|Ct2m>_f<k>_s<seed> — 5 kat x 4 modalite                       (Medium_Flat)
   baselines: Z_baselines (tüm veri; majority, eşikler, logreg, rf, hgb)
+  hgbfs    : Z_hgbfs (P2: HGB dört öznitelik setiyle — center1, center5, current, texture)
+  importance: P3_channel_importance (eğitimsiz; B_full checkpoint'leri üzerinde permütasyon önemi + IG)
+  P1/P2 modaliteleri (--modalities ile): A_norad, B_norad (radarsız), B_full_shuf (uzamsal karıştırma); CV: Bnorad
   arch     : 6 mimari varyantı (v2'de koşuldu, Medium_Flat kazandı; v3'te isteğe bağlı)
 --stage v3 = modality,unet,resnet,cv,baselines (arch hariç); --stage all = hepsi.
 --only / --skip: koşu adı ön ekleriyle süzme (ör. Colab'da --only RESNET_CIFAR, yerelde --skip RESNET_CIFAR).
@@ -49,7 +52,7 @@ import sys
 import time
 
 SRC = os.path.dirname(os.path.abspath(__file__))
-STAGES = ["arch", "modality", "unet", "resnet", "cv", "baselines"]
+STAGES = ["arch", "modality", "unet", "resnet", "cv", "baselines", "hgbfs", "importance"]
 V3_STAGES = ["modality", "unet", "resnet", "cv", "baselines"]
 # Modalite varyantları: ad -> train.py ek argümanları
 MODALITIES = {
@@ -57,8 +60,13 @@ MODALITIES = {
     "B_full":   ["--aux"],                                                 # + tüm aux (t2m, rh2m, elev, cos_sza, radar_cov)
     "C_noawos": ["--aux", "--aux_channels", "cos_sza,elev,radar_cov"],     # aux, AWOS'suz
     "C_t2m":    ["--aux", "--aux_channels", "cos_sza,elev,radar_cov,t2m"], # AWOS'tan yalnız t2m (K14)
+    # P1 (15 Kas 2026): radarsız — radar kanalı ve radar_cov çıkarılır
+    "A_norad":  ["--base_channels", "fci"],                                                    # 16 FCI
+    "B_norad":  ["--base_channels", "fci", "--aux", "--aux_channels", "t2m,rh2m,elev,cos_sza"], # 16 FCI + 4 aux
+    # P2: uzamsal yapı kontrolü — B_full girdileri, piksel konumları örnek başına karıştırılmış (merkez sabit)
+    "B_full_shuf": ["--aux", "--spatial_shuffle"],
 }
-CV_SHORT = {"A": "A_sat", "B": "B_full", "C": "C_noawos", "Ct2m": "C_t2m"}
+CV_SHORT = {"A": "A_sat", "B": "B_full", "C": "C_noawos", "Ct2m": "C_t2m", "Bnorad": "B_norad"}
 
 
 def pick_best_arch(outdir: str):
@@ -143,6 +151,16 @@ def build_matrix(args):
                  [py, os.path.join(SRC, "baselines.py"), "--h5", args.h5, "--split", args.split, "--aux",
                   "--models", "majority,threshold,threshold2,logreg,rf,hgb", "--seed", str(seeds[0]),
                   "--max_train", "0", "--max_eval", "0"] + res(f"Z_baselines_s{seeds[0]}")))
+    # 7) P2: HGB öznitelik setleri (merkez piksel / merkez 5x5 / mevcut / mevcut + doku) — tek koşu, öznitelikler bir kez okunur
+    jobs.append(("hgbfs", f"Z_hgbfs_s{seeds[0]}",
+                 [py, os.path.join(SRC, "baselines.py"), "--h5", args.h5, "--split", args.split, "--aux",
+                  "--models", "hgb", "--feature_sets", "center1,center5,current,texture", "--seed", str(seeds[0]),
+                  "--max_train", "0", "--max_eval", "0"] + res(f"Z_hgbfs_s{seeds[0]}")))
+    # 8) P3: kanal önemi (eğitim yok; B_full s1-3 checkpoint'leri, test_time) — permütasyon + Integrated Gradients
+    imp = [py, os.path.join(SRC, "channel_importance.py"), "--h5", args.h5, "--split", args.split, "--dir", args.outdir]
+    if args.threads:
+        imp += ["--threads", str(args.threads)]
+    jobs.append(("importance", "P3_channel_importance", imp))
     return jobs
 
 
