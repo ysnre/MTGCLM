@@ -67,6 +67,7 @@ def atomic_json(obj, path: str):
 # float32'ye genişletme ve aux z-skoru burada, GPU'da yapılır. Matematik aynıdır;
 # CPU'dan kalkan iş, batch başına ~3 kat daha ucuz bir veri yolu demektir.
 _AUX_NORM = None   # (n_base, mean[1,A,1,1], std[1,A,1,1]) ya da None
+_FEAT_CFG = (None, False, 42)   # main() ayarlar: (temel kanal indeksleri | None, uzamsal karıştırma, seed)
 
 
 def set_aux_norm(base_dataset, device):
@@ -80,6 +81,45 @@ def set_aux_norm(base_dataset, device):
         _AUX_NORM = None
 
 
+# P1/P2 (15 Kas 2026): isteğe bağlı girdi dönüşümleri. İkisi de None iken prep_features eskisiyle birebir aynıdır.
+_CH_KEEP = None    # LongTensor: birleştirilmiş [17 temel + aux] tensöründe tutulacak kanal indeksleri (--base_channels)
+_SHUF_GEN = None   # torch.Generator: --spatial_shuffle açıkken örnek başına piksel permütasyonu üretir
+
+
+def set_feature_transform(base_dataset, keep_base, spatial_shuffle, seed, device):
+    """run_experiment başında çağrılır. keep_base: tutulacak temel kanal indeksleri (None = 17'nin tamamı).
+    Aux kanalları (--aux/--aux_channels ile seçilenler) her zaman tutulur. Döndürür: modele giren kanal sayısı."""
+    global _CH_KEEP, _SHUF_GEN
+    n_base = int(base_dataset.base_channels)
+    n_aux = len(getattr(base_dataset, "aux_names", []) or [])
+    if keep_base is None:
+        _CH_KEEP = None
+        n_in = n_base + n_aux
+    else:
+        idx = list(keep_base) + [n_base + j for j in range(n_aux)]
+        _CH_KEEP = torch.as_tensor(idx, dtype=torch.long, device=device)
+        n_in = len(idx)
+    _SHUF_GEN = None
+    if spatial_shuffle:
+        _SHUF_GEN = torch.Generator()
+        _SHUF_GEN.manual_seed(int(seed) * 7919 + 17)
+    return n_in
+
+
+def spatial_shuffle(x, gen):
+    """P2: her örnekte 33x33 piksellerin konumlarını rastgele karıştırır; aynı permütasyon tüm kanallara uygulanır,
+    merkez piksel (16,16) yerinde kalır. Spektral dağılım korunur, uzamsal yapı yok olur."""
+    B, C, H, W = x.shape
+    n, c = H * W, (H // 2) * W + W // 2
+    others = torch.tensor([i for i in range(n) if i != c], dtype=torch.long)
+    order = torch.rand(B, n - 1, generator=gen).argsort(dim=1)
+    src = torch.empty(B, n, dtype=torch.long)
+    src[:, c] = c
+    src[:, others] = others[order]
+    src = src.to(x.device).unsqueeze(1).expand(B, C, n)
+    return x.reshape(B, C, n).gather(2, src).reshape(B, C, H, W)
+
+
 def prep_features(features, device):
     x = features.to(device, non_blocking=True)
     if x.dtype != torch.float32:
@@ -87,6 +127,10 @@ def prep_features(features, device):
     if _AUX_NORM is not None:
         n_base, m, s = _AUX_NORM
         x = torch.cat([x[:, :n_base], (x[:, n_base:] - m) / s], dim=1)
+    if _CH_KEEP is not None:
+        x = x.index_select(1, _CH_KEEP)
+    if _SHUF_GEN is not None:
+        x = spatial_shuffle(x, _SHUF_GEN)
     return x
 
 
@@ -351,8 +395,11 @@ def run_experiment(name: str, conv_blocks: list, train_loader, val_loader, epoch
     _ds = train_loader.dataset
     while hasattr(_ds, "dataset"):
         _ds = _ds.dataset
-    in_ch = int(getattr(_ds, "num_channels", 17))
     set_aux_norm(_ds, DEVICE)          # f16 modunda aux z-skoru GPU'da yapılacak
+    keep_base, shuf, seed = _FEAT_CFG
+    in_ch = set_feature_transform(_ds, keep_base, shuf, seed, DEVICE)
+    if keep_base is not None or shuf:
+        print(f"Girdi dönüşümü: temel kanallar {'tümü' if keep_base is None else keep_base} | uzamsal karıştırma {shuf}")
     print(f"Input channels: {in_ch}")
     
     # Initialize model
@@ -583,6 +630,11 @@ def main():
                         help="Eski veri yolu: float32'ye cevirme ve aux z-skoru CPU'da yapilsin (daha yavas, "
                              "sonuc ayni). Dogrulama/karsilastirma icin.")
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--base_channels", type=str, default=None,
+                        help="P1: temel (uydu+radar) kanal alt kümesi — 'fci' (16 FCI, radarsız), virgüllü adlar (src/channels.py) "
+                             "ya da 'all' (varsayılan). Aux seçimi --aux/--aux_channels ile ayrıdır.")
+    parser.add_argument("--spatial_shuffle", action="store_true",
+                        help="P2: her örnekte piksel konumlarını karıştır (merkez sabit; eğitim ve değerlendirmede)")
     parser.add_argument("--epochs", type=int, default=15,
                         help="Varsayılan 15 (her platformda; eskiden yerelde 3'tü). Hızlı deneme: --epochs 1 --limit_batches 50")
     parser.add_argument("--limit_batches", type=int, default=None, help="Yalnız deneme için; 0/None = tüm veri")
@@ -608,7 +660,10 @@ def main():
         torch.set_num_threads(args.threads)
     setup_repro(args.seed, deterministic=not args.no_deterministic)
     aux_channels = args.aux_channels.split(",") if args.aux_channels else None
-    global OUT_DIR, RUN_TAG
+    from channels import parse_base_channels, BASE_CHANNELS
+    keep_base = parse_base_channels(args.base_channels)
+    global OUT_DIR, RUN_TAG, _FEAT_CFG
+    _FEAT_CFG = (keep_base, bool(args.spatial_shuffle), args.seed)
     if args.results:
         RUN_TAG = os.path.splitext(os.path.basename(args.results))[0]
     if args.outdir:
@@ -749,6 +804,8 @@ def main():
             "num_params": num_params,
             "test": test_results,
             "config": {"seed": args.seed, "aux": args.aux, "aux_channels": aux_channels, "split": args.split,
+                       "base_channels": "all" if keep_base is None else [BASE_CHANNELS[i] for i in keep_base],
+                       "spatial_shuffle": bool(args.spatial_shuffle),
                        "epochs": epochs_to_run, "limit_batches": limit_batches,
                        "best_model_file": f"best_model_{RUN_TAG + '__' if RUN_TAG else ''}{name.lower()}.pth",
                        "preds_file": f"preds/{preds_file}" if test_loaders else None,
