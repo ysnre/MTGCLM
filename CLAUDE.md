@@ -568,6 +568,18 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   Özet: `src/summarize_scenes.py` → `artifacts_v3/scenes/scenes_summary.csv` (verify_numbers bu klasörü de okur). Tab. 5 sahne
   sütunu ve Yöntem §3.8 (P4 kısmı) yazıldı.
 
+### K28 — 15 Kas 2026: P5 — sahne seçimi, ürün eşlemesi ve Fig. 8 kodu (gerçek koşu bekliyor)
+- `src/select_scenes.py`: test haftalarından (test_time ∪ test_both, ≥ 25 etiketli istasyon) 5 sahne **görüntüye bakmadan**,
+  önceden yazılı puanlarla: konveksiyon (yama radar maks. ≥ 128 mavi kanal), kar (Ara–Mar gündüz, açık, ≥ 1500 m, VIS0.6 ≥ %30,
+  NIR1.6/VIS0.6 ≤ 0,4), sirrüs (NWC CT 11–15), gece alçak bulut/sis (bulutlu ve okta 9 ya da RH ≥ %90), gündüz açık (açık oranı).
+  Aynı gün iki kez seçilmez. Çıktı `scenes_selected.csv` + `scenes_candidates.csv`.
+  **Radar ölçeği varsayımı:** radar_aligned değerleri 3,2'lik adımlarla 0–192 (≈ 0–80 dBZ doğrusal ise 128 ≈ 40 dBZ); MGM PNG ölçeği teyit edilmeli.
+- `src/build_scene_pack.py`: FCI doğal renk (R NIR1.6, G VIS0.8, B VIS0.6, SZA normalize) / gece IR10.5; U-Net olasılığı; FCI CLM
+  (2,3 → bulutlu; 1,8 → açık; diğer geçersiz) ve NWC CT (5–15 bulutlu) 800×1000'e en yakın piksel. **CLM ızgara eşlemesi satpy'siz:**
+  geos (sweep y) `col = floor(X/2000,02 + 2784)`, `row = floor(Y/2000,02 + 2784)` — `clm_station_index.npz` ile 279/279 birebir.
+- `paper/figures/make_fig08_scenes.py`: 5 satır × 4 sütun (a–t), 174 × ~120 mm; istasyon dolu = bulutlu, boş = açık (şekille);
+  `MTGCLM_SCENE_PACK`/`MTGCLM_SCENES_CSV` ile test girdisi; make_all'a eklendi (paket yoksa atlanır). Sahte paketle düzen sınandı.
+
 ---
 
 ## 3. Komutlar
@@ -726,6 +738,8 @@ python src\analyze_preds.py --dir artifacts_v3 --out artifacts_v3/analysis --ref
 | `src/make_label_policy.py` | METAR NSC politikası (keep/verify/ignore) → `split_v2_<politika>.npz`, `cv5_<politika>_fold*.npz` |
 | `src/analyze_preds.py` | v3 örnek bazlı analiz: blok-bootstrap GA, eşleştirilmiş farklar, CV, kırılımlar, CLM/NWC kıyası (K18) |
 | `src/infer_scene.py` | P4 tam harita çıkarımı: U-Net faz-hizalı / CNN kayan pencere → NetCDF + GeoTIFF + PNG; `--check` H5/preds tutarlılığı (K27) |
+| `src/select_scenes.py` | P5 sahne seçimi (ölçütle, görüntüsüz) → `scenes_selected.csv` (K28) |
+| `src/build_scene_pack.py` | P5 sahne paketi: FCI görüntüsü + model + CLM + NWC CT aynı ızgarada (K28) |
 | `src/summarize_scenes.py` | Sahne JSON'ları → `scenes_summary.csv` (tutarlılık, faz deseni, süre; torch gerekmez) |
 | `src/bench_speed.py` | Model başına eğitim/değerlendirme hızı (sentetik), koşu süresi tahmini, iş parçacığı seçimi |
 | `src/model.py` | `MTGConvNet` (Shallow/Medium/Deep × GAP/Flatten), `MTGResNet18` (stem: imagenet / cifar), `MTGUNet` |
