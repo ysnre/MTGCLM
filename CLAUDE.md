@@ -543,6 +543,24 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   models (HGB öznitelik kümeleri, karıştırma), importance.tex (MAP). refs.bib'e He2016, Breiman2001, Kunsch1989, Sundararajan2017.
   verify_numbers 249/0; TAAC 20+5 s., MAP 22+3 s., 48 \todo.
 
+### K27 — 15 Kas 2026: P4 — `src/infer_scene.py` (tam harita çıkarımı) yazıldı, gerçek U-Net koşusu bekliyor
+- Girdiler eğitimle birebir: FCI kanalları **adla** (`channels.py` sırası), H5 `means/stds` z-skoru, NaN→0, float16 yuvarlaması;
+  radar `radar_aligned/<sahne>.npy`; aux `update_h5_aux_channels.py` fonksiyonları ve parametreleri **H5 `aux_params`'tan**
+  (k=8, p=2, 250 km, 6,5 K/km, floor; radar_cov o anda PNG'si olan radarlar — eğitimde `--radar_dir f:/radar/ppi`). Grid dışı:
+  eğitimdeki yama dolgusu (uydu/radar 0, elev/radar_cov 0, t2m/rh2m/cos_sza ekstrapole konumda). AWOS anları
+  `data/processed/awos_scene_cache/` altında önbelleklenir (4,4 GB CSV tek geçişte taranır).
+- **U-Net havuzlama fazı:** U-Net yalnız merkez pikselde (16,16; 4'e bölünen konum) denetlendi → tek geçişte 4 piksellik faz deseni
+  çıkıyor (v2 ağırlığıyla 25 May 2026 sahnesi: tek geçiş − faz-hizalı ort. |fark| 0,077, maskede %3 uyuşmazlık, 4 periyotlu güç
+  oranı 1,9 → 0,001). Varsayılan `--unet_mode aligned`: 16 geçiş, her piksel eğitim fazında. Boyut 4k+1 olmalı (up1 output_padding=1).
+- CNN (B_full) kayan pencere 33×33 adım 1; bulut ortamında (2 çekirdek) 320 bin piksel 148 s.
+- **Tutarlılık testi (`--check`):** sahte H5 + preds ile mekanik doğrulandı (girdi farkı 0, harita = yama olasılığı). Gerçek doğrulama
+  kullanıcı makinesinde F:/turkiye_kesitler + C:/mtg H5 ile yapılacak.
+- **Ölçek gözlemi (makale için):** 25 May 2026 12 UTC'de kümülüs alanında RGB'de çok sayıda açık boşluk varken model Anadolu'nun
+  çoğunu bulutlu veriyor — ürün "piksel bulut maskesi" değil, ~57×37 km bağlamdan **istasyonun ≥5 okta bildirme olasılığı**.
+  P5/P6 ve Tartışma'da bu ayrım açıkça yazılmalı.
+- Çıktılar `artifacts_v3/scenes/`: `.nc` (h5py ile NetCDF4/CF), `_prob.tif` (EPSG:4326, PIL ile), `.png`, `.json`, `timing.csv`.
+  quality_flag: 1 uydu NaN, 2 radar dosyası yok, 4 AWOS doldurma, 8 radar kapsamı dışı, 16 statik radar_cov.
+
 ---
 
 ## 3. Komutlar
@@ -700,6 +718,7 @@ python src\analyze_preds.py --dir artifacts_v3 --out artifacts_v3/analysis --ref
 | `src/run_utils.py` | Tekrarlanabilirlik (seed, deterministik, RNG checkpoint), ortam bilgisi, SYNOP-only metrik, tahmin kaydı |
 | `src/make_label_policy.py` | METAR NSC politikası (keep/verify/ignore) → `split_v2_<politika>.npz`, `cv5_<politika>_fold*.npz` |
 | `src/analyze_preds.py` | v3 örnek bazlı analiz: blok-bootstrap GA, eşleştirilmiş farklar, CV, kırılımlar, CLM/NWC kıyası (K18) |
+| `src/infer_scene.py` | P4 tam harita çıkarımı: U-Net faz-hizalı / CNN kayan pencere → NetCDF + GeoTIFF + PNG; `--check` H5/preds tutarlılığı (K27) |
 | `src/bench_speed.py` | Model başına eğitim/değerlendirme hızı (sentetik), koşu süresi tahmini, iş parçacığı seçimi |
 | `src/model.py` | `MTGConvNet` (Shallow/Medium/Deep × GAP/Flatten), `MTGResNet18` (stem: imagenet / cifar), `MTGUNet` |
 | `src/extract_fci_clm.py` | FCI CLM → istasyon çevresi sınıf sayımları (merkez, 3×3, r5–r30 km); indeks `data/clm_station_index.npz` |
@@ -757,7 +776,7 @@ geç-füzyon planıdır — **arşiv**, güncel hattı temsil etmez. `notebooks/
 - [ ] Bölüm 2.2: "5–30 km komşuluk" ifadesi — sonuçlarda yalnız merkez ve 30 km var (5–20 km ekle ya da cümleyi daralt).
 - [ ] Analiz raporunu makale bulgularına dönüştür; gece hataları (alçak bulut/sis) için ayrıntı.
 - [ ] U-Net tam harita için hedef-piksel jitter (49×49 çıkar → 33×33 rastgele kırp).
-- [ ] `infer_scene.py`: tek NetCDF sahne + radar + aux → 800×1000 olasılık haritası (GeoTIFF/PNG) — henüz yok.
+- [x] ~~`infer_scene.py`~~ — yazıldı (K27); gerçek sahnelerde tutarlılık testi ve süre ölçümü bekliyor.
 - [ ] Kanal permütasyon önemi / Integrated Gradients — kod hazır (K25), koşu bekliyor.
 - [ ] Metrikleri gündüz/gece ve mevsim kırılımıyla raporla.
 - [ ] `src/make_public_sample.py` ile paylaşılabilir örneklem (`data/mtg_sample.h5`) üret — henüz çalıştırılmadı.
