@@ -521,6 +521,21 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   Sonra: `python src\analyze_preds.py --dir artifacts_v3 --out artifacts_v3/analysis --refs --aux_h5 C:/mtg/mtg_train_v2.h5`,
   `python paper\tools\verify_numbers.py` (mevcut 178 sayı hâlâ 0 hata olmalı), `python paper\figures\make_all.py`.
 
+### K26 — 15 Kas 2026: P1–P3 gece koşusu bitti; kanal önemi permütasyonu düzeltildi, şekil/tablo süzgeci
+- **P1 (radar):** A_sat − A_norad test_time −0,0006 [−0,0016, +0,0003] (anlamsız), test_both −0,0024 [−0,0040, −0,0005];
+  B_full − B_norad test_time +0,0007 [+0,00002, +0,0015]; CV B − Bnorad +0,0009 [+0,0003, +0,0014] (4/5 kat). → Radarın katkısı
+  aux varken küçük pozitif, aux yokken yok. Radar kapsam dışı örnek yalnız test_station'da (n = 964).
+- **P2 (uzamsal yapı):** B_full − B_full_shuf +0,0016 [+0,00002, +0,0033] (test_time), test_station +0,0021 (anlamlı).
+  HGB: hgb_texture test_time 0,962; texture − current +0,0025 (anlamlı); current − center1 +0,0146; B_full − hgb_texture
+  −0,0055 [−0,0093, −0,0023] → doku öznitelikli HGB CNN'i test_time'da geçiyor; makalede dürüstçe raporlanacak.
+- **P3 tasarım hatası düzeltildi:** tüm kümede permütasyon gece örneklerine gündüz yansıması taşıyordu (gece NIR1.6 kaybı 0,18 —
+  fiziksel değil). `channel_importance.py --perm_within illum` (varsayılan): permütasyon gündüz/alacakaranlık/gece sınıfı içinde,
+  assert ile korunur, json'a `perm_within` yazılır. **importance aşaması yeniden koşulmalı** (`--stage importance --force`).
+- **Şekil/tablo:** `figdata.MAIN_EXPS` (MODEL_ORDER'ın ilk 12'si: ana modeller + B_norad + A_norad) — Fig. 4/5/6 ve Tab. 3 yalnız bunları
+  çizer; B_full_shuf ve hgb_* öznitelik kümeleri yeni **Tab. S4** (`tabS4_spatial_texture`). Tab. 4'e A_sat−A_norad ve B_full−B_norad
+  (CV: B − Bnorad). `springer_fig.COLORS/LABELS` yeni deneyleri içerir. `MTGCLM_FIG_OUT` ortam değişkeni şekilleri önizleme klasörüne
+  yönlendirir (son şekillerin üzerine yazmadan sınama).
+
 ---
 
 ## 3. Komutlar
