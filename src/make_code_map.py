@@ -118,6 +118,8 @@ MODULE_INFO = {
     "clm_vs_synop_quicklook": ("referans", "CLM ↔ ham SYNOP ön bakış (merkez vs alan)", None),
     # 10 araç
     "channels": ("model", "Doğrulanmış H5 kanal sırası (tek kaynak), dalga boyları, P3 fiziksel grupları (K24–K25)", None),
+    "select_scenes": ("analiz", "P5: Fig. 8 için test haftalarından 5 sahneyi önceden tanımlı ölçütlerle seçer (görüntüye bakmadan)", None),
+    "build_scene_pack": ("analiz", "P5: seçilen sahnelerde FCI görüntüsü, model, FCI CLM ve NWC CT'yi 800x1000 ızgarada paketler", None),
     "summarize_scenes": ("analiz", "P4: sahne JSON'larından tutarlılık/faz/süre özeti (scenes_summary.csv)", None),
     "infer_scene": ("analiz", "P4: tek sahne tam harita çıkarımı (U-Net faz-hizalı / CNN kayan pencere), NetCDF+GeoTIFF+PNG, H5/preds tutarlılık testi", None),
     "channel_importance": ("analiz", "P3: permütasyon önemi + Integrated Gradients (B_full, test_time; kayıtlı tahminlerle güvenlik kontrolü)", None),
@@ -156,6 +158,8 @@ EXTRA_DATA = {
     "make_label_policy": [("bolme", "okur+yazar"), ("h5_kompakt", "okur")],
     "run_all": [("sonuc", "yazar"), ("h5_kompakt", "okur")],
     "train": [("h5_kompakt", "okur"), ("bolme", "okur")],
+    "select_scenes": [("h5_kompakt", "okur"), ("h5meta", "okur"), ("bolme", "okur"), ("nwc_ist", "okur"), ("sonuc", "yazar")],
+    "build_scene_pack": [("kesit", "okur"), ("clm_ham", "okur"), ("nwc_ham", "okur"), ("sonuc", "okur"), ("h5meta", "okur")],
     "infer_scene": [("h5_kompakt", "okur"), ("kesit", "okur"), ("radar_hiz", "okur"), ("awos", "okur"), ("dem", "okur"), ("sonuc", "okur+yazar")],
     "train_unet": [("h5_kompakt", "okur"), ("bolme", "okur")],
     "h5_dataset": [("h5_kompakt", "okur")],
