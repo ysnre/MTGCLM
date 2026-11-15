@@ -12,6 +12,8 @@ Sahne başına data/processed/scene_pack/pack_<YYYYmmddHHMMSS>.npz:
   nwc_class[800,1000] uint8    ham sınıf
   st_lat, st_lon, st_label     sahnenin etiketli test istasyonları
   meta (json)                  dosya adları, CLM tekrar döngüsü ve dönemi (C/O), NWC slotu
+Ayrıca artifacts_v3/scenes/scene_pack_summary.csv: sahne başına istasyonlarda model/CLM/NWC doğruluğu (aynı istasyonlar,
+ürünün geçerli olduğu yerde), bulutlu piksel oranları ve model–ürün piksel uyumu (Bulgular metni bu dosyadan).
 
 Izgara eşlemeleri:
   CLM: FCI 2 km tam disk, geos (h 35 786,4 km, sweep y, WGS84). col = floor(X/2000,02 + 2784), row = floor(Y/2000,02 + 2784);
@@ -124,6 +126,7 @@ def main():
     test_rows = np.unique(np.concatenate([sp["test_time"], sp["test_both"]]))
     ts_all = meta["time"].dt.strftime("%Y%m%d%H%M%S").values
     os.makedirs(a.out, exist_ok=True)
+    summary = []
 
     for _, s in sel.iterrows():
         ts = s["scene"]
@@ -185,10 +188,37 @@ def main():
                             st_lat=st["lat"].values, st_lon=st["lon"].values, st_label=st["label"].values.astype(np.int8),
                             lats=grid.lats, lons=grid.lons, meta=json.dumps(meta_d))
         agree = lambda m: float(((prob >= 0.5).astype(np.int8) == m)[m >= 0].mean()) if (m >= 0).any() else None
+        sy, sx = grid.latlon_to_index(st["lat"].values, st["lon"].values)
+        inside = (sy >= 0) & (sy < grid.ny) & (sx >= 0) & (sx < grid.nx)
+        sy, sx, lab = sy[inside], sx[inside], st["label"].values[inside]
+
+        def st_acc(binmap):
+            v = binmap[sy, sx]
+            ok = v >= 0
+            return (float((v[ok] == lab[ok]).mean()) if ok.any() else None), int(ok.sum())
+        acc_m, _ = st_acc((prob >= 0.5).astype(np.int8))
+        acc_c, n_c = st_acc(clm)
+        acc_n, n_n = st_acc(nwc)
+        both = (clm[sy, sx] >= 0) & (nwc[sy, sx] >= 0)
+        acc_m_both = float((((prob[sy, sx] >= 0.5).astype(int)) == lab)[both].mean()) if both.any() else None
+        summary.append({"category": s["category"], "scene": ts, "is_day": is_day, "n_stations": int(len(lab)),
+                        "n_clear": int((lab == 0).sum()), "acc_model": acc_m, "acc_clm": acc_c, "n_clm": n_c,
+                        "acc_nwc": acc_n, "n_nwc": n_n, "acc_model_where_both": acc_m_both,
+                        "cloudfrac_model": float(np.mean(prob >= 0.5)),
+                        "cloudfrac_clm": float(np.mean(clm[clm >= 0] == 1)) if (clm >= 0).any() else None,
+                        "cloudfrac_nwc": float(np.mean(nwc[nwc >= 0] == 1)) if (nwc >= 0).any() else None,
+                        "agree_model_clm": agree(clm), "agree_model_nwc": agree(nwc),
+                        "clm_disposition": meta_d.get("clm_disposition"), "clm_snow_frac": float(np.mean(cst == 8)),
+                        "nwc_semitransparent_frac": float(np.mean((ncl >= 11) & (ncl <= 15)))})
         print(f"{ts} [{s['category']}] {'gündüz' if is_day else 'gece'}  model bulutlu {np.mean(prob >= 0.5):.2f} | "
               f"CLM bulutlu {np.mean(clm[clm >= 0] == 1) if (clm >= 0).any() else float('nan'):.2f} (uyum {agree(clm)}) | "
               f"NWC bulutlu {np.mean(nwc[nwc >= 0] == 1) if (nwc >= 0).any() else float('nan'):.2f} (uyum {agree(nwc)}) | "
               f"{len(st)} istasyon -> {out}")
+    if summary:
+        import pandas as pd
+        sp_out = os.path.join(a.scene_dir, "scene_pack_summary.csv")
+        pd.DataFrame(summary).to_csv(sp_out, index=False, encoding="utf-8")
+        print(f"Özet: {sp_out}")
 
 
 if __name__ == "__main__":
