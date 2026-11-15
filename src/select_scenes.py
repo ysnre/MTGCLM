@@ -13,6 +13,8 @@ Türler ve puanlar (istasyon = etiketli test satırı; değerler istasyon piksel
   cirrus      : gündüz; NWC SAF CT merkez sınıfı yarı saydam (11–15) olan istasyon sayısı
   night_low   : gece (istasyonların tümü <= −5°); etiket bulutlu ve (okta 9 ya da RH2m >= %90) olan istasyon sayısı
   day_clear   : gündüz; açık etiket oranı (eşitlikte istasyon sayısı)
+Ön koşul (tüm türler): sahne zamanında iki referans ürün de var — FCI CLM tekrar döngüsü (data/processed/clm_station,
+floor 10 dk) okunmuş ve NWC SAF CT istasyonların >= %90'ında mevcut (Fig. 8 dört sütunu dolu olsun diye; 15 Kas 2026).
 Çıktılar: <out>/scenes_selected.csv (seçilenler, puan ve gerekçe), <out>/scenes_candidates.csv (her türün ilk 10 adayı).
 
     python src/select_scenes.py --h5 C:/mtg/mtg_train_v2.h5
@@ -89,6 +91,24 @@ def nwc_center_class(meta_rows, nwc_dir):
     return out
 
 
+def clm_available(scenes, clm_dir):
+    """Sahne zamanı (floor 10 dk) için CLM tekrar döngüsü var mı (extract_fci_clm.py gün dosyalarındaki rc_start, ok)."""
+    out = {}
+    cache = {}
+    for ts in scenes:
+        key = ts[:11] + "0"                      # YYYYmmddHHM0
+        day = ts[:8]
+        if day not in cache:
+            p = os.path.join(clm_dir, f"clm_{day}.npz")
+            if os.path.exists(p):
+                z = np.load(p)
+                cache[day] = {str(r) for r, ok in zip(z["rc_start"], z["ok"]) if ok}
+            else:
+                cache[day] = set()
+        out[ts] = key in cache[day]
+    return pd.Series(out)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--h5", required=True)
@@ -96,6 +116,7 @@ def main():
     ap.add_argument("--meta", default=os.path.join(ROOT, "data/processed/h5meta_train_v2.npz"))
     ap.add_argument("--stations", default=os.path.join(ROOT, "data/raw_observation/station_list.csv"))
     ap.add_argument("--nwc_dir", default=os.path.join(ROOT, "data/processed/nwcsaf_station"))
+    ap.add_argument("--clm_dir", default=os.path.join(ROOT, "data/processed/clm_station"))
     ap.add_argument("--min_rows", type=int, default=25)
     ap.add_argument("--radar_raw", type=float, default=128.0)
     ap.add_argument("--out", default=os.path.join(ROOT, "artifacts_v3/scenes"))
@@ -131,6 +152,10 @@ def main():
         "n_ci": g["f_ci"].sum(), "n_low": g["f_low"].sum(), "nwc_cover": g["nwc"].apply(lambda s: float((s < 255).mean())),
     })
     S = S[S["n_rows"] >= a.min_rows].copy()
+    S["clm_ok"] = clm_available(S.index, a.clm_dir).reindex(S.index).fillna(False).astype(bool)
+    n0 = len(S)
+    S = S[S["clm_ok"] & (S["nwc_cover"] >= 0.9)].copy()
+    print(f"Aday sahne: {n0} (>= {a.min_rows} istasyon) -> {len(S)} (CLM ve NWC mevcut)")
     S["day"] = S.index.str[:8]
     day = S["day_frac"] >= 0.9
     S["score_convection"] = S["n_conv"].astype(float)
