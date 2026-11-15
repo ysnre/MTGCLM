@@ -543,7 +543,7 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   models (HGB öznitelik kümeleri, karıştırma), importance.tex (MAP). refs.bib'e He2016, Breiman2001, Kunsch1989, Sundararajan2017.
   verify_numbers 249/0; TAAC 20+5 s., MAP 22+3 s., 48 \todo.
 
-### K27 — 15 Kas 2026: P4 — `src/infer_scene.py` (tam harita çıkarımı) yazıldı, gerçek U-Net koşusu bekliyor
+### K27 — 15 Kas 2026: P4 — `src/infer_scene.py` (tam harita çıkarımı) — gerçek sahnelerde doğrulandı
 - Girdiler eğitimle birebir: FCI kanalları **adla** (`channels.py` sırası), H5 `means/stds` z-skoru, NaN→0, float16 yuvarlaması;
   radar `radar_aligned/<sahne>.npy`; aux `update_h5_aux_channels.py` fonksiyonları ve parametreleri **H5 `aux_params`'tan**
   (k=8, p=2, 250 km, 6,5 K/km, floor; radar_cov o anda PNG'si olan radarlar — eğitimde `--radar_dir f:/radar/ppi`). Grid dışı:
@@ -560,6 +560,13 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   P5/P6 ve Tartışma'da bu ayrım açıkça yazılmalı.
 - Çıktılar `artifacts_v3/scenes/`: `.nc` (h5py ile NetCDF4/CF), `_prob.tif` (EPSG:4326, PIL ile), `.png`, `.json`, `timing.csv`.
   quality_flag: 1 uydu NaN, 2 radar dosyası yok, 4 AWOS doldurma, 8 radar kapsamı dışı, 16 statik radar_cov.
+- **Gerçek doğrulama (15 Kas, MSSPC, 3 test sahnesi: 2026-05-03 11:58 ve 03:48, 2025-12-31 11:58; 298 istasyon satırı):** girdi farkı **0**
+  (22 kanal), yeniden üretilen yamadan olasılık ↔ kayıtlı preds ≤ 4e-7; tam harita ↔ kayıtlı: CNN birebir, U-Net medyan ≤ 8e-5
+  (p95 ≤ 0,043, en büyük 0,16 — 33 piksel dışındaki gerçek bağlam). **v3 U-Net tek geçişte kullanılamaz:** tek fazlı geçiş maskenin
+  %38–54'ünü değiştiriyor (tek indeksli fazlarda ort. |fark| ~0,4–0,6) → faz-hizalı mod zorunlu; P20 (jitter) ile kalıcı çözülebilir.
+  Süre (12 iş parçacığı, tek model): U-Net 14 s (16 geçiş), CNN kayan pencere 167 s; girdi hazırlığı ~2 s; tepe bellek ~2 GB.
+  Özet: `src/summarize_scenes.py` → `artifacts_v3/scenes/scenes_summary.csv` (verify_numbers bu klasörü de okur). Tab. 5 sahne
+  sütunu ve Yöntem §3.8 (P4 kısmı) yazıldı.
 
 ---
 
@@ -719,6 +726,7 @@ python src\analyze_preds.py --dir artifacts_v3 --out artifacts_v3/analysis --ref
 | `src/make_label_policy.py` | METAR NSC politikası (keep/verify/ignore) → `split_v2_<politika>.npz`, `cv5_<politika>_fold*.npz` |
 | `src/analyze_preds.py` | v3 örnek bazlı analiz: blok-bootstrap GA, eşleştirilmiş farklar, CV, kırılımlar, CLM/NWC kıyası (K18) |
 | `src/infer_scene.py` | P4 tam harita çıkarımı: U-Net faz-hizalı / CNN kayan pencere → NetCDF + GeoTIFF + PNG; `--check` H5/preds tutarlılığı (K27) |
+| `src/summarize_scenes.py` | Sahne JSON'ları → `scenes_summary.csv` (tutarlılık, faz deseni, süre; torch gerekmez) |
 | `src/bench_speed.py` | Model başına eğitim/değerlendirme hızı (sentetik), koşu süresi tahmini, iş parçacığı seçimi |
 | `src/model.py` | `MTGConvNet` (Shallow/Medium/Deep × GAP/Flatten), `MTGResNet18` (stem: imagenet / cifar), `MTGUNet` |
 | `src/extract_fci_clm.py` | FCI CLM → istasyon çevresi sınıf sayımları (merkez, 3×3, r5–r30 km); indeks `data/clm_station_index.npz` |
@@ -776,7 +784,7 @@ geç-füzyon planıdır — **arşiv**, güncel hattı temsil etmez. `notebooks/
 - [ ] Bölüm 2.2: "5–30 km komşuluk" ifadesi — sonuçlarda yalnız merkez ve 30 km var (5–20 km ekle ya da cümleyi daralt).
 - [ ] Analiz raporunu makale bulgularına dönüştür; gece hataları (alçak bulut/sis) için ayrıntı.
 - [ ] U-Net tam harita için hedef-piksel jitter (49×49 çıkar → 33×33 rastgele kırp).
-- [x] ~~`infer_scene.py`~~ — yazıldı (K27); gerçek sahnelerde tutarlılık testi ve süre ölçümü bekliyor.
+- [x] ~~`infer_scene.py`~~ — yazıldı ve gerçek sahnelerde doğrulandı (K27).
 - [ ] Kanal permütasyon önemi / Integrated Gradients — kod hazır (K25), koşu bekliyor.
 - [ ] Metrikleri gündüz/gece ve mevsim kırılımıyla raporla.
 - [ ] `src/make_public_sample.py` ile paylaşılabilir örneklem (`data/mtg_sample.h5`) üret — henüz çalıştırılmadı.
