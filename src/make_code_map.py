@@ -118,6 +118,7 @@ MODULE_INFO = {
     "clm_vs_synop_quicklook": ("referans", "CLM ↔ ham SYNOP ön bakış (merkez vs alan)", None),
     # 10 araç
     "channels": ("model", "Doğrulanmış H5 kanal sırası (tek kaynak), dalga boyları, P3 fiziksel grupları (K24–K25)", None),
+    "summarize_scenes": ("analiz", "P4: sahne JSON'larından tutarlılık/faz/süre özeti (scenes_summary.csv)", None),
     "infer_scene": ("analiz", "P4: tek sahne tam harita çıkarımı (U-Net faz-hizalı / CNN kayan pencere), NetCDF+GeoTIFF+PNG, H5/preds tutarlılık testi", None),
     "channel_importance": ("analiz", "P3: permütasyon önemi + Integrated Gradients (B_full, test_time; kayıtlı tahminlerle güvenlik kontrolü)", None),
     "verify_compact_h5": ("arac", "Yeniden üretilen kompakt H5'i h5meta_train_v2.npz ile birebir karşılaştırır (12 Kas 2026)", None),
