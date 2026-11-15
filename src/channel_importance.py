@@ -7,8 +7,11 @@ Guvenlik kontrolu (atlanamaz): her seed icin temel olasiliklar yeniden hesaplani
 (<dir>/preds/B_full_s<k>__medium_flat.npz, test_time_prob) karsilastirilir. En buyuk mutlak fark > --tol ise betik durur:
 normalizasyon, kanal sirasi ya da checkpoint egitimdekiyle ayni degildir ve sonuclar anlamsiz olurdu.
 
-1) Permutasyon onemi: bir kanal (ya da fiziksel grup) tum test orneklerinde ornekler arasi karistirilir (yama ici yapi
-   korunur; grupta ayni permutasyon tum kanallarina uygulanir), BalAcc dususu olculur. --repeats tekrar x seed.
+1) Permutasyon onemi: bir kanal (ya da fiziksel grup) ornekler arasi karistirilir (yama ici yapi korunur; grupta ayni
+   permutasyon tum kanallarina uygulanir), BalAcc dususu olculur. --repeats tekrar x seed.
+   DUZELTME (15 Kas 2026, K26): karistirma varsayilan olarak AYDINLANMA SINIFI ICINDE yapilir (--perm_within illum).
+   Tum kumede karistirmak gece orneklerine gunduz yansitmasi tasiyordu; olculen sey kanalin bilgisi degil, modelin
+   hic gormedigi girdilere tepkisiydi (ilk kosuda gece NIR1.6 "onemi" 0.18 cikti). --perm_within all eski davranis.
 2) IG: tabakali alt kume (aydinlanma x sinif), taban = normalize uzayda sifir, Riemann orta-nokta kurali --ig_steps adim,
    hedef = logit farki (bulutlu - acik). Kanal basina |IG| toplami (yama geneli ve merkez 5x5) ve paylari.
    Tamlik kontrolu: sum(IG) ~ f(x) - f(taban); goreli sapma raporlanir.
@@ -118,6 +121,8 @@ def main():
     ap.add_argument("--tol", type=float, default=1e-3, help="Kayitli tahminlerle izin verilen en buyuk mutlak fark")
     ap.add_argument("--limit", type=int, default=0, help="Yalniz deneme: test orneklerini bu sayiya indir")
     ap.add_argument("--skip_ig", action="store_true")
+    ap.add_argument("--perm_within", default="illum", choices=["illum", "all"],
+                    help="Permutasyon katmani: illum = gunduz/alacakaranlik/gece icinde (varsayilan), all = tum kume")
     ap.add_argument("--seed", type=int, default=0)
     a = ap.parse_args()
     if a.threads:
@@ -175,9 +180,14 @@ def main():
         base = {k: balacc(p0[m] >= 0.5, y[m]) for k, m in subsets.items()}
 
         t1 = time.time()
+        strata = [np.flatnonzero(illum == il) for il in ILLUM] if a.perm_within == "illum" else [np.arange(len(rows))]
         for name, kind, ch in units:
             for r in range(a.repeats):
-                perm = rng.permutation(len(rows))
+                perm = np.arange(len(rows))
+                for st in strata:                       # her katmanin icinde karistir
+                    perm[st] = st[rng.permutation(len(st))]
+                if a.perm_within == "illum":
+                    assert np.array_equal(illum[perm], illum), "permutasyon aydinlanma sinifini korumuyor"
                 p = predict(model, X, norm, a.batch, swap=(ch, perm))
                 for k, m in subsets.items():
                     ba = balacc(p[m] >= 0.5, y[m])
@@ -232,6 +242,7 @@ def main():
                                                pay_yama_ss=("pay_yama", "std"), pay_merkez5=("pay_merkez5", "mean")) \
             .reset_index().to_csv(os.path.join(out, "ig_summary.csv"), index=False, encoding="utf-8")
     info = {"exp": a.exp, "set": a.set, "n": int(len(rows)), "seeds": a.seeds, "repeats": a.repeats, "ig_steps": a.ig_steps,
+            "perm_within": a.perm_within,
             "channels": names, "groups": GROUPS, "checks": checks, "minutes": round((time.time() - t0) / 60, 1)}
     with open(os.path.join(out, "channel_importance.json"), "w", encoding="utf-8") as fh:
         json.dump(info, fh, indent=1, ensure_ascii=False)
