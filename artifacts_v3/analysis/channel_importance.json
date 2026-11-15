@@ -1,0 +1,101 @@
+{
+ "exp": "B_full",
+ "set": "test_time",
+ "n": 40868,
+ "seeds": "1,2,3",
+ "repeats": 5,
+ "ig_steps": 32,
+ "perm_within": "illum",
+ "channels": [
+  "ir_87",
+  "vis_09",
+  "wv_73",
+  "ir_105",
+  "nir_22",
+  "ir_123",
+  "wv_63",
+  "vis_08",
+  "ir_97",
+  "ir_38",
+  "vis_06",
+  "nir_16",
+  "nir_13",
+  "ir_133",
+  "vis_05",
+  "vis_04",
+  "radar",
+  "t2m",
+  "rh2m",
+  "elev",
+  "cos_sza",
+  "radar_cov"
+ ],
+ "groups": {
+  "VIS/NIR 0.4-1.6 um": [
+   "vis_04",
+   "vis_05",
+   "vis_06",
+   "vis_08",
+   "vis_09",
+   "nir_13",
+   "nir_16"
+  ],
+  "NIR 2.2 um": [
+   "nir_22"
+  ],
+  "IR 3.8 um": [
+   "ir_38"
+  ],
+  "Water vapour 6.3/7.3 um": [
+   "wv_63",
+   "wv_73"
+  ],
+  "IR window 8.7/10.5/12.3 um": [
+   "ir_87",
+   "ir_105",
+   "ir_123"
+  ],
+  "Ozone 9.7 um": [
+   "ir_97"
+  ],
+  "CO2 13.3 um": [
+   "ir_133"
+  ],
+  "Radar": [
+   "radar"
+  ],
+  "AWOS (T2m, RH2m)": [
+   "t2m",
+   "rh2m"
+  ],
+  "Static (elevation, cos SZA, radar coverage)": [
+   "elev",
+   "cos_sza",
+   "radar_cov"
+  ]
+ },
+ "checks": [
+  {
+   "seed": 1,
+   "max_abs_diff_vs_saved_preds": 1.1920928955078125e-07,
+   "ig_n": 4998,
+   "ig_completeness_rel_err_median": 0.009588781744241714,
+   "ig_completeness_rel_err_p90": 0.031363870948553085
+  },
+  {
+   "seed": 2,
+   "max_abs_diff_vs_saved_preds": 1.1920928955078125e-07,
+   "ig_n": 4998,
+   "ig_completeness_rel_err_median": 0.009480798617005348,
+   "ig_completeness_rel_err_p90": 0.029000233858823776
+  },
+  {
+   "seed": 3,
+   "max_abs_diff_vs_saved_preds": 1.1920928955078125e-07,
+   "ig_n": 4998,
+   "ig_completeness_rel_err_median": 0.006943188142031431,
+   "ig_completeness_rel_err_p90": 0.024875139817595482
+  }
+ ],
+ "minutes": 76.4
+}
