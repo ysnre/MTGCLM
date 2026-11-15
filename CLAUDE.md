@@ -579,6 +579,12 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   geos (sweep y) `col = floor(X/2000,02 + 2784)`, `row = floor(Y/2000,02 + 2784)` — `clm_station_index.npz` ile 279/279 birebir.
 - `paper/figures/make_fig08_scenes.py`: 5 satır × 4 sütun (a–t), 174 × ~120 mm; istasyon dolu = bulutlu, boş = açık (şekille);
   `MTGCLM_SCENE_PACK`/`MTGCLM_SCENES_CSV` ile test girdisi; make_all'a eklendi (paket yoksa atlanır). Sahte paketle düzen sınandı.
+- **İlk gerçek koşu (15 Kas):** konveksiyon 14 May 11:58, kar 12 Mar 08:58, sirrüs 13 May 05:58, gece 31 Ara 17:58, gündüz açık 11 Mar 06:58 —
+  ama 11 Mar 06:58'de **FCI CLM yok** (o gün 09:50'de başlıyor). Seçime ön koşul eklendi: CLM tekrar döngüsü var ve NWC istasyonların
+  ≥ %90'ında var (veri varlığı; görüntüye bakılmadı). Yeni gündüz açık adayı 15 Haz 2026 06:58 (diğer dört sahne değişmiyor).
+  İlk gözlemler: kar sahnesinde CLM ve NWC karlı dağları büyük ölçüde bulutlu sayıyor (CLM'de kar/buz sınıfı 8 hiç yok), model açık;
+  sirrüs sahnesinde NWC tüm Anadolu'yu yarı saydam bulutlu, gözlemcilerin yarısı açık bildiriyor (model istasyonlarla uyumlu).
+  `build_scene_pack.py` artık `artifacts_v3/scenes/scene_pack_summary.csv` yazar (istasyonlarda model/CLM/NWC doğruluğu, piksel uyumu).
 
 ---
 
