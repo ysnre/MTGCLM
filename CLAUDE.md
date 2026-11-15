@@ -535,6 +535,13 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   çizer; B_full_shuf ve hgb_* öznitelik kümeleri yeni **Tab. S4** (`tabS4_spatial_texture`). Tab. 4'e A_sat−A_norad ve B_full−B_norad
   (CV: B − Bnorad). `springer_fig.COLORS/LABELS` yeni deneyleri içerir. `MTGCLM_FIG_OUT` ortam değişkeni şekilleri önizleme klasörüne
   yönlendirir (son şekillerin üzerine yazmadan sınama).
+- **P3 yeniden koşuldu (aydınlanma içi, 76 dk):** gündüz IR8.7 0,304, IR12.3 0,225, IR3.8 0,177, NIR1.6 0,158, NIR2.2 0,115 (VIS ≤ 0,010);
+  gece IR3.8 0,381, IR8.7 0,205, T2m 0,150, IR10.5 0,106; radar ≤ 0,004, statik ≤ 0,001. Gece NIR kaybı artık 0. **IG gece NIR1.6'ya %12
+  pay veriyor** — sıfır tabanın karanlık yansımadan uzaklığı ("gece" bilgisi); yorum permütasyona dayanır (metinde ve altyazıda yazıldı).
+  T2m modelde önemli ama ablasyonda küçük → bilgi büyük ölçüde IR'de de var (BT10.5−T2m, K14).
+- **Metin:** 03_methods (§3.5 radar/doku/karıştırma, §3.7 kanal önemi), results/inputs (radar; TAAC'ta önem özeti → Supp. Fig. S1),
+  models (HGB öznitelik kümeleri, karıştırma), importance.tex (MAP). refs.bib'e He2016, Breiman2001, Kunsch1989, Sundararajan2017.
+  verify_numbers 249/0; TAAC 20+5 s., MAP 22+3 s., 48 \todo.
 
 ---
 
