@@ -1,0 +1,5 @@
+scene,exp,seeds,mode,threads,inputs_s,model_s,check_s,write_s,total_s,peak_mem_mb,roi,host
+20260503115825,D_unet,"1,2,3",aligned,12,2.403,43.298,2.151,1.2,49.87,1809.3,,MSSPC
+20260503034817,D_unet,"1,2,3",aligned,12,2.244,42.13,1.083,0.371,46.62,2053.2,,MSSPC
+20251231115814,D_unet,"1,2,3",aligned,12,2.255,43.256,1.848,0.43,48.62,2066.1,,MSSPC
+20260503115825,B_full,"1,2,3",sliding,12,1.827,501.882,1.147,0.645,505.5,1691.7,,MSSPC
