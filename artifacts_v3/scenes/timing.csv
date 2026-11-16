@@ -9,3 +9,4 @@ scene,exp,seeds,mode,threads,inputs_s,model_s,check_s,write_s,total_s,peak_mem_m
 20251231175814,D_unet,"1,2,3",aligned,12,2.205,41.398,,0.393,44.0,2055.2,,MSSPC
 20260311065814,D_unet,"1,2,3",aligned,12,2.342,41.35,,0.427,44.12,2090.8,,MSSPC
 20260615065821,D_unet,"1,2,3",aligned,12,2.272,42.522,,1.327,46.12,1812.5,,MSSPC
+20260509145825,D_unet,"1,2,3",aligned,12,2.646,47.449,,1.633,51.73,1705.0,,MSSPC

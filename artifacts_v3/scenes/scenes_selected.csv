@@ -1,6 +1,6 @@
 category,scene,score,criterion,n_rows,clear_frac,day_frac,n_conv,n_snow,n_ci,n_low,nwc_cover
 convection,20260514115825,40.0,stations with patch radar maximum >= 128.0 (blue channel),112,0.018,1.0,40,0,22,7,1.0
 snow,20260312085814,6.0,"clear stations >= 1500 m with VIS0.6 >= 30 % and NIR1.6/VIS0.6 <= 0.4 (Dec-Mar, day)",94,0.713,1.0,4,6,2,1,1.0
-cirrus,20260513055817,68.0,"stations with NWC SAF CT semi-transparent class (11-15), day",68,0.515,1.0,1,0,68,7,1.0
+cirrus,20260509145825,31.0,"stations with NWC SAF CT semi-transparent class (11-15), day",88,0.125,1.0,8,0,31,0,1.0
 night_low,20251231175814,44.0,"cloudy stations with okta 9 or RH2m >= 90 %, night",103,0.097,0.0,5,0,20,44,1.0
 day_clear,20260615065821,1.0,"fraction of clear stations, day",29,1.0,1.0,0,0,0,0,1.0
