@@ -183,12 +183,12 @@
       <div class="bar"><div class="nm">ResNet18 <small>CIFAR girişi</small></div><div class="track"><div class="fill good" style="width:77.4%"></div></div><div class="v">0,957</div></div>
       <div class="bar"><div class="nm">B_full <small>tüm aux (AWOS dahil)</small></div><div class="track"><div class="fill good" style="width:76.4%"></div></div><div class="v">0,956</div></div>
       <div class="bar"><div class="nm">Bloklu 5-katlı CV <small>B_full, ort. ± 0,012</small></div><div class="track"><div class="fill" style="width:65.8%"></div></div><div class="v">0,946</div></div>
-      <div class="bar"><div class="nm">NWC SAF CT <small>30 km alan, aynı örnekler</small></div><div class="track"><div class="fill ref" style="width:44.2%"></div></div><div class="v">0,924</div></div>
+      <div class="bar"><div class="nm">NWC SAF CT <small>30 km alan, aynı örnekler</small></div><div class="track"><div class="fill ref" style="width:48.1%"></div></div><div class="v">0,928</div></div>
       <div class="bar"><div class="nm">FCI CLM <small>30 km alan, aynı örnekler</small></div><div class="track"><div class="fill ref" style="width:32.2%"></div></div><div class="v">0,912</div></div>
     </div>
     <p class="note">Ölçek 0,88–0,98. Derin modeller ve HGB 0,956–0,959 aralığında; hiçbir model çifti arasındaki fark %95 blok-bootstrap
     güven aralığında sıfırdan ayrışmıyor (HGB − B_full +0,003 sınırda). Referans çubukları kapsanan örneklerde ölçüldü
-    (NWC %82, CLM %98). v2 (eski etiketler) ~0,935’ti; etiket kümesi farklı olduğu için doğrudan kıyaslanmaz.</p>
+    (NWC %81, CLM %98). v2 (eski etiketler) ~0,935’ti; etiket kümesi farklı olduğu için doğrudan kıyaslanmaz.</p>
   </div>
 </section>
 
@@ -232,12 +232,12 @@
       <thead><tr><th>Yöntem</th><th class="num">test_time</th><th class="num">test_station</th></tr></thead>
       <tbody>
         <tr><td><b>Modellerimiz</b> (CNN / U-Net / ResNet / HGB)</td><td class="num hl">0,953–0,955</td><td class="num hl">0,932–0,936</td></tr>
-        <tr><td>NWC SAF Cloud Type (MGM) — 30 km alan</td><td class="num">0,923</td><td class="num">0,903</td></tr>
+        <tr><td>NWC SAF Cloud Type (MGM) — 30 km alan</td><td class="num">0,927</td><td class="num">0,904</td></tr>
         <tr><td>FCI CLM (EUMETSAT) — 30 km alan</td><td class="num">0,908</td><td class="num">0,896</td></tr>
         <tr><td>FCI CLM — merkez piksel</td><td class="num">0,889</td><td class="num">0,877</td></tr>
       </tbody>
     </table>
-    <p class="note">Model − NWC (30 km) farkı test_time’da +0,023…+0,026, test_station’da +0,026…+0,030; %95 blok-bootstrap güven aralıkları
+    <p class="note">Model − NWC (30 km) farkı test_time’da +0,019…+0,023, test_station’da +0,025…+0,029 (82 bozuk NWC karesi çıkarıldı, K29); %95 blok-bootstrap güven aralıkları
     sıfırı dışlıyor. NWC görüntüleri test_time örneklerinin %84’ünü kapsıyor; model skorları her satırda referansla aynı örneklerde
     hesaplandı. Alan büyüdükçe referans uyumu artıyor — etiketin bir alan büyüklüğü olduğunun kanıtı.</p>
   </div>
@@ -272,6 +272,7 @@
         <div class="it"><div class="k">K25 · 15 Kas</div><div class="t">P1–P3 kodu hazır</div><div class="d">Radarsız ablasyon (<code>--base_channels</code>), uzamsal karıştırma ve HGB doku öznitelikleri, kanal önemi (permütasyon + IG). Varsayılan yollar birebir korunuyor; gece koşusu bekliyor (~9 sa).</div></div>
         <div class="it"><div class="k">K26 · 15 Kas</div><div class="t">P1–P2 sonuçları; P3 düzeltildi</div><div class="d">Radar: aux varken küçük pozitif (CV B−Bnorad +0,0009), aux yokken katkı yok. Piksel karıştırma −0,0016…−0,0021. Dokulu HGB test_time 0,962 (CNN’den +0,0055). Kanal önemi (aydınlanma içi permütasyon): gündüz IR8.7 0,30, gece IR3.8 0,38; radar ≤ 0,004.</div></div>
         <div class="it"><div class="k">K27 · 15 Kas</div><div class="t">P4: tam harita çıkarımı</div><div class="d"><code>infer_scene.py</code>: girdiler eğitimle birebir; U-Net 16 geçişle faz-hizalı (tek geçiş maskenin %38–54’ünü bozuyor). 3 test sahnesinde girdi farkı 0, istasyonlarda kayıtlı tahminle medyan fark ≤ 8e-5; sahne başına U-Net 14 s, CNN 167 s. Ürün, istasyonun ≥5 okta bildirme olasılığıdır, piksel maskesi değil.</div></div>
+        <div class="it"><div class="k">K29–K31 · 16 Kas</div><div class="t">P6: bulut oluşum sıklığı</div><div class="d">1 436 üç saatlik sahne. Türkiye ort. 0,609; tepe 12 UTC. Test haftalarında istasyon sıklığıyla r = 0,97 (CLM 0,94). CLM doğu yaylalarında kışın gündüz +0,14 fazla: karı bulut sayıyor. 82 bozuk NWC karesi ayıklandı.</div></div>
       </div>
     </div>
   </div>
