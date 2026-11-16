@@ -654,6 +654,15 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   30 km içinde. Ek tablo `tabS7_parallax` (TAAC S7 / MAP S6), ek şekil `make_figS_parallax.py` (TAAC S4 / MAP S3); 02_data.tex'teki
   "5–30 km" ertelenen işi çözüldü (metin "merkez ve 30 km" olarak düzeltildi). verify_numbers 343/0.
 
+### K35 — 16 Kas 2026: P15 — Giriş, Tartışma, Sonuç ve iki öz yazıldı
+- `01_introduction.tex` (7 paragraf; ¶1 ve ¶7 \ifTAAC), `05_discussion.tex` (5.1 ürünler, 5.2 model ailesi, 5.3 AWOS/radar, 5.4 gece;
+  TAAC 5.5 izleme / MAP 5.6 kanal fiziği; 5.7 sınırlılıklar), `06_conclusions.tex`, frontmatter özleri (TAAC 231, MAP 215 kelime).
+- **Atıf kuralı:** refs.bib'de henüz `verified = {yes}` yok (P16). Tam metni okunmamış kaynaklar `\citeu{}` / `\citetu{}` ile
+  (preamble; taslakta turuncu "v", build.py sayar: 16). P16'da doğrulananlar `\citep`'e çevrilecek, desteklemeyenler kaldırılacak.
+  Eksik kaynaklar `\todo`: Holmlund 2021 (BAMS, MTG), Ackerman 1998 / Stengel 2014, satpy, FCI L1c, CLM ATBD, NWC SAF CT, Copernicus DEM.
+  MAP çapaları (10.1007/s00703-…) bib'de yok.
+- Karakter: toplam 70 038 (sınır 100 000); TAAC 28 + 8, MAP 29 + 8 sayfa; verify_numbers 346/0; kalan \todo 17.
+
 ---
 
 ## 3. Komutlar
