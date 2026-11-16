@@ -306,5 +306,19 @@
     "minutes": 76.6,
     "finished": "2026-11-15 15:44:24",
     "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\channel_importance.py --h5 C:\\mtg\\mtg_train_v2.h5 --split E:\\belgeler\\MTGCLM\\splits\\split_v2_verify.npz --dir E:\\belgeler\\MTGCLM\\artifacts_v3 --threads 12"
+  },
+  "P6_batch_scenes": {
+    "stage": "climatology",
+    "ok": true,
+    "minutes": 1103.1,
+    "finished": "2026-11-16 18:40:50",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\batch_scenes.py --h5 C:\\mtg\\mtg_train_v2.h5 --seeds 1,2,3 --threads 12"
+  },
+  "P6_cloud_frequency": {
+    "stage": "climatology",
+    "ok": true,
+    "minutes": 1.5,
+    "finished": "2026-11-16 18:42:17",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\cloud_frequency.py"
   }
 }
