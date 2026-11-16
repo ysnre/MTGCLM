@@ -24,6 +24,8 @@ hızlı yükleyici (--loader), örnek bazlı tahmin kaydı (<outdir>/preds/), SY
   baselines: Z_baselines (tüm veri; majority, eşikler, logreg, rf, hgb)
   hgbfs    : Z_hgbfs (P2: HGB dört öznitelik setiyle — center1, center5, current, texture)
   importance: P3_channel_importance (eğitimsiz; B_full checkpoint'leri üzerinde permütasyon önemi + IG)
+  climatology: P6 — batch_scenes.py (3 saatte bir tam sahne, U-Net seed ortalaması, + FCI CLM; kaldığı yerden sürer)
+               ve cloud_frequency.py (piksel başına bulut sıklığı, NetCDF + istasyon doğrulaması)
   P1/P2 modaliteleri (--modalities ile): A_norad, B_norad (radarsız), B_full_shuf (uzamsal karıştırma); CV: Bnorad
   arch     : 6 mimari varyantı (v2'de koşuldu, Medium_Flat kazandı; v3'te isteğe bağlı)
 --stage v3 = modality,unet,resnet,cv,baselines (arch hariç); --stage all = hepsi.
@@ -52,7 +54,7 @@ import sys
 import time
 
 SRC = os.path.dirname(os.path.abspath(__file__))
-STAGES = ["arch", "modality", "unet", "resnet", "cv", "baselines", "hgbfs", "importance"]
+STAGES = ["arch", "modality", "unet", "resnet", "cv", "baselines", "hgbfs", "importance", "climatology"]
 V3_STAGES = ["modality", "unet", "resnet", "cv", "baselines"]
 # Modalite varyantları: ad -> train.py ek argümanları
 MODALITIES = {
@@ -161,6 +163,12 @@ def build_matrix(args):
     if args.threads:
         imp += ["--threads", str(args.threads)]
     jobs.append(("importance", "P3_channel_importance", imp))
+    # 9) P6: bulut sıklığı — toplu sahne çıkarımı (uzun; kendi içinde kaldığı yerden sürer) + toplama
+    bs = [py, os.path.join(SRC, "batch_scenes.py"), "--h5", args.h5, "--seeds", ",".join(str(s) for s in seeds)]
+    if args.threads:
+        bs += ["--threads", str(args.threads)]
+    jobs.append(("climatology", "P6_batch_scenes", bs))
+    jobs.append(("climatology", "P6_cloud_frequency", [py, os.path.join(SRC, "cloud_frequency.py")]))
     return jobs
 
 
