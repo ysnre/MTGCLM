@@ -586,6 +586,43 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   sirrüs sahnesinde NWC tüm Anadolu'yu yarı saydam bulutlu, gözlemcilerin yarısı açık bildiriyor (model istasyonlarla uyumlu).
   `build_scene_pack.py` artık `artifacts_v3/scenes/scene_pack_summary.csv` yazar (istasyonlarda model/CLM/NWC doğruluğu, piksel uyumu).
 
+### K29 — 16 Kas 2026: 82 bozuk NWC SAF CT karesi — referans sayıları düzeltildi
+- 82 PNG'nin (18 354 karenin %0,45'i) **tamamı tek sınıf 15** (kar/buz üstü yarı saydam; denizler dahil) → fiziksel değil, bozuk kare.
+  P5 sirrüs ölçütü tam da bu karelerden birini (13 May 2026 05:45) seçti; NWC referans metrikleri de bu kareleri "bulutlu" sayıyordu.
+- `extract_nwcsaf_ct.py`: `degenerate_frames()` (istasyonların ≥ %95'i sınıf 15), `is_degenerate_image()`; `--flag_only` mevcut gün
+  dosyalarında `ok=False` + `degenerate` dizisi (uygulandı). `select_scenes.py` ve `build_scene_pack.py` bu kareleri veri yok sayar.
+- `analyze_preds.py --refs` yeniden koşuldu: **yalnız references.csv değişti** (diğer CSV'ler sayısal olarak birebir). Yalnız-SYNOP
+  test_time: NWC merkez 0,907 → 0,911, r30 0,923 → 0,927; kapsam %84,1 → %83,6; CNN − NWC r30 +0,023 → +0,019 [+0,013, +0,024];
+  test_station NWC r30 0,903 → 0,904, fark +0,030 → +0,029; test_both r30 farkı +0,020 → +0,017 [+0,007, +0,026]; lojistik regresyon
+  istisnası sürüyor (+0,006 [−0,005, +0,017]). products.tex ve infografik güncellendi; verify_numbers 251/0. Fig. 5 yeniden üretilmeli.
+  (v2 dönemi `artifacts/nwc_metar_on_splits.json` tarihsel; yeniden koşulmadı.)
+
+### K30 — 16 Kas 2026: P6 — bulut sıklığı altyapısı (`batch_scenes.py`, `cloud_frequency.py`, run_all `climatology`)
+- Dönem = h5meta'daki 183 etiketli gün × 8 nominal saat (00…21 UTC) = 1 464 zaman; en yakın FCI sahnesi (≤ 10 dk). U-Net faz-hizalı,
+  **3 seed ortalaması (kullanıcı kararı)**; sahne başına ~45 s → ~18 sa. Sahne başına `data/processed/cloud_freq/scenes/cf_<ts>.npz`
+  (prob_u8, flag, CLM ikili) + `manifest.csv`; kaldığı yerden sürer.
+- `cloud_frequency.py`: sıklık = bulutlu/geçerli (olasılık ≥ 0,5); CLM ile kıyas aynı sahne-piksel geçerlilik maskesinde (joint);
+  tüm dönem / ay / saat NetCDF'leri `artifacts_v3/climatology/`, `cloud_freq_summary.csv` (sahne sayıları, kara ortalamaları,
+  istasyon doğrulaması: SYNOP gözlenen sıklık vs model/CLM, aynı sahne zamanları), `station_frequency.csv`. Ay başına gün sayısı
+  eşit değil (Ara 2025: 8 gün, Nis 2025: 11 gün) — şekilde ve metinde sahne sayısı verilmeli; "klimatoloji" denmeyecek.
+
+### K31 — 16 Kas 2026: P6 sonuçları — bulut oluşum sıklığı, istasyon doğrulaması, Fig. 9
+- Koşu (MSSPC, 1 103 dk): 1 464 nominal zaman → 1 437 sahne (27'sinde FCI yok), 1 sahne radar yok → **1 436 geçerli**, 1 420'sinde CLM
+  (C 290 / O 1 131 sahne). Sahne başına medyan 43,6 s (3 seed).
+- Türkiye maskesi: kara ve bir AWOS istasyonuna ≤ 25 km; kıyı ≤ 30 km deniz; doğu yaylaları ≥ 38,5° D ve ≥ 1500 m; iç kesim kalan
+  (`cloud_frequency.py region_masks`, `regions.npz`). Model sıklığı (Türkiye) 0,609; en bulutlu Şub 2026 0,793, en açık Haz 2026 0,325;
+  günlük döngü tepe 12 UTC 0,732, en düşük 21 UTC 0,517.
+- **İstasyon doğrulaması** (SYNOP, sahne zamanlarında, 0/≥5 okta; `--station_only` ile alt kümeler eklendi): test haftaları 131 istasyon,
+  19 333 rapor: model r 0,973, bias −0,026, MAE 0,031; CLM r 0,936, −0,035, 0,051. Görülmemiş istasyonlar: model r 0,955, CLM 0,923.
+  "all" alt kümesi eğitim örneklerini de içerir (iyimser) — makalede test alt kümeleri kullanıldı.
+- **CLM − model (aynı sahne-piksel):** Türkiye −0,012; iç kesim −0,032 (15 UTC −0,090); doğu yaylaları +0,059 — yalnız gündüz
+  (06–12 UTC +0,130…+0,163) ve kar mevsiminde (Ara +0,139, Oca +0,138; Mar 2025 +0,189, commissioning dönemi), Nis–Haz ~0 → CLM karı
+  bulut sayıyor (Fig. 8 kar sahnesiyle tutarlı). P7 C/O ayrımı bu Mar 2025 değerini ayrıca ele almalı.
+- `paper/figures/make_fig09_cloud_frequency.py` (a tüm dönem, b CLM − model, c Oca, d Haz, e günlük döngü bölgeler; Türkiye dışı beyaz
+  örtülü; renk ölçeği 0,1–0,9). TAAC ana metin Fig. 9, MAP Supplementary Fig. S1 (`\figfreq` makrosu). make_all'a eklendi.
+  Yöntem §3.8 ve Bulgular "Full-scene" alt bölümü yazıldı; verify_numbers 290/0; TAAC 22+5, MAP 24+4 sayfa, 41 \todo.
+- U-Net haritasında ızgara kenarında (25° D, 35° K) ince dolgu şeritleri var; Türkiye maskesi dışında kalıyor.
+
 ---
 
 ## 3. Komutlar
@@ -746,6 +783,8 @@ python src\analyze_preds.py --dir artifacts_v3 --out artifacts_v3/analysis --ref
 | `src/infer_scene.py` | P4 tam harita çıkarımı: U-Net faz-hizalı / CNN kayan pencere → NetCDF + GeoTIFF + PNG; `--check` H5/preds tutarlılığı (K27) |
 | `src/select_scenes.py` | P5 sahne seçimi (ölçütle, görüntüsüz) → `scenes_selected.csv` (K28) |
 | `src/build_scene_pack.py` | P5 sahne paketi: FCI görüntüsü + model + CLM + NWC CT aynı ızgarada (K28) |
+| `src/batch_scenes.py` | P6 toplu tam sahne çıkarımı (3 saatte bir, U-Net + CLM; kaldığı yerden) (K30) |
+| `src/cloud_frequency.py` | P6 bulut oluşum sıklığı NetCDF + istasyon doğrulaması (K30) |
 | `src/summarize_scenes.py` | Sahne JSON'ları → `scenes_summary.csv` (tutarlılık, faz deseni, süre; torch gerekmez) |
 | `src/bench_speed.py` | Model başına eğitim/değerlendirme hızı (sentetik), koşu süresi tahmini, iş parçacığı seçimi |
 | `src/model.py` | `MTGConvNet` (Shallow/Medium/Deep × GAP/Flatten), `MTGResNet18` (stem: imagenet / cifar), `MTGUNet` |
