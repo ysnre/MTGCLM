@@ -632,6 +632,17 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   r30 eşikleri (train): bulutlu 0,45, açık 0,15, dışarıda 0,25.
 - Ek tablo `tabS5_clm_period` (TAAC S5 / MAP S4), products.tex'e 3 cümle. verify_numbers 303/0.
 
+### K33 — 16 Kas 2026: P8 — gece / sis / alçak bulut / kar hata analizi
+- `src/export_center_values.py` → `data/processed/center_values.npz` (400 209 satır; istasyon pikselinde 17 temel kanal ham birim, 5 aux,
+  yama radar maks.). `src/error_analysis.py` (B_full s1–3 olasılık ortalaması ≥ 0,5; test_time + test_station birlikte) →
+  `error_analysis.csv`, `error_cases.csv` (10 vaka, tohum 0), `error_summary.json/.csv`.
+- Kaçırma gece %8,3, gündüz %3,7; yanlış alarm %5,1 / %3,3. **Gece kaçırmaları sis/alçak bulut değil:** NWC "çok alçak/alçak" payı
+  kaçırmalarda %6, doğru yakalananlarda %20; kaçırmaların %50'sinde NWC "açık"; RH ≥ %90 payı %12 vs %33. Kaçırmalar yarı saydam
+  bulutta (ince %20,8, orta %16,6) ve kuru havada (RH < %50: %11,1). RH ≥ %95'te açık raporların %13,7'si bulutlu → sığ sis/pus olabilir.
+- **Kar yanlış alarm üretmiyor:** kar imzalı gündüz açık raporlarda %1,2 (n 169) vs tüm gündüz açık %3,3. Yüksek istasyonlardaki
+  (> 1500 m) yanlış alarm (kış %7,4, ilkbahar %10,8) kara bağlı değil; az örnek (311, 139). → CLM'nin kar sorunu modelde yok.
+- Ek şekil `paper/figures/make_figS_errors.py` (TAAC S3 / MAP S2), breakdowns.tex'te iki P8 \todo'su metne dönüştü. verify_numbers 323/0.
+
 ---
 
 ## 3. Komutlar
@@ -795,6 +806,8 @@ python src\analyze_preds.py --dir artifacts_v3 --out artifacts_v3/analysis --ref
 | `src/batch_scenes.py` | P6 toplu tam sahne çıkarımı (3 saatte bir, U-Net + CLM; kaldığı yerden) (K30) |
 | `src/cloud_frequency.py` | P6 bulut oluşum sıklığı NetCDF + istasyon doğrulaması (K30) |
 | `src/references_by_period.py` | P7 FCI CLM C/O dönemi ve "contaminated" eşleme duyarlılığı (K32) |
+| `src/export_center_values.py` | Kompakt H5 → istasyon pikseli ham değerleri (`center_values.npz`) (K33) |
+| `src/error_analysis.py` | P8 hata analizi: gece, nem, NWC sınıfı, okta, kar (K33) |
 | `src/summarize_scenes.py` | Sahne JSON'ları → `scenes_summary.csv` (tutarlılık, faz deseni, süre; torch gerekmez) |
 | `src/bench_speed.py` | Model başına eğitim/değerlendirme hızı (sentetik), koşu süresi tahmini, iş parçacığı seçimi |
 | `src/model.py` | `MTGConvNet` (Shallow/Medium/Deep × GAP/Flatten), `MTGResNet18` (stem: imagenet / cifar), `MTGUNet` |
