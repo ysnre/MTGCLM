@@ -35,7 +35,8 @@ import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from analyze_preds import load_meta                                   # noqa: E402
-from extract_nwcsaf_ct import H as NWC_H, W as NWC_W, pixel_of, sample_time_to_slot, to_classes  # noqa: E402
+from extract_nwcsaf_ct import (H as NWC_H, W as NWC_W, is_degenerate_image, pixel_of,  # noqa: E402
+                               sample_time_to_slot, to_classes)
 from grid_utils import LatLonGrid, cos_solar_zenith                    # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -174,9 +175,13 @@ def main():
             ok = (pr >= 0) & (pr < NWC_H) & (pc >= 0) & (pc < NWC_W)
             cls = np.full(grid.shape, 255, np.uint8)
             cls[ok] = to_classes(rgb[(pr[ok] * NWC_W + pc[ok])])
-            ncl = cls
-            nwc = np.where(cls == 255, -1, np.where(cls >= 5, 1, 0)).astype(np.int8)
-            meta_d["nwc"] = os.path.basename(nf)
+            if is_degenerate_image(cls):
+                print(f"  {ts}: NWC karesi bozuk (tek sınıf 15) — veri yok sayıldı")
+                meta_d["nwc_degenerate"] = os.path.basename(nf)
+            else:
+                ncl = cls
+                nwc = np.where(cls == 255, -1, np.where(cls >= 5, 1, 0)).astype(np.int8)
+                meta_d["nwc"] = os.path.basename(nf)
         else:
             print(f"  {ts}: NWC PNG yok ({slot})")
 

@@ -84,9 +84,10 @@ def nwc_center_class(meta_rows, nwc_dir):
         si = {s: i for i, s in enumerate(z["slot"])}
         wi = {int(w): i for i, w in enumerate(z["wmoid"])}
         cc = z["center_class"]
+        okf = z["ok"]                                   # bozuk kareler ok=False (extract_nwcsaf_ct --flag_only)
         for k in np.flatnonzero(np.array([s[:8] == day for s in slots])):
             i, j = si.get(slots[k]), wi.get(int(meta_rows["wmoid"].values[k]))
-            if i is not None and j is not None:
+            if i is not None and j is not None and okf[i]:
                 out[k] = cc[i, j]
     return out
 
