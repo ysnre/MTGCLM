@@ -643,6 +643,17 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   (> 1500 m) yanlış alarm (kış %7,4, ilkbahar %10,8) kara bağlı değil; az örnek (311, 139). → CLM'nin kar sorunu modelde yok.
 - Ek şekil `paper/figures/make_figS_errors.py` (TAAC S3 / MAP S2), breakdowns.tex'te iki P8 \todo'su metne dönüştü. verify_numbers 323/0.
 
+### K34 — 16 Kas 2026: P9 etiket tanımı duyarlılığı ve P10 paralaks kaydırması
+- **P9** (`src/predict_rows.py` — kayıtlı ağırlıklarla 17 639 doğrulanmamış METAR açık satırı, güvenlik kontrolü 512 satır;
+  `src/label_sensitivity.py` → `label_sensitivity.csv`; ek tablo `tabS6_label_sensitivity` TAAC S6 / MAP S5). Görülmemiş haftalar, tüm etiketler:
+  verify CNN 0,956 (CLM r30 0,912, NWC r30 0,928; fark +0,044 / +0,021); keep CNN 0,935 (0,886 / 0,899; +0,047 / +0,028);
+  0/≥1 okta CNN 0,844 (0,806 / 0,810; +0,039 / +0,014; eşik 0,5, yeniden seçilmedi — val'de 1–4 okta yok). Sıralama değişmiyor.
+  `artifacts*/preds_extra/` .gitignore'a eklendi. ResNet ağırlıkları yerelde yok → P9'da yok.
+- **P10** (`src/parallax_shift.py`, analitik, küresel Dünya, MTG-I1 0°; satpy bu ortamda yok): 132 istasyonda VZA 51,6–64,4°;
+  kayma 6 km CTH'de 7,6–12,5 km (medyan 9,2), 10 km'de en çok 20,9 km (≈ 10,9 px K–G, 10,3 px D–B) → 33×33 yama (16 px yarı) ve
+  30 km içinde. Ek tablo `tabS7_parallax` (TAAC S7 / MAP S6), ek şekil `make_figS_parallax.py` (TAAC S4 / MAP S3); 02_data.tex'teki
+  "5–30 km" ertelenen işi çözüldü (metin "merkez ve 30 km" olarak düzeltildi). verify_numbers 343/0.
+
 ---
 
 ## 3. Komutlar
@@ -808,6 +819,9 @@ python src\analyze_preds.py --dir artifacts_v3 --out artifacts_v3/analysis --ref
 | `src/references_by_period.py` | P7 FCI CLM C/O dönemi ve "contaminated" eşleme duyarlılığı (K32) |
 | `src/export_center_values.py` | Kompakt H5 → istasyon pikseli ham değerleri (`center_values.npz`) (K33) |
 | `src/error_analysis.py` | P8 hata analizi: gece, nem, NWC sınıfı, okta, kar (K33) |
+| `src/predict_rows.py` | Kayıtlı v3 ağırlıklarıyla H5 satırlarına tahmin (P9 keep ekleri; güvenlik kontrollü) (K34) |
+| `src/label_sensitivity.py` | P9 etiket tanımı duyarlılığı (verify / keep / 0–≥1 okta) (K34) |
+| `src/parallax_shift.py` | P10 paralaks kaydırması (istasyon × CTH, ızgara 6 km) (K34) |
 | `src/summarize_scenes.py` | Sahne JSON'ları → `scenes_summary.csv` (tutarlılık, faz deseni, süre; torch gerekmez) |
 | `src/bench_speed.py` | Model başına eğitim/değerlendirme hızı (sentetik), koşu süresi tahmini, iş parçacığı seçimi |
 | `src/model.py` | `MTGConvNet` (Shallow/Medium/Deep × GAP/Flatten), `MTGResNet18` (stem: imagenet / cifar), `MTGUNet` |
