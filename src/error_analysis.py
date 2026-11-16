@@ -11,7 +11,7 @@ istasyon > 1500 m, açık raporlarda yanlış alarm oranı (karşılaştırma: a
 
 Girdi: preds/B_full_s*, h5meta, data/processed/center_values.npz (src/export_center_values.py; yoksa RH ve kanal sütunları boş),
 data/processed/nwcsaf_station, data/processed/clm_station.
-Çıktı: artifacts_v3/analysis/error_analysis.csv, error_cases.csv, error_summary.json
+Çıktı: artifacts_v3/analysis/error_analysis.csv, error_cases.csv, error_summary.json (+ düz error_summary.csv)
 
     python src/error_analysis.py
 """
@@ -143,8 +143,22 @@ def main():
     S["snow"] = {"winter_day_high": fa(winter & day & (D["elev"] > 1500)),
                  "winter_day_low": fa(winter & day & (D["elev"] <= 1500)),
                  "spring_day_high": fa(~winter & day & (D["elev"] > 1500))}
+    if "vis_06" in D:
+        sig = (D["vis_06"] >= 30) & (D["nir_16"] <= 0.4 * D["vis_06"])      # kar imzası (select_scenes.py ile aynı)
+        S["snow"]["day_clear_snow_signature"] = fa(day & sig)
+        S["snow"]["winter_day_clear_no_signature"] = fa(winter & day & ~sig)
+        S["snow"]["day_clear_all"] = fa(day)
     with open(os.path.join(a.out, "error_summary.json"), "w", encoding="utf-8") as f:
         json.dump(S, f, indent=2, ensure_ascii=False)
+    flat = []
+    def walk(d, pre=""):
+        for k, v in d.items():
+            if isinstance(v, dict):
+                walk(v, pre + k + ".")
+            else:
+                flat.append({"key": pre + k, "value": v})
+    walk(S)
+    pd.DataFrame(flat).to_csv(os.path.join(a.out, "error_summary.csv"), index=False, encoding="utf-8")   # verify_numbers için
 
     # --- temsilî vakalar
     err = D[D["pred"] != D["label"]]
