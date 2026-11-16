@@ -33,6 +33,7 @@ artifacts_*/status/
 artifacts_bench/
 # örnek bazlı tahminler (koşu başına ~1-2 MB; Zenodo'ya gider, depoya değil)
 artifacts*/preds/
+artifacts*/preds_extra/
 scratch/
 sonuç1/
 graphify-out/
