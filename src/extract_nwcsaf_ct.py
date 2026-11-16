@@ -19,6 +19,9 @@ Sınıf kodları (bu betiğin çıktısı, palet: .agent/rules/nwcsaf_Palette_CT
 Kullanım (proje kökünden; yalnız numpy + Pillow gerekir, kaldığı yerden devam eder):
     python src/extract_nwcsaf_ct.py --png_dir F:/nwcsaf --stations data/raw_observation/station_list.csv ^
         --out data/processed/nwcsaf_station
+Bozuk kareler (15 Kas 2026): 82 PNG'nin tamamı tek sınıf (15, kar/buz üstü yarı saydam; denizler dahil) — fiziksel değil.
+    degenerate_frames() bunları bulur; run() yeni dosyalarda, --flag_only mevcut gün dosyalarında ok=False yapar ve
+    'degenerate' dizisini ekler (yük okuyucuları ok'a uyar). Görüntü düzeyinde aynı denetim: is_degenerate_image().
 Zaman: dosya adındaki YYYYmmddHHMM MSG tarama başlangıcıdır; Türkiye ~9 dk sonra taranır. Model örneğiyle eşleme için
     slot = (örnek zamanı - 9 dk) en yakın 15 dakikaya yuvarlanır (sample_time_to_slot()).
 """
@@ -151,12 +154,50 @@ def run(png_dir, stations_csv, out_dir, force=False):
                 counts[k], center[k] = process_png(f, ix)
             except Exception as e:
                 ok[k] = False; print(f"  ! okunamadı: {os.path.basename(f)} ({e})")
+        deg = degenerate_frames(center)
+        ok &= ~deg
         tmp = outp + ".tmp.npz"
-        np.savez_compressed(tmp, slot=np.array([i[0] for i in items]), ok=ok, counts=counts, center_class=center,
+        np.savez_compressed(tmp, slot=np.array([i[0] for i in items]), ok=ok, degenerate=deg, counts=counts, center_class=center,
                             wmoid=ix["wmoid"], groups=np.array(GROUPS), class_names=np.array(CLASS_NAMES))
         os.replace(tmp, outp); done += F
         print(f"  {day}: {F} dosya (toplam {done}, {done / max(time.time() - t0, 1e-6):.1f} dosya/s)")
     print(f"Bitti ({(time.time() - t0) / 60:.1f} dk).")
+
+
+def degenerate_frames(center_class, min_share=0.95):
+    """[F, S] merkez sınıfları -> [F] bool: geçerli istasyonların >= min_share'i sınıf 15 (bozuk, tek renk PNG)."""
+    cc = np.asarray(center_class)
+    valid = cc < NCLS
+    n = np.maximum(valid.sum(1), 1)
+    return ((cc == 15) & valid).sum(1) / n >= min_share
+
+
+def is_degenerate_image(cls, min_share=0.95):
+    """Izgaraya eşlenmiş sınıf dizisi için aynı denetim."""
+    v = np.asarray(cls)
+    v = v[v < NCLS]
+    return bool(len(v)) and float((v == 15).mean()) >= min_share
+
+
+def flag_existing(out_dir):
+    """Mevcut nwc_*.npz dosyalarında bozuk kareleri ok=False yapar (yerinde, atomik)."""
+    tot = 0
+    for p in sorted(glob.glob(os.path.join(out_dir, "nwc_*.npz"))):
+        z = np.load(p)
+        d = {k: z[k] for k in z.files}
+        deg = degenerate_frames(d["center_class"])
+        if "degenerate" in d and np.array_equal(d["degenerate"], deg):
+            tot += int(deg.sum())
+            continue
+        d["degenerate"] = deg
+        d["ok"] = d["ok"] & ~deg
+        tmp = p + ".tmp.npz"
+        np.savez_compressed(tmp, **d)
+        os.replace(tmp, p)
+        tot += int(deg.sum())
+        if deg.any():
+            print(f"  {os.path.basename(p)}: {int(deg.sum())} bozuk kare -> ok=False")
+    print(f"Toplam bozuk kare: {tot}")
 
 
 def sample_time_to_slot(ts):
@@ -172,5 +213,9 @@ if __name__ == "__main__":
     ap.add_argument("--stations", default="data/raw_observation/station_list.csv")
     ap.add_argument("--out", default="data/processed/nwcsaf_station")
     ap.add_argument("--force", action="store_true")
+    ap.add_argument("--flag_only", action="store_true", help="Yalnız mevcut gün dosyalarındaki bozuk kareleri işaretle")
     a = ap.parse_args()
-    run(a.png_dir, a.stations, a.out, a.force)
+    if a.flag_only:
+        flag_existing(a.out)
+    else:
+        run(a.png_dir, a.stations, a.out, a.force)
