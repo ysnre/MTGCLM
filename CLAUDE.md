@@ -623,6 +623,15 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   Yöntem §3.8 ve Bulgular "Full-scene" alt bölümü yazıldı; verify_numbers 290/0; TAAC 22+5, MAP 24+4 sayfa, 41 \todo.
 - U-Net haritasında ızgara kenarında (25° D, 35° K) ince dolgu şeritleri var; Türkiye maskesi dışında kalıyor.
 
+### K32 — 16 Kas 2026: P7 — FCI CLM dönem (C/O) ve "cloud contaminated" duyarlılığı
+- `src/references_by_period.py` → `artifacts_v3/analysis/references_by_period.csv` (yalnız SYNOP, CLM kapsamı; B_full ve D_unet; gün blokları,
+  test_station istasyon blokları; all_test = üç kümenin birleşimi). C dosyaları yalnız test_station'da (test haftaları O döneminde).
+- **Fark C'den kaynaklanmıyor:** all_test, 30 km: CNN − CLM C +0,042 [+0,023, +0,062] (n 6 745), O +0,041 [+0,032, +0,052] (n 50 265).
+  C döneminde model de daha düşük (0,920 vs 0,949) — Mar–Nis 2025 zor bir dönem.
+- Eşleme: contaminated = açık → CLM r30 O'da 0,866 (fark +0,083); dışarıda bırak → fark +0,040 [+0,029, +0,053] (değişmez).
+  r30 eşikleri (train): bulutlu 0,45, açık 0,15, dışarıda 0,25.
+- Ek tablo `tabS5_clm_period` (TAAC S5 / MAP S4), products.tex'e 3 cümle. verify_numbers 303/0.
+
 ---
 
 ## 3. Komutlar
@@ -785,6 +794,7 @@ python src\analyze_preds.py --dir artifacts_v3 --out artifacts_v3/analysis --ref
 | `src/build_scene_pack.py` | P5 sahne paketi: FCI görüntüsü + model + CLM + NWC CT aynı ızgarada (K28) |
 | `src/batch_scenes.py` | P6 toplu tam sahne çıkarımı (3 saatte bir, U-Net + CLM; kaldığı yerden) (K30) |
 | `src/cloud_frequency.py` | P6 bulut oluşum sıklığı NetCDF + istasyon doğrulaması (K30) |
+| `src/references_by_period.py` | P7 FCI CLM C/O dönemi ve "contaminated" eşleme duyarlılığı (K32) |
 | `src/summarize_scenes.py` | Sahne JSON'ları → `scenes_summary.csv` (tutarlılık, faz deseni, süre; torch gerekmez) |
 | `src/bench_speed.py` | Model başına eğitim/değerlendirme hızı (sentetik), koşu süresi tahmini, iş parçacığı seçimi |
 | `src/model.py` | `MTGConvNet` (Shallow/Medium/Deep × GAP/Flatten), `MTGResNet18` (stem: imagenet / cifar), `MTGUNet` |
