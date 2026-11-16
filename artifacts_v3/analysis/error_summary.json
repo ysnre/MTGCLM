@@ -1,0 +1,64 @@
+{
+  "night": {
+    "n": 35134,
+    "n_cloudy": 24592,
+    "n_clear": 10542,
+    "error": 0.07351852906016963,
+    "miss_rate": 0.0830757970071568,
+    "false_alarm_rate": 0.05122367672168469,
+    "n_miss": 2043,
+    "n_false_alarm": 540,
+    "day": {
+      "n": 43298,
+      "n_cloudy": 33682,
+      "n_clear": 9616,
+      "error": 0.03584461176035845,
+      "miss_rate": 0.036785226530491065,
+      "false_alarm_rate": 0.03254991680532446,
+      "n_miss": 1239,
+      "n_false_alarm": 313
+    }
+  },
+  "night_misses": {
+    "n": 2043,
+    "okta9": 0.003915810083210965,
+    "nwc_known": 1918,
+    "nwc_low_or_verylow": 0.06256517205422316,
+    "nwc_clear": 0.5031282586027112,
+    "rh_ge90": 0.12090063631913853
+  },
+  "night_hits": {
+    "n": 22549,
+    "okta9": 0.004745221517583928,
+    "nwc_known": 19558,
+    "nwc_low_or_verylow": 0.20048062174046427,
+    "nwc_clear": 0.10272011453113815,
+    "rh_ge90": 0.33305246352388135
+  },
+  "snow": {
+    "winter_day_high": {
+      "n_clear": 311,
+      "false_alarm_rate": 0.07395498392282958
+    },
+    "winter_day_low": {
+      "n_clear": 4987,
+      "false_alarm_rate": 0.02927611790655705
+    },
+    "spring_day_high": {
+      "n_clear": 139,
+      "false_alarm_rate": 0.1079136690647482
+    },
+    "day_clear_snow_signature": {
+      "n_clear": 169,
+      "false_alarm_rate": 0.011834319526627219
+    },
+    "winter_day_clear_no_signature": {
+      "n_clear": 5132,
+      "false_alarm_rate": 0.03273577552611068
+    },
+    "day_clear_all": {
+      "n_clear": 9616,
+      "false_alarm_rate": 0.03254991680532446
+    }
+  }
+}
