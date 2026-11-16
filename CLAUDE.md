@@ -663,6 +663,16 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   MAP çapaları (10.1007/s00703-…) bib'de yok.
 - Karakter: toplam 70 038 (sınır 100 000); TAAC 28 + 8, MAP 29 + 8 sayfa; verify_numbers 346/0; kalan \todo 17.
 
+### K36 — 16 Kas 2026: P16 (1. tur) — atıf yapılan 20 kaynağın tam metin doğrulaması
+- PDF klasörü: `E:\belgeler\OneDrive\OneDrive - mgm.gov.tr\uydu ile ilgili makale` (kök 100 + `oa_pdf/` 40). Makaledeki 20 `\citeu`
+  kaynağının hepsi bulundu ve okundu → `\citep`; refs.bib'de `verified = {yes}` (20; yedek `refs.bib.bak_20261116`).
+  Notlar: `docs/paper/literature_notes.md` (ne yaptılar / ana sayı / desteklediği cümle).
+- **Üç cümle daraltıldı:** Derrien2005 yalnız eşik testlerini anlatıyor (gece/kar/sis zayıflığı iddiası yok → gece kısmı Kotarba2017'ye);
+  Wang_2023 derin ağla kıyas yapmıyor (→ "RF yalnız spektral öznitelikle yüksek doğruluk"); Ezber_2022/Youn2026 "sığ sis" değil
+  (→ "İstanbul çevresinde sık sis/pus").
+- PDF'i olmayan çapalar: rs12030365 (paralaks+radar), amt-19-6193-2026, peerj.20495 (FCI kar), rs15245662 (MTG yağış),
+  MAP'in 6 çapası (10.1007/s00703-…), BAMS 2021 MTG (Holmlund). Yöntem kaynakları (He, Breiman, Künsch, Sundararajan) `verified = {no}`.
+
 ---
 
 ## 3. Komutlar
