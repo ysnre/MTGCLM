@@ -161,11 +161,10 @@ veri seti (`mtg_train_v2.h5`, 19 GB) GitHub boyut sınırlarını aştığından
 Kayıt şu anda taslak hâlindedir; bölme dosyaları ve koşu sonuçları yüklenmiştir.
 
 Türetilmiş veri seti iki katman hâlinde paylaşılır: **katman (a)** 16 FCI kanalı, statik alanlar
-(yükseklik, cos SZA) ve SYNOP/METAR etiketleri — açık erişim, Zenodo kaydında; **katman (b)**
-radar kanalı, `radar_cov`, t2m ve rh2m — MGM'ye aittir, talep üzerine MGM'den temin edilir.
-Zenodo kaydında katman (a)'nın ~2.000 satırlık örneklemi (`mtg_sample_core.h5`), bölmeler, koşu sonuçları,
-analiz tabloları, iki model ağırlığı ve bulut oluşum sıklığı haritaları bulunur (`src/make_zenodo_package.py`).
-Katman (b) MGM teyidi gelene kadar kayda eklenmez.
+(yükseklik, cos SZA) ve SYNOP/METAR etiketleri; **katman (b)** radar kanalı, `radar_cov`, t2m ve rh2m — MGM verisinden
+türetilmiştir ve MGM'nin izniyle paylaşılır. Zenodo kaydında iki katmanın ~2.000 satırlık örneklemi (`mtg_sample_core.h5`,
+`mtg_sample_mgm.h5`), bölmeler, koşu sonuçları, analiz tabloları, iki model ağırlığı ve bulut oluşum sıklığı haritaları
+bulunur (`src/make_zenodo_package.py --include_mgm`). Ham radar ve yer gözlemleri talep üzerine MGM'den temin edilir.
 
 Eğitilmiş model ağırlıkları (`best_model_*.pth`) sürüm (release) eklerinde yayımlanır.
 
