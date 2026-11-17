@@ -75,3 +75,8 @@ paper/
 
 # Natural Earth 10 m kiyi/sinir dosyalari (Fig. 1 icin yerel kopya; github.com/nvkelso/natural-earth-vector)
 data/natural_earth/
+
+# P17: yerel paket ve örneklem çıktıları (Zenodo'ya yüklenir, depoya girmez)
+zenodo_package/
+data/public/
+artifacts_sample/
