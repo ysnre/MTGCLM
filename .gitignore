@@ -80,3 +80,8 @@ data/natural_earth/
 zenodo_package/
 data/public/
 artifacts_sample/
+
+# Büyük/yeniden üretilebilir v3 ara çıktıları (17 Kas 2026)
+artifacts_v3/scenes/*.png
+artifacts_v3/climatology/regions.npz
+artifacts_v3/analysis/parallax_grid_6km.npz
