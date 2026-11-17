@@ -77,6 +77,8 @@ MODULE_INFO = {
     "update_h5_labels_v2": ("h5", "Parametrik etiket politikası, ham okta, obs_time, çift örnek işareti", None),
     "export_compact_h5": ("h5", "Bölmedeki örnekleri karıştırıp float16 kompakt H5'e (mtg_train_v2.h5) yazar", None),
     "make_public_sample": ("h5", "Kompakt H5'ten iki katmanlı (a: FCI+statik+etiket, b: MGM radar/AWOS) tabakalı örneklem; --merge, --check", None),
+    "single_channel_auc": ("analiz", "Tek değişkenli AUC: BT10.5 ve BT10.5 − T2m (eğitim/val/test, SYNOP) → single_channel_auc.csv", None),
+    "cv_weeks": ("analiz", "Bloklu CV havuzunda kat/ay/hafta bazında BalAcc → cv_weeks.csv (zayıf haftalar)", None),
     "make_zenodo_package": ("h5", "Zenodo yükleme paketini toplar: örneklem, bölmeler, sonuçlar, ağırlıklar, klimatoloji + MANIFEST/metadata", None),
     "update_h5_labels": ("h5", "Etiketleri ilk politika ile yazar (v1)", "update_h5_labels_v2.py ile değiştirildi"),
     "update_h5_scalars": ("h5", "H5'e v1 AWOS skalerlerini ekler", "v1 skaler füzyon (K1)"),
