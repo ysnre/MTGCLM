@@ -1,0 +1,13 @@
+küme,etiket,değişken,auc,n
+train,tümü,BT10.5,0.8968,179326
+train,tümü,BT10.5 - T2m,0.9253,179326
+train,SYNOP,BT10.5,0.9013,97154
+train,SYNOP,BT10.5 - T2m,0.93,97154
+val,tümü,BT10.5,0.8563,43152
+val,tümü,BT10.5 - T2m,0.9129,43152
+val,SYNOP,BT10.5,0.859,23209
+val,SYNOP,BT10.5 - T2m,0.9122,23209
+test_time,tümü,BT10.5,0.8659,40868
+test_time,tümü,BT10.5 - T2m,0.9419,40868
+test_time,SYNOP,BT10.5,0.866,23100
+test_time,SYNOP,BT10.5 - T2m,0.9421,23100
