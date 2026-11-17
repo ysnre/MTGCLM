@@ -5,7 +5,7 @@ Türkiye üzerinde bulut varlığını tahmin eden derin öğrenme hattı. Etike
 istasyon ve 79 havaalanı (METAR) gözleminden; yardımcı meteorolojik alanlar 1982 otomatik
 gözlem istasyonundan (AWOS) enterpolasyonla üretilir.
 
-> Durum: geliştirme aşamasında. Sonuçlar ve sürümler için `walkthrough_v2.md` dosyasına bakın.
+> Durum: v3 sonuçları tamamlandı (`artifacts_v3/`). Akış için `walkthrough_v2.md`, kararlar için `CLAUDE.md`.
 
 ## İçindekiler
 
@@ -15,6 +15,8 @@ gözlem istasyonundan (AWOS) enterpolasyonla üretilir.
 - [Eğitim ve değerlendirme](#eğitim-ve-değerlendirme)
 - [Çapraz doğrulama](#çapraz-doğrulama)
 - [Karşılaştırma modelleri](#karşılaştırma-modelleri)
+- [v3 sonuçlarını yeniden üretme](#v3-sonuçlarını-yeniden-üretme)
+- [Açık örneklemle hızlı deneme](#açık-örneklemle-hızlı-deneme)
 - [Veri bulunabilirliği](#veri-bulunabilirliği)
 - [Atıf](#atıf)
 - [Lisans](#lisans)
@@ -109,6 +111,41 @@ lojistik regresyon, rastgele orman ve gradyan artırma; hepsi aynı bölme ve me
 Derin modeller tarafında MTGConvNet (Shallow/Medium/Deep × GAP/Flatten), 17 kanala uyarlanmış
 ResNet-18 ve U-Net karşılaştırılır.
 
+## v3 sonuçlarını yeniden üretme
+
+Güncel sonuçlar `artifacts_v3/` altındadır (etiket politikası *verify*: `splits/split_v2_verify.npz`, bloklu CV
+`splits/cv5_verify_fold{0..4}.npz`). Her çıktı tek komutla yeniden üretilir; `--h5` her zaman kompakt veri setini gösterir.
+
+| Çıktı | Komut |
+|---|---|
+| Modalite, U-Net, ResNet, CV, karşılaştırma modelleri (`artifacts_v3/*.json`, `preds/`) | `python src/run_all.py --h5 <h5> --outdir artifacts_v3 --stage v3 --threads 12` |
+| Radarsız ve uzamsal karıştırma ablasyonları; HGB öznitelik setleri | `python src/run_all.py --h5 <h5> --outdir artifacts_v3 --stage modality,cv --modalities A_norad,B_norad,B_full_shuf --cv_variants Bnorad` ; `--stage hgbfs` |
+| Toplu tablo | `python src/aggregate_results.py --dir artifacts_v3 --out artifacts_v3/summary --plot` |
+| Ana tablo, eşleştirilmiş farklar, CV, kırılımlar, referanslarla kıyas (`analysis/*.csv`) | `python src/analyze_preds.py --dir artifacts_v3 --out artifacts_v3/analysis --refs` |
+| Kanal önemi (permütasyon + integrated gradients) | `python src/channel_importance.py --h5 <h5> --dir artifacts_v3 --threads 12` |
+| FCI CLM dönem (C/O) ve "cloud contaminated" duyarlılığı | `python src/references_by_period.py` |
+| Gece / sis / kar hata analizi | `python src/export_center_values.py --h5 <h5>` → `python src/error_analysis.py` |
+| Etiket tanımı duyarlılığı (keep, ≥1 okta) | `python src/predict_rows.py --h5 <h5> --threads 12` → `python src/label_sensitivity.py` |
+| Paralaks kaydırması | `python src/parallax_shift.py` |
+| Tam sahne haritaları | `python src/select_scenes.py --h5 <h5>` → `python src/infer_scene.py --h5 <h5> --time <YYYYMMDDhhmm> --check` → `python src/summarize_scenes.py --dir artifacts_v3/scenes` |
+| Bulut oluşum sıklığı (NetCDF) | `python src/run_all.py --h5 <h5> --outdir artifacts_v3 --stage climatology` (`batch_scenes.py` + `cloud_frequency.py`) |
+
+Referans ürün çıkarımları (FCI CLM, NWC SAF CT) ham ürün dosyalarını gerektirir: `src/extract_fci_clm.py`,
+`src/extract_nwcsaf_ct.py`, ardından `src/eval_clm_on_splits.py` ve `src/eval_nwc_and_metar.py`.
+
+## Açık örneklemle hızlı deneme
+
+`src/make_public_sample.py` kompakt veri setinden tabakalı (küme × sınıf × gündüz/gece) ~2.000 satırlık bir örneklem
+üretir, iki dosya hâlinde: `mtg_sample_core.h5` (katman a: 16 FCI kanalı, yükseklik, cos SZA, etiketler) ve
+`mtg_sample_mgm.h5` (katman b: radar, `radar_cov`, t2m, rh2m). Satır sırası ortaktır; `--merge` tam biçimi geri kurar.
+
+```bash
+python src/make_public_sample.py --h5 <h5> --split splits/split_v2_verify.npz --out data/public/mtg_sample --n 2000
+python src/train.py --h5 data/public/mtg_sample_core.h5 --split data/public/mtg_sample_split.npz \
+    --model medium_flat --aux --epochs 3 --outdir artifacts_sample
+python src/make_zenodo_package.py --out zenodo_package --sample data/public/mtg_sample   # Zenodo yükleme paketi
+```
+
 ## Veri bulunabilirliği
 
 MTG FCI verisi EUMETSAT Data Store üzerinden ücretsiz kayıtla herkese açıktır. Radar ve yer
@@ -126,8 +163,9 @@ Kayıt şu anda taslak hâlindedir; bölme dosyaları ve koşu sonuçları yükl
 Türetilmiş veri seti iki katman hâlinde paylaşılır: **katman (a)** 16 FCI kanalı, statik alanlar
 (yükseklik, cos SZA) ve SYNOP/METAR etiketleri — açık erişim, Zenodo kaydında; **katman (b)**
 radar kanalı, `radar_cov`, t2m ve rh2m — MGM'ye aittir, talep üzerine MGM'den temin edilir.
-Katman (a) dosyaları makale kabulünden sonra kayda eklenecektir. Ayrıca doğrulama ve hızlı deneme için ~2.000 yamalık
-bir örneklem (`mtg_sample.h5`, ~100 MB) `src/make_public_sample.py` ile üretilebilir.
+Zenodo kaydında katman (a)'nın ~2.000 satırlık örneklemi (`mtg_sample_core.h5`), bölmeler, koşu sonuçları,
+analiz tabloları, iki model ağırlığı ve bulut oluşum sıklığı haritaları bulunur (`src/make_zenodo_package.py`).
+Katman (b) MGM teyidi gelene kadar kayda eklenmez.
 
 Eğitilmiş model ağırlıkları (`best_model_*.pth`) sürüm (release) eklerinde yayımlanır.
 
