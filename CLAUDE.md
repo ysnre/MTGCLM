@@ -717,6 +717,32 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   ilk atıf sırası karışık. Açılmayan kısaltmalar: NWC SAF, SEVIRI, CT, METAR (+AUC MAP). FigS_errors etiket çakışması,
   FigS_parallax yazı tipi → Windows'ta make_all. Öz/karakter/ondalık/Türkiye/beyan başlıkları OK.
 
+### K41 — 17 Kas 2026: P19 düzeltmeleri
+- **Şekil 2 ve 3 çizildi:** `paper/figures/make_fig02_flow.py` (veri akışı + etiket politikası) ve `make_fig03_arch.py`
+  (Medium_Flat CNN; U-Net, kayıp yalnız merkezde), yardımcı `diagram_utils.py`; make_all'a eklendi.
+- **K14 sızıntısı kapandı:** AUC yeni `src/single_channel_auc.py` → `artifacts_v3/analysis/single_channel_auc.csv` ile güncel
+  etiketlerde yeniden hesaplandı. Eğitim kümesi SYNOP: BT10.5 − T2m 0,930, BT10.5 0,901 (eski K14: 0,932/0,893).
+- **Zayıf CV haftaları (K12 açık işi):** `src/cv_weeks.py` → `cv_weeks.csv`. Mar–Nis 2025 0,941 / Ara 2025–Haz 2026 0,950;
+  en zayıf dönemler neredeyse tamamen bulutlu: Şub 2026 0,917 (%93 bulutlu), Nis 2025 0,925, 2026-W05 0,835 (%97).
+- **Diğer:** Tablo 1'e doğal çözünürlük + radar/aux satırları; MAP'e bootstrap/CV denklemleri (Denk. 1–2); scikit-learn 1.9.1;
+  NWC SAF/DEM teşekkürü; kısaltmalar açıldı (SEVIRI, MSG, CALIOP, MODIS, EUMETSAT, NWC SAF, CT, METAR, AUC; özetlerde NWC SAF).
+  İsteğe bağlı kalibrasyon todo'su kaldırıldı.
+- **Atıf sırası:** ek materyal numaraları `preamble.tex`'teki makrolarla (`\STparallax`, `\SFerrors`, …) ilk atıf sırasına bağlandı.
+  `supplementary.tex` dergiye göre aynı sırada; MAP maliyet tablosu Yöntem'de (Tablo 3).
+- **Gönderim dosyaları:** `paper/tools/export_figures.py` → `paper/submission/<dergi>/Fig<N>.pdf|tif`, `ESM_FigS<N>` +
+  `figure_map.csv` (.aux'tan numara okur). Kaynak adları iki dergide ortak olduğu için yeniden adlandırılmadı.
+- `FigS_errors` panel harfleri eksen dışına (çakışma giderildi). Kalan 2 `\todo` kullanıcıda: MGM teyidi + Zenodo concept DOI,
+  S.K. katkısı/tez beyanı. TAAC özeti 247 kelime (sınır 250). **Son adım: final derleme `main_final`.**
+
+### K42 — 17 Kas 2026: katman (b) izni ve son todo'lar
+- **MGM katman (b) için sözlü onay verdi** (yazılı onay kullanıcıda). Data availability: iki katman da Zenodo'da
+  (`mtg_sample_core.h5` 32 MB, `mtg_sample_mgm.h5` 9 MB); ham radar/yer gözlemleri talep üzerine MGM'den. README, sürüm notu,
+  kapak mektupları, `make_zenodo_package.py` (artık `--include_mgm` ile koşulur) ve declarations taslağı güncellendi.
+- Çalışma tezden türemiyor; S.K. doktora danışmanı (yazar katkısında "Supervision: S.K." yeterli, ek beyan yok).
+- Tablo 2 dipnotu kaynakta (`make_tables.py`) düzeltildi — make_all tabloyu yeniden yazınca eski todo geri gelmişti.
+- Fig02/03 betikleri altyazıyı `fd.FIG_DIR`'e yazıyor (önceden göreli yol; make_all kökten koşunca hata veriyordu).
+- Derleme: 0 `\todo`, 0 tanımsız, 0 taşan kutu, verify_numbers 356/0. Kalan: Fig02/03'ü Arial ile üret, final derleme, export.
+
 ---
 
 ## 3. Komutlar
@@ -947,7 +973,7 @@ geç-füzyon planıdır — **arşiv**, güncel hattı temsil etmez. `notebooks/
 - [x] ~~`infer_scene.py`~~ — yazıldı ve gerçek sahnelerde doğrulandı (K27).
 - [ ] Kanal permütasyon önemi / Integrated Gradients — kod hazır (K25), koşu bekliyor.
 - [ ] Metrikleri gündüz/gece ve mevsim kırılımıyla raporla.
-- [x] ~~Açık örneklemi üret ve Zenodo paketini hazırla~~ (K38). - [ ] `zenodo_package/`'ı Zenodo taslağına yükle; katman (b) MGM teyidinden sonra.
+- [x] ~~Açık örneklemi üret ve Zenodo paketini hazırla~~ (K38). - [ ] `make_zenodo_package.py --include_mgm` ile yeniden paketle ve Zenodo'ya yükle (MGM sözlü onayı K42; yazılı onay bekleniyor).
 - [ ] Zenodo DOI al, README'ye ekle; eğitilmiş ağırlıkları (artık `artifacts/checkpoints/*.pth`
       içinde) release olarak yayımla.
 - [ ] `task.md`'yi v2 fazlarıyla güncelle (hâlâ v1 checklist'i gösteriyor).
