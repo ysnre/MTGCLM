@@ -4,7 +4,7 @@ make_zenodo_package.py
 Zenodo kaydı (DOI 10.5281/zenodo.24112650) için yükleme paketini tek klasörde toplar (P17):
 
   sample/      açık örneklem katmanı (a): <önek>_core.h5 + _split.npz + _split.json   (make_public_sample.py)
-               katman (b) <önek>_mgm.h5 yalnız --include_mgm ile (MGM teyidi gelene kadar EKLEMEYİN)
+               katman (b) <önek>_mgm.h5 --include_mgm ile (MGM izni alındı, 17 Kas 2026)
   splits/      splits/*.npz|json (v1, v2_verify, cv5, cv5_verify)
   results/     artifacts_v3/*.json (koşu sonuçları), artifacts_v3/analysis/*.csv|json|md
   checkpoints/ seçili ağırlıklar (varsayılan B_full_s1, D_unet_s1)
@@ -49,7 +49,7 @@ Station-trained cloud mask for Meteosat Third Generation FCI over Türkiye. Code
 * **Layer (a), open:** the 16 FCI channels (EUMETSAT, EO:EUM:DAT:0662), terrain elevation (Copernicus DEM GLO-90),
   the cosine of the solar zenith angle, and the SYNOP/METAR cloud labels. FCI data are subject to the EUMETSAT data
   policy; surface synoptic reports are exchanged under the WMO Unified Data Policy.
-* **Layer (b), on request:** the radar reflectivity channel, the radar coverage field and the interpolated 2 m
+* **Layer (b):** the radar reflectivity channel, the radar coverage field and the interpolated 2 m
   temperature and relative humidity. These derive from data of the Turkish State Meteorological Service (TSMS/MGM)
   and are {mgm_state}.
 
@@ -80,7 +80,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--out", default="zenodo_package")
     ap.add_argument("--sample", default="data/public/mtg_sample", help="make_public_sample.py çıktı öneki")
-    ap.add_argument("--include_mgm", action="store_true", help="Katman (b)'yi de ekle (yalnız MGM teyidinden sonra)")
+    ap.add_argument("--include_mgm", action="store_true", help="Katman (b)'yi de ekle (MGM izniyle)")
     ap.add_argument("--results_dir", default="artifacts_v3")
     ap.add_argument("--checkpoints", default=CKPT_DEFAULT, help="virgülle ayrılmış dosya adları (checkpoints/ altında)")
     ap.add_argument("--dry_run", action="store_true")
