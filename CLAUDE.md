@@ -698,6 +698,18 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   "her şekil/tablo için tek komut" paper/ betiklerini GitHub'a taşırdı (kullanıcı istemiyor) → yalnız src/ çıktıları listelendi.
   Etiket önerisi `v1.0-taac` yerine `v1.0` (aynı nedenle). Sürüm notu taslağı `docs/release_notes_v1.0.md`.
 - .gitignore: `zenodo_package/`, `data/public/`, `artifacts_sample/`.
+- **Gerçek veride koşuldu (17 Kas):** `data/public/mtg_sample_core.h5` 2038 satır, 32 MB (+ `_mgm.h5` 9 MB), `--check` OK;
+  `zenodo_package/` 126 dosya (a: 30 dosya 39 MB, türetilmiş: 95 dosya 69 MB), katman (b) pakette yok. satpy sürümü 0.48.0
+  (coknc.py ortamı). .gitignore'a `artifacts_v3/scenes/*.png`, `climatology/regions.npz`, `analysis/parallax_grid_6km.npz` eklendi.
+
+### K39 — 17 Kas 2026: P18 — kapak mektupları ve önerilen hakemler
+- `docs/paper/cover_letter_taac.md`, `cover_letter_map.md` (İngilizce, ≤ 1 sayfa; 3 katkı, kapsam uyumu, veri dönemi kısıtı,
+  veri/kod erişimi, çıkar çatışması yok). Sayılar özetlerden (verify_numbers geçen frontmatter).
+- `docs/paper/suggested_reviewers.md`: Kotarba (CBK PAN), Kuma (MISU), Karlsson (SMHI), Tian (PNNL), Casella (CNR-ISAC); e-postalar
+  PDF'lerin yazışma satırından. Önerilmeyen: Wojciechowska (Kotarba ortak yazarı), Kuter (H SAF–MGM kurumsal çakışma riski),
+  Bozzo (EUMETSAT, CLM üreticisi), Alves (doğrudan rakip).
+- P16 kapanış: satpy 0.48.0 (22 Nis 2024) metne ve bib'e; Balaj2026 tam yazar listesi (kullanıcı, yayıncı sayfası).
+  Backmatter: örneklem adı/boyutu yazıldı, "Code availability" todo'su yeniden ifadeyle kapandı → kalan \todo 10.
 
 ---
 
@@ -929,8 +941,7 @@ geç-füzyon planıdır — **arşiv**, güncel hattı temsil etmez. `notebooks/
 - [x] ~~`infer_scene.py`~~ — yazıldı ve gerçek sahnelerde doğrulandı (K27).
 - [ ] Kanal permütasyon önemi / Integrated Gradients — kod hazır (K25), koşu bekliyor.
 - [ ] Metrikleri gündüz/gece ve mevsim kırılımıyla raporla.
-- [ ] Açık örneklemi gerçek veride üret (`make_public_sample.py --h5 C:/mtg/mtg_train_v2.h5 --out data/public/mtg_sample`) ve
-      `make_zenodo_package.py` ile paketle; katman (b) MGM teyidinden sonra (K38).
+- [x] ~~Açık örneklemi üret ve Zenodo paketini hazırla~~ (K38). - [ ] `zenodo_package/`'ı Zenodo taslağına yükle; katman (b) MGM teyidinden sonra.
 - [ ] Zenodo DOI al, README'ye ekle; eğitilmiş ağırlıkları (artık `artifacts/checkpoints/*.pth`
       içinde) release olarak yayımla.
 - [ ] `task.md`'yi v2 fazlarıyla güncelle (hâlâ v1 checklist'i gösteriyor).
