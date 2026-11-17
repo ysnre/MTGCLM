@@ -711,6 +711,12 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
 - P16 kapanış: satpy 0.48.0 (22 Nis 2024) metne ve bib'e; Balaj2026 tam yazar listesi (kullanıcı, yayıncı sayfası).
   Backmatter: örneklem adı/boyutu yazıldı, "Code availability" todo'su yeniden ifadeyle kapandı → kalan \todo 10.
 
+### K40 — 17 Kas 2026: P19 — gönderim öncesi kontrol raporu
+- `docs/paper/p19_kontrol_2026-11-17.md`. Engelleyenler: Şekil 2 (veri akışı) ve 3 (mimari) hâlâ `\figpending`; MAP
+  importance.tex:25'te "K14" final PDF'e sızıyor; 12 `\todo`. MAP'te Tablo 5, Tablo 3'ten önce atıflanıyor; ek materyal
+  ilk atıf sırası karışık. Açılmayan kısaltmalar: NWC SAF, SEVIRI, CT, METAR (+AUC MAP). FigS_errors etiket çakışması,
+  FigS_parallax yazı tipi → Windows'ta make_all. Öz/karakter/ondalık/Türkiye/beyan başlıkları OK.
+
 ---
 
 ## 3. Komutlar
