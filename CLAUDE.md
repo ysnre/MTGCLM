@@ -4,7 +4,7 @@ Bu dosya, Claude Code / Cowork oturumlarının projeyi sıfırdan anlamadan kald
 devam edebilmesi için tutulur. **Yeni bir karar alındığında (model seçimi, veri bölme,
 etiket politikası, eğitim komutu) bu dosyaya birkaç satır ekleyin.**
 
-Son güncelleme: 2026-11-15
+Son güncelleme: 2026-11-17
 
 ---
 
@@ -672,6 +672,32 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   (→ "İstanbul çevresinde sık sis/pus").
 - PDF'i olmayan çapalar: rs12030365 (paralaks+radar), amt-19-6193-2026, peerj.20495 (FCI kar), rs15245662 (MTG yağış),
   MAP'in 6 çapası (10.1007/s00703-…), BAMS 2021 MTG (Holmlund). Yöntem kaynakları (He, Breiman, Künsch, Sundararajan) `verified = {no}`.
+- **2. tur:** Ozkaya_2022 (Veri, MGM radar), Bozzo_2024 (Giriş ¶2), Hadizadeh2019 (Giriş ¶4), Kotarba2016 (TAAC 5.5) ve yeni
+  `NWCSAF_ATBD_2019` (Veri, referans ürünler) eklendi → 25 doğrulanmış kaynak. Borna_2024, Kamat_2025 okundu, eklenmedi.
+
+### K37 — 17 Kas 2026: P16 (3. tur) — eksik PDF'ler eklendi, kalan atıf \todo'ları kapandı
+- Kullanıcının eklediği 11 PDF okundu (DOI'ler PDF'ten). refs.bib'e 9 makale/rapor + 4 yazılım/veri girdisi (`verified = {yes}`;
+  yedek `refs.bib.bak_20261117`; eski eksik `Ackerman2006` girdisi doğrulanmışla değiştirildi). Notlar `literature_notes.md` 3. tur.
+- Yerleşim: Holmlund2021 + DAdderio2023 (Giriş ¶2), Ackerman2006 = MOD35 ATBD v5.0 (Giriş fizik ¶ MAP + Bulgular/önem),
+  Balaj2026 (Giriş ML ¶), LiS2024 (Giriş radar ¶), Mowla2026 (Yöntem/önem), Bielinski2020 + Kotarba2026 (Veri/paralaks; Sonuç),
+  Kuter2026 (TAAC Tartışma: doğu yaylalarında kar → FCI H43 kar maskesiyle sınama), satpy, EUMETSAT_FCIL1c (EO:EUM:DAT:0662),
+  EUMETSAT_FCICLM (EO:EUM:DAT:0678), CopernicusDEM (10.5270/ESA-c5d3d65).
+- Kullanılmayan MAP çapaları: Shukla 2026 (tavan yüksekliği), Xiang 2022 (CloudSat girdap), Sukanya 2019 (bulut radarı) — cümle desteği yok.
+- Açık: satpy sürümü (`\todo`, coknc.py ortamı), Balaj2026 tam yazar sırası (bib'de "and others"). Derleme 0 tanımsız, 0 \citeu,
+  kalan \todo 12; verify_numbers 346/0.
+
+### K38 — 17 Kas 2026: P17 — iki katmanlı açık örneklem ve Zenodo paketi (kod hazır, gerçek veride koşu bekliyor)
+- `src/make_public_sample.py` yeniden yazıldı: tabakalı (küme × sınıf × gündüz/gece; merkez cos_sza > 0) örneklem, iki dosya —
+  `<önek>_core.h5` (katman a: patches[:, :16] FCI + aux elev, cos_sza + etiket/meta) ve `<önek>_mgm.h5` (katman b: radar
+  [N,1,33,33] + t2m, rh2m, radar_cov + aux_flags). Ortak `row` (kompakt H5 satırı); `--merge` tam 17+5 biçimini geri kurar,
+  `--check` (bölme/etiket, katman eşleşmesi, kaynakla 50 satır birebir). Sentetik H5'te merge birebir; core dosyayla
+  `train.py --aux` 1 epoch uçtan uca koştu (18 kanal).
+- `src/make_zenodo_package.py`: örneklem (a) + splits + artifacts_v3 JSON + analysis + 2 ağırlık (B_full_s1, D_unet_s1) +
+  klimatoloji NetCDF → `zenodo_package/` + MANIFEST.csv (sha256) + metadata.json + README; (b) yalnız `--include_mgm`.
+- README: "v3 sonuçlarını yeniden üretme" (çıktı → komut tablosu) ve "Açık örneklemle hızlı deneme". **Sapma:** P17'deki
+  "her şekil/tablo için tek komut" paper/ betiklerini GitHub'a taşırdı (kullanıcı istemiyor) → yalnız src/ çıktıları listelendi.
+  Etiket önerisi `v1.0-taac` yerine `v1.0` (aynı nedenle). Sürüm notu taslağı `docs/release_notes_v1.0.md`.
+- .gitignore: `zenodo_package/`, `data/public/`, `artifacts_sample/`.
 
 ---
 
@@ -819,7 +845,8 @@ python src\analyze_preds.py --dir artifacts_v3 --out artifacts_v3/analysis --ref
 | `src/make_cv_splits.py` | Bloklu K-katlı CV bölmeleri (`cv5_fold0..4.npz`) |
 | `src/export_compact_h5.py` | Bölmedeki örnekler, global permütasyon, float16 → `mtg_train_v2.h5` |
 | `src/make_dem_npy.py` | DEM GeoTIFF → 800×1000 `.npy` (metre) — Copernicus GLO-90 ile çalıştırıldı |
-| `src/make_public_sample.py` | Paylaşılabilir küçük örneklem H5 + bölme (henüz çalıştırılmadı) |
+| `src/make_public_sample.py` | İki katmanlı tabakalı örneklem (a: FCI+statik+etiket, b: MGM radar/AWOS) + bölme; `--merge`, `--check` (K38) |
+| `src/make_zenodo_package.py` | Zenodo yükleme paketi + MANIFEST (sha256) + metadata.json (K38) |
 | `src/metrics.py` | Balanced Acc, MCC, F1(clear/cloudy), AUC, karışıklık matrisi, majority |
 | `src/baselines.py` | majority, threshold_ir_105, threshold2_ir_105+vis_06, logreg_aux, rf_aux, hgb_aux (K16: blok okuma, SYNOP-only, tahmin kaydı) |
 | `src/aggregate_results.py` | Koşu JSON'ları → ortalama ± s.s. tablo (MD/CSV/LaTeX) + grafik |
@@ -902,7 +929,8 @@ geç-füzyon planıdır — **arşiv**, güncel hattı temsil etmez. `notebooks/
 - [x] ~~`infer_scene.py`~~ — yazıldı ve gerçek sahnelerde doğrulandı (K27).
 - [ ] Kanal permütasyon önemi / Integrated Gradients — kod hazır (K25), koşu bekliyor.
 - [ ] Metrikleri gündüz/gece ve mevsim kırılımıyla raporla.
-- [ ] `src/make_public_sample.py` ile paylaşılabilir örneklem (`data/mtg_sample.h5`) üret — henüz çalıştırılmadı.
+- [ ] Açık örneklemi gerçek veride üret (`make_public_sample.py --h5 C:/mtg/mtg_train_v2.h5 --out data/public/mtg_sample`) ve
+      `make_zenodo_package.py` ile paketle; katman (b) MGM teyidinden sonra (K38).
 - [ ] Zenodo DOI al, README'ye ekle; eğitilmiş ağırlıkları (artık `artifacts/checkpoints/*.pth`
       içinde) release olarak yayımla.
 - [ ] `task.md`'yi v2 fazlarıyla güncelle (hâlâ v1 checklist'i gösteriyor).
