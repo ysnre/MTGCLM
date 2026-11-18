@@ -753,8 +753,8 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   (Kayıt 18 Kas'ta dosya zaman damgalarından geriye dönük yazıldı.)
 
 ### K44 — 18 Kas 2026: hakem öz-değerlendirmesi, revizyon planı, ön-kayıt, EUMETSAT CLM doğrulama raporu, P20 kararı
-- `docs/hakem_degerlendirmesi_MTGCLM.md` (3 kritik + 15 ikincil itiraz, 15 jüri sorusu) ve `docs/ret_riski_yol_haritasi_MTGCLM.md` (R1–R15,
-  E1–E12) madde madde değerlendirildi → `docs/madde_madde_degerlendirme_2026-11-18.md`; takvim `docs/calisma_plani_revizyon_2026-11-18.md`
+- `docs/paper/hakem_degerlendirmesi_MTGCLM.md` (3 kritik + 15 ikincil itiraz, 15 jüri sorusu) ve `docs/paper/ret_riski_yol_haritasi_MTGCLM.md` (R1–R15,
+  E1–E12) madde madde değerlendirildi → `docs/paper/madde_madde_degerlendirme_2026-11-18.md`; takvim `docs/paper/calisma_plani_revizyon_2026-11-18.md`
   (R16–R19 ve N1–N5 eklendi). **Ön-kayıt `docs/revizyon_onkayit.md`** (docs/paper .gitignore'da olduğu için docs/ altında; commit'i zaman damgası).
 - **Model–referans farkı etiket tanımına duyarsız** (`label_sensitivity.csv`): CLM r30 +0,044 / +0,047 / +0,039, NWC r30 +0,021 / +0,028 / +0,014
   (verify / keep / 0–≥1 okta) → Kritik 2'ye ana savunma.
@@ -768,6 +768,16 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
 - **Kullanıcı kararları (18 Kas):** P20 (U-Net jitter) yapılacak; MGM yazılı izin süreci başlatıldı.
 - **Olgusal düzeltme gereken iki cümle:** 03_methods "each test set is evaluated once" (K14→K16 kronolojisiyle çelişiyor) ve TAAC özetinin ilk cümlesi.
   AI beyanı (03_methods sonu) taslak yazımını kapsamıyor → genişletilecek (Springer: LLM kullanımı Methods'ta belgelenir).
+- **18 Kas akşam — N1 uygulandı:** NWC/GEO MTG-I Day-1 User Manual (NWC/CDOP3/MTG/MFL/SCI/UM/Cloud 1.1.1, 30 May 2025) okundu:
+  NWC/GEO CMA'nın MTG doğrulaması **SYNOP/SHIP ile tam diskte, POD %85,9** (VR: NWC/CDOP4/MTG/MFL/SCI/VR/Cloud v1.0; PDF henüz klasörde yok);
+  gece karlı zemin algılanmıyor. → Eski Öz cümlesi ("not yet evaluated against surface observations") yanlıştı. TAAC özetinin ilk cümlesi
+  "validated only at full-disc scale, not against a national station network" oldu (250 kelime, sınırda); Giriş ¶2'ye iki ajans doğrulaması
+  ve CLM'de kar testinin kapalı olduğu eklendi. refs.bib: `EUMETSAT_CLMVR2025`, `NWCSAF_UMMTG2025` (verified=yes; yedek `refs.bib.bak_20261118`).
+  verify_numbers 356/0; TAAC 31+7, MAP 32+6 sayfa, 0 tanımsız, 0 \todo.
+- **Zenodo (18 Kas):** kayıt yayımlandı; rezerve DOI 10.5281/zenodo.24112650 artık **sürüm DOI'si** olarak çözümleniyor (kullanıcı). Concept DOI
+  kayıt sayfasındaki "Cite all versions" satırından alınacak. `zenodo_package/` katman (b) `mtg_sample_mgm.h5`'i de içeriyor (MGM sözlü onayı K42).
+- **Uyarı (18 Kas):** depo herkese açık; `docs/` altındaki iç ön-inceleme belgeleri (hakem öz-değerlendirmesi, ret riski, madde madde değerlendirme,
+  revizyon planı) push edildi → depodan çıkarılıp `docs/paper/` (gitignore) altına taşınması önerildi; geçmişten silme kararı kullanıcıda.
 
 ---
 
@@ -1006,7 +1016,7 @@ geç-füzyon planıdır — **arşiv**, güncel hattı temsil etmez. `notebooks/
 - [ ] `make_zenodo_package.py --include_mgm` ile yeniden paketle ve Zenodo'ya yükle (MGM sözlü onayı K42; **yazılı izin süreci 18 Kas'ta başlatıldı**).
 - [ ] Zenodo kaydını **yayımla** (DOI 10.5281/zenodo.24112650 yalnız rezerve, taslak kayıt — yayımlanana kadar çözümlenmez);
       yayımlanınca oluşan **concept DOI**'yi makale, README, CITATION.cff, kapak mektupları ve release notlarına yaz (K44).
-- [ ] **Revizyon (K44):** `docs/calisma_plani_revizyon_2026-11-18.md` takvimi; ön-kayıt `docs/revizyon_onkayit.md`.
+- [ ] **Revizyon (K44):** `docs/paper/calisma_plani_revizyon_2026-11-18.md` takvimi; ön-kayıt `docs/revizyon_onkayit.md`.
 - [ ] `task.md`'yi v2 fazlarıyla güncelle (hâlâ v1 checklist'i gösteriyor).
 - [ ] Makale limitations: Tem–Kas verisi yok; kar–bulut karışıklığı; ~1,7×1,1 km piksel / ~3×3,5 km CLM pikseli vs yarımküre
       gözlem ölçek farkı; etiket eşiği duyarlılığı (0/≥5 vs 0/≥1); AWOS-aux'un belirsiz katkısı.
@@ -1022,7 +1032,7 @@ Cowork projesinde **özel proje talimatı (custom instructions) tanımlı değil
 - `claude/mtgclm_eylem_plani_2026-09-15.md` — 5 fazlı eylem planı (kararların kaynağı)
 - `claude/mtgclm_walkthrough_v2.md` — v2 akışı (yereldeki `walkthrough_v2.md` güncel sürümdür)
 - `claude/mtgclm_madde_madde_degerlendirme_2026-11-18.md`, `claude/mtgclm_revizyon_calisma_plani_2026-11-18.md` — hakem raporu
-  ve ret riski yol haritasının madde madde değerlendirmesi ve revizyon takvimi (K44). Yerel kopyaları `docs/` altında.
+  ve ret riski yol haritasının madde madde değerlendirmesi ve revizyon takvimi (K44). Yerel kopyaları `docs/paper/` altında (depo dışı).
 
 Yereldeki diğer notlar: `MTG Cloud Phase Web Service Development.md`,
 `Visualizing MTGConvNet Architecture2.md`.
