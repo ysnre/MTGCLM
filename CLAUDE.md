@@ -4,7 +4,7 @@ Bu dosya, Claude Code / Cowork oturumlarının projeyi sıfırdan anlamadan kald
 devam edebilmesi için tutulur. **Yeni bir karar alındığında (model seçimi, veri bölme,
 etiket politikası, eğitim komutu) bu dosyaya birkaç satır ekleyin.**
 
-Son güncelleme: 2026-11-17
+Son güncelleme: 2026-11-18
 
 ---
 
@@ -37,7 +37,8 @@ MTG (Meteosat Third Generation) FCI uydu verisi + TMM C-bandı radar + yer gözl
 - AWOS `SAAT` alanı **UTC**; `DAKIKA_BASLANGICI` 10 dk periyodun **başlangıcı**.
 - METAR `BKN` → 5 okta.
 - Etiket kaynağı: 147 insanlı sinoptik istasyon + 79 havaalanı (METAR). Yardımcı alanlar
-  1982 otomatik istasyondan (AWOS) IDW ile.
+  1982 otomatik istasyondan (AWOS) IDW ile. **Kompakt H5'te örneği olan istasyon: 132** (90 yalnız SYNOP + 42 METAR'lı
+  havalimanı; K14, K21) — makaledeki sayı budur.
 - DEM: **gerçek Copernicus GLO-90** verisiyle üretildi → `data/dem_800x1000.npy` (artık IDW
   yaklaşıklığı değil; eski uyarı kapandı).
 
@@ -198,6 +199,8 @@ v2 sonucu: ortalama BalAcc 0.806 ± 0.166 (test_time) — modeller arası büyü
 - DEM kaynağı: **Copernicus DEM GLO-90** (açık, artık yerelde gerçek veriyle üretildi).
 - Not: yerel repoda şu an **tek commit** var ("İlk commit", 1 Eki 2026) — önceki ayrıntılı commit
   geçmişi bu squash ile tek işleme indirildi; `git log` geçmişine güvenmeyin, bu dosyaya güvenin.
+  **Güncelleme (18 Kas 2026):** "tek commit" notu eskidi — 1 Eki'den beri dosya başına commit'lerle depoda ~196 commit var
+  (Kural 1). Yine de karar gerekçesi için kaynak bu dosyadır.
 
 ### K11 — Diğer bilinçli kararlar
 - `aux` ham fiziksel birimlerde (°C, %, m); normalizasyon `aux_means/aux_stds` attrs ile dataset
@@ -426,6 +429,7 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   alınır (Springer gönderiminde kurum onayı zaten beyan ediliyor). Ayrıntı: `docs/paper/makale_yol_haritasi.md` §5.
 - **Not:** CLAUDE.md §5'teki "49×49 çıkar → 33×33 kırp" jitter maddesi §7'deki "yamaları yeniden çıkarma" kuralıyla
   çelişiyor; P20 bunun yerine 33×33 içinde 25×25 rastgele kırpma öneriyor.
+  **Güncelleme (18 Kas 2026, K44):** çelişki kapandı — P20 yapılacak (kullanıcı kararı), yöntem 33×33 içinde 25×25 kırpma; H5 yeniden çıkarılmaz.
 
 ### K21 — 14 Kas 2026: P11 + P12a — şekil altyapısı doğrulandı, Fig. 1/4/5/6/10 ve Tab. 2–5 (+S1–S2) üretildi
 - **P11:** `springer_fig` import OK. `check_figure()` artık çözümlenen yazı tipini de denetler: Arial/Helvetica değilse rapor
@@ -743,6 +747,28 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
 - Fig02/03 betikleri altyazıyı `fd.FIG_DIR`'e yazıyor (önceden göreli yol; make_all kökten koşunca hata veriyordu).
 - Derleme: 0 `\todo`, 0 tanımsız, 0 taşan kutu, verify_numbers 356/0. Kalan: Fig02/03'ü Arial ile üret, final derleme, export.
 
+### K43 — 17 Kas 2026 akşam: final derleme ve gönderim dosyaları (K42'deki kalan işler kapandı)
+- Fig02/Fig03 Arial'lı Windows'ta üretildi (`_check.txt` OK); `paper/main_final.pdf` ve `main_MAP_final.pdf` derlendi; `paper/submission/taac`
+  (Fig1–8 + ESM_Fig1–4) ve `paper/submission/map` (Fig1–9 + ESM_Fig1–3) + `figure_map.csv` dışa aktarıldı. 0 `\todo`, verify_numbers 356/0.
+  (Kayıt 18 Kas'ta dosya zaman damgalarından geriye dönük yazıldı.)
+
+### K44 — 18 Kas 2026: hakem öz-değerlendirmesi, revizyon planı, ön-kayıt, EUMETSAT CLM doğrulama raporu, P20 kararı
+- `docs/hakem_degerlendirmesi_MTGCLM.md` (3 kritik + 15 ikincil itiraz, 15 jüri sorusu) ve `docs/ret_riski_yol_haritasi_MTGCLM.md` (R1–R15,
+  E1–E12) madde madde değerlendirildi → `docs/madde_madde_degerlendirme_2026-11-18.md`; takvim `docs/calisma_plani_revizyon_2026-11-18.md`
+  (R16–R19 ve N1–N5 eklendi). **Ön-kayıt `docs/revizyon_onkayit.md`** (docs/paper .gitignore'da olduğu için docs/ altında; commit'i zaman damgası).
+- **Model–referans farkı etiket tanımına duyarsız** (`label_sensitivity.csv`): CLM r30 +0,044 / +0,047 / +0,039, NWC r30 +0,021 / +0,028 / +0,014
+  (verify / keep / 0–≥1 okta) → Kritik 2'ye ana savunma.
+- **EUMETSAT FCI L2 doğrulama raporu (EUM2045564 v1A, 21 Kas 2025)** okundu: CLM yalnız SEVIRI NWC SAF CMa ve MODIS maskelerine karşı
+  (13 Ağu–13 Eki 2025) doğrulanmış — **yer gözlemi yok** (ACTRIS yalnız OCA CTH için). Ortalama POD %93, FPR %9,6, doğruluk %92 (SEVIRI'ye göre);
+  yarı kurak yüzeylerde POD ~%50'ye iniyor. **Kar/buz testi kapalı** → karlı açık pikseller bulutlu sınıflanabilir (bilinen sorun; NIR2.2 kullanılmıyor)
+  → doğu yaylaları kış CLM fazlası (K31) ve kar sahnesi (K28) için bağımsız kaynak; "CLM'de sınıf 8 hiç yok" gözleminin açıklaması.
+  Ayrıca: alacakaranlıkta alçak bulutlar "contaminated" sınıflanabilir (K32 eşleme duyarlılığıyla ilgili). NWC SAF eğitim sunumu (Haz 2025)
+  NWC/GEO CMA'nın SYNOP/SHIP ile doğrulandığını söylüyor (uydu adı belirtilmeden) → Öz'ün ilk cümlesi "operasyonel CLM yer gözlemiyle
+  doğrulanmadı" biçiminde daraltılacak; NWC/GEO MTG-I day-1 doğrulama raporu okununca kesinleşecek.
+- **Kullanıcı kararları (18 Kas):** P20 (U-Net jitter) yapılacak; MGM yazılı izin süreci başlatıldı.
+- **Olgusal düzeltme gereken iki cümle:** 03_methods "each test set is evaluated once" (K14→K16 kronolojisiyle çelişiyor) ve TAAC özetinin ilk cümlesi.
+  AI beyanı (03_methods sonu) taslak yazımını kapsamıyor → genişletilecek (Springer: LLM kullanımı Methods'ta belgelenir).
+
 ---
 
 ## 3. Komutlar
@@ -946,14 +972,16 @@ geç-füzyon planıdır — **arşiv**, güncel hattı temsil etmez. `notebooks/
 
 - [x] ~~v2 koşu matrisini Colab'da çalıştır~~ — **tamamlandı (5 Eki 2026)**, sonuçlar K12'de.
 - [x] ~~Gerçek Copernicus GLO-90 DEM'i indirip üret~~ — **tamamlandı**, `data/dem_800x1000.npy`.
-- [ ] **K12'deki AWOS-aux bulgusunu doğrula/açıkla**: neden B_full (AWOS dahil) C_noawos'tan
+- [x] ~~**K12'deki AWOS-aux bulgusunu doğrula/açıkla**~~ — K18 (CV'de küçük pozitif). Kalan: IDW doğrulaması → revizyon R18.
+  _Eski metin:_ **K12'deki AWOS-aux bulgusunu doğrula/açıkla**: neden B_full (AWOS dahil) C_noawos'tan
       (AWOS'suz) düşük? IDW enterpolasyon kalitesi, normalizasyon, ya da gerçekten bilgi
       katkısı yok mu — ek analiz/ablasyon (farklı IDW parametreleri, AWOS yoğunluk haritası
       görselleştirme) gerekebilir.
-- [ ] Bloklu CV'nin tek-bölme test_time'dan daha düşük/değişken çıkmasını makalede tartış
+- [x] ~~Bloklu CV'nin tek-bölme test_time'dan daha düşük/değişken çıkmasını makalede tartış~~ — K41 (`cv_weeks.csv`).
+  _Eski metin:_ Bloklu CV'nin tek-bölme test_time'dan daha düşük/değişken çıkmasını makalede tartış
       (K12) — hangi haftalar/katlar düşürüyor, incele.
 - [x] ~~Uydu-only (radar hariç) ablasyonu için kanal seçimi~~ — K25 (`train.py --base_channels`; koşu bekliyor).
-- [ ] FCI CLM karşılaştırması: çıkarım `src/extract_fci_clm.py` ile (K13); aynı örneklerde merkez + alan bazlı, C/O dönemleri ayrı.
+- [x] ~~FCI CLM karşılaştırması: çıkarım `src/extract_fci_clm.py` ile (K13); aynı örneklerde merkez + alan bazlı, C/O dönemleri ayrı.~~ — K14, K18, K32.
 - [x] ~~NWC SAF CT projeksiyonu~~ — MGM köşeleri alındı, çıkarım yapıldı (K13/K14).
 - [x] ~~METAR NSC politikası~~ — **verify** seçildi, `split_v2_verify` + `cv5_verify` üretildi; H5 yeniden üretimi gerekmedi (K16).
 - [x] ~~Örnek bazlı tahmin kaydı, SYNOP-only metrik, determinizm, hızlı yükleyici~~ — K16.
@@ -967,15 +995,18 @@ geç-füzyon planıdır — **arşiv**, güncel hattı temsil etmez. `notebooks/
       `Bechini2007`/`Liu2020` (P16); Code availability metnini depo dışı makale klasörlerine göre uyarla; eşleştirilmiş farklar 4 ondalık (K21 istisnası).
 - [x] ~~P14 Bölüm 2–4 taslakları~~ — K23.
 - [x] ~~Kanal sırasını doğrula~~ — K24 (IR kesin; güneş kanalları için güncellenmiş betikle bir kez daha koş, `TAMAM` beklenir).
-- [ ] Bölüm 2.2: "5–30 km komşuluk" ifadesi — sonuçlarda yalnız merkez ve 30 km var (5–20 km ekle ya da cümleyi daralt).
-- [ ] Analiz raporunu makale bulgularına dönüştür; gece hataları (alçak bulut/sis) için ayrıntı.
-- [ ] U-Net tam harita için hedef-piksel jitter (49×49 çıkar → 33×33 rastgele kırp).
+- [x] ~~Bölüm 2.2: "5–30 km komşuluk" ifadesi~~ — K34'te "merkez ve 30 km" olarak düzeltildi.
+- [x] ~~Analiz raporunu makale bulgularına dönüştür; gece hataları~~ — K33, K35.
+- [ ] **P20 (revizyon R14):** U-Net hedef-piksel jitter — **33×33 içinde 25×25 rastgele kırpma**, kayıp gerçek konumda; H5 yeniden
+      çıkarılmaz (eski "49×49 çıkar" maddesi K20/K44 ile değişti). Fig. 9'un yeniden üretim kuralı `docs/revizyon_onkayit.md`'de.
 - [x] ~~`infer_scene.py`~~ — yazıldı ve gerçek sahnelerde doğrulandı (K27).
-- [ ] Kanal permütasyon önemi / Integrated Gradients — kod hazır (K25), koşu bekliyor.
-- [ ] Metrikleri gündüz/gece ve mevsim kırılımıyla raporla.
-- [x] ~~Açık örneklemi üret ve Zenodo paketini hazırla~~ (K38). - [ ] `make_zenodo_package.py --include_mgm` ile yeniden paketle ve Zenodo'ya yükle (MGM sözlü onayı K42; yazılı onay bekleniyor).
-- [ ] Zenodo DOI al, README'ye ekle; eğitilmiş ağırlıkları (artık `artifacts/checkpoints/*.pth`
-      içinde) release olarak yayımla.
+- [x] ~~Kanal permütasyon önemi / Integrated Gradients~~ — K26 (aydınlanma içi permütasyon).
+- [x] ~~Metrikleri gündüz/gece ve mevsim kırılımıyla raporla~~ — K18, K21 (Fig. 6).
+- [x] ~~Açık örneklemi üret ve Zenodo paketini hazırla~~ (K38).
+- [ ] `make_zenodo_package.py --include_mgm` ile yeniden paketle ve Zenodo'ya yükle (MGM sözlü onayı K42; **yazılı izin süreci 18 Kas'ta başlatıldı**).
+- [ ] Zenodo kaydını **yayımla** (DOI 10.5281/zenodo.24112650 yalnız rezerve, taslak kayıt — yayımlanana kadar çözümlenmez);
+      yayımlanınca oluşan **concept DOI**'yi makale, README, CITATION.cff, kapak mektupları ve release notlarına yaz (K44).
+- [ ] **Revizyon (K44):** `docs/calisma_plani_revizyon_2026-11-18.md` takvimi; ön-kayıt `docs/revizyon_onkayit.md`.
 - [ ] `task.md`'yi v2 fazlarıyla güncelle (hâlâ v1 checklist'i gösteriyor).
 - [ ] Makale limitations: Tem–Kas verisi yok; kar–bulut karışıklığı; ~1,7×1,1 km piksel / ~3×3,5 km CLM pikseli vs yarımküre
       gözlem ölçek farkı; etiket eşiği duyarlılığı (0/≥5 vs 0/≥1); AWOS-aux'un belirsiz katkısı.
@@ -990,6 +1021,8 @@ Cowork projesinde **özel proje talimatı (custom instructions) tanımlı değil
 - `claude/mtgclm_inceleme_2026-09-15.md` — akademik + teknik inceleme raporu
 - `claude/mtgclm_eylem_plani_2026-09-15.md` — 5 fazlı eylem planı (kararların kaynağı)
 - `claude/mtgclm_walkthrough_v2.md` — v2 akışı (yereldeki `walkthrough_v2.md` güncel sürümdür)
+- `claude/mtgclm_madde_madde_degerlendirme_2026-11-18.md`, `claude/mtgclm_revizyon_calisma_plani_2026-11-18.md` — hakem raporu
+  ve ret riski yol haritasının madde madde değerlendirmesi ve revizyon takvimi (K44). Yerel kopyaları `docs/` altında.
 
 Yereldeki diğer notlar: `MTG Cloud Phase Web Service Development.md`,
 `Visualizing MTGConvNet Architecture2.md`.
@@ -1006,8 +1039,9 @@ Yereldeki diğer notlar: `MTG Cloud Phase Web Service Development.md`,
 - Ağır eğitim `run_all.py` üzerinden: v3'te yerel PC (CPU, `--loader auto`, `--outdir artifacts_v3`) + Colab (ResNet-CIFAR,
   `--outdir` Drive altında, `--cache_dir /content/cache`). Bkz. K16, §3.4.
 - Depoya veri/ağırlık commit etme; `splits/*.npz|json` ve `artifacts/*.json` paylaşılır.
-- Mimari/modalite tartışırken **Medium_Flat**'in kazanan mimari olduğunu ve AWOS-aux'un
-  test kümelerinde net bir katkısı görünmediğini unutma (K6, K12) — v1 sayılarını güncel
+- Mimari/modalite tartışırken **Medium_Flat**'in kazanan mimari olduğunu (K6) ve AWOS-aux'un **küçük ama
+  tutarlı pozitif** katkısını unutma: CV birleşik B − C +0,0027 [+0,0015, +0,0041] (5/5 kat), test_station +0,0031;
+  tek bölmenin test_time'ında fark yok (K18; K12'deki "katkı yok" yargısı düzeltildi) — v1 sayılarını güncel
   karşılaştırma için kullanma.
 - Yeni bir karar alındığında bu dosyanın §2'sine ekle (Kural 2 / `.agent/rules/rule_update_claude_md.md`).
 - İş paketi bitince dosya başına ayrı İngilizce commit komutları üret, çalıştırma (Kural 1 / `.agent/rules/rule_commit_per_file.md`).

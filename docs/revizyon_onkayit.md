@@ -1,8 +1,8 @@
 # MTGCLM — Revizyon analizleri ön-kaydı (pre-registration)
 
 **Tarih:** 18 Kasım 2026 · **Depo durumu:** `main` @ `469a476` (bu dosyanın commit'i ön-kaydın zaman damgasıdır)
-**Dayanak:** `docs/hakem_degerlendirmesi_MTGCLM.md`, `docs/ret_riski_yol_haritasi_MTGCLM.md`,
-`docs/calisma_plani_revizyon_2026-11-18.md`
+**Dayanak:** gönderim öncesi **gayriresmî iç ön-inceleme** (dergi hakem süreci değil). Bu dosya, yeni test kümesi analizlerine
+başlamadan önce yazarların kendi kendine verdiği bir taahhüttür.
 
 ## 0. Taahhütler
 
@@ -43,4 +43,8 @@
 
 ## 3. Sapmalar
 
-(henüz yok)
+- **18 Kas 2026, 18:57 (TSİ):** Yalnız "Dayanak" satırı netleştirildi (iç ön-inceleme olduğu yazıldı, iç belge adları çıkarıldı).
+  Analiz listesi, metrikler ve yorum kuralları **değişmedi**. Bu satır yazılırken henüz hiçbir yeni analiz koşulmamıştı.
+- **18 Kas 2026:** §2'deki Öz cümlesi kararı uygulandı (N1). Uygulanan biçim: "validated only at full-disc scale, not against a national
+  station network". Kaynaklar: EUMETSAT_CLMVR2025 ve NWCSAF_UMMTG2025 (NWC/GEO CMA, MTG için SYNOP/SHIP ile tam disk, POD %85,9).
+  Bu bir metin kararıdır, analiz sonucu değildir.

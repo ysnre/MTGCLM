@@ -282,6 +282,8 @@
         <div class="it"><div class="k">K38 · 17 Kas</div><div class="t">P17: açık örneklem</div><div class="d">İki katmanlı örneklem (a: FCI + statik + etiket açık; b: MGM radar/AWOS talep üzerine) ve Zenodo paketleme betiği; README’ye yeniden üretim tablosu.</div></div>
         <div class="it"><div class="k">K39 · 17 Kas</div><div class="t">P18: gönderim mektupları</div><div class="d">TAAC ve MAP kapak mektupları; çıkar çatışması denetlenmiş 5 önerilen hakem. Açık örneklem gerçek veride üretildi (2038 satır, 32 MB).</div></div>
         <div class="it"><div class="k">K40–41 · 17 Kas</div><div class="t">P19: son kontrol</div><div class="d">Veri akışı ve mimari şekilleri çizildi; atıf sırası, kısaltmalar, ek numaraları ve şekil dosya adları düzeltildi. 2 beyan maddesi ve final derleme kaldı.</div></div>
+        <div class="it"><div class="k">K42–43 · 17 Kas</div><div class="t">Final derleme</div><div class="d">MGM katman (b) sözlü onayı; Fig. 2–3 Arial ile üretildi; TAAC ve MAP final PDF’leri ve gönderim şekilleri dışa aktarıldı. 0 todo, 356 sayı denetimi 0 hata.</div></div>
+        <div class="it"><div class="k">K44 · 18 Kas</div><div class="t">Revizyon başladı</div><div class="d">Hakem öz-değerlendirmesi ve yol haritası madde madde değerlendirildi; ön-kayıt yazıldı. EUMETSAT doğrulama raporu: CLM yalnız uydu maskelerine karşı doğrulanmış, kar testi kapalı. P20 (U-Net jitter) yapılacak.</div></div>
       </div>
     </div>
   </div>
@@ -328,19 +330,19 @@
     <div class="card">
       <h3>Olmazsa olmaz</h3>
       <ul class="lst">
-        <li>Analiz raporunu makale bulgularına dönüştür (yöntem, tablolar, şekiller)</li>
-        <li>Gece performansı: alçak bulut/sis hataları, AWOS’un gece rolü</li>
-        <li>Danışman sunumu: model karşılaştırması + operasyonel ürün kıyası</li>
-        <li>Sınırlılıklar: Tem–Kas verisi yok, paralaks düzeltmesiz, ölçek farkı</li>
+        <li>Referans ürünleri aynı etiketlerle kalibre eden kıyas (R12) — en güçlü hakem itirazına cevap</li>
+        <li>Öz’de iddiayı daraltma: skor aralığı, “istasyon ölçeği”, ilk cümle (yer gözlemi)</li>
+        <li>Karar kronolojisi ve “test bir kez” cümlesinin düzeltilmesi; AI beyanının genişletilmesi</li>
+        <li>POD/FAR/KSS, çoklu karşılaştırma, blok uzunluğu duyarlılığı</li>
       </ul>
     </div>
     <div class="card">
       <h3>Güçlendirir</h3>
       <ul class="lst">
-        <li>U-Net için ayak izi (alan) kayıplı eğitim + tam harita çıkarımı</li>
-        <li>Kanal önemi (permütasyon / Integrated Gradients)</li>
-        <li>Bulut tipine göre hata analizi (NWC CT)</li>
-        <li>Zenodo DOI, paylaşılabilir örneklem, ağırlık yayını</li>
+        <li>P20: U-Net hedef-piksel jitter → tek geçişli tam harita</li>
+        <li>Bulut sıklığının eşik/kalibrasyon/maske duyarlılığı (doğu yaylaları)</li>
+        <li>Gözlemci belirsizlik tavanı; holdout–AWOS ve IDW doğrulaması</li>
+        <li>Zenodo kaydını yayımla (concept DOI), MGM yazılı izni</li>
       </ul>
     </div>
   </div>
@@ -352,7 +354,7 @@
 </section>
 
 <footer>
-  MTGCLM proje infografiği · güncelleme: <b>17 Kasım 2026</b> · Bu sayfa projedeki her anlamlı değişiklikte güncellenir.
+  MTGCLM proje infografiği · güncelleme: <b>18 Kasım 2026</b> · Bu sayfa projedeki her anlamlı değişiklikte güncellenir.
   Sayılar <code>artifacts_v3/analysis/analysis.md</code>, <code>artifacts/summary.md</code>, <code>artifacts/clm_on_splits.json</code> ve <code>artifacts/nwc_metar_on_splits.json</code>’dan türetilmiştir.
 </footer>
 
