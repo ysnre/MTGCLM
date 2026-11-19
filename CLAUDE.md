@@ -806,6 +806,20 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   yorumu satır SONUNA koy, metne yeni satırda devam et.
 - verify_numbers 356/0; TAAC 31+7, MAP 32+6 sayfa; toplam 81 143 karakter (sınır 100 000, hedef 80 000 → hafif aşım).
 
+### K46 — 19 Kas 2026: P20 kodu (U-Net hedef-piksel jitter) + "neden 0 / ≥5 okta" metni + R20 ön-kaydı
+- **`train_unet.py --center_jitter [--jitter_crop 25]`:** eğitimde 33×33 yamadan örnek başına rastgele 25×25 pencere (`center_jitter_crop`);
+  etiket istasyonun penceredeki gerçek konumuna (8..16) yazılır → 16 havuzlama fazının hepsi görülür; kayıp (`MaskedBCELoss`) değişmedi.
+  Pencereler (seed, epoch)'a bağlı ayrı `torch.Generator`'dan (devam eden koşu aynı pencereleri görür; küresel RNG'ye dokunmaz).
+  Doğrulama/test değişmedi (33×33, merkez). JSON config: `center_jitter`, `jitter_crop`. Epoch satırına genel ilerleme % ve kalan süre eklendi.
+- **Testler `src/test_center_jitter.py`:** 6 birim testi + mini H5'te bütünleşik: jitter KAPALI yeni kod == P20 öncesi kod (`3f1008a`) bit bit
+  (kayıp geçmişi + ağırlıklar), jitter AÇIK uçtan uca. Bulut ortamında hepsi geçti (torch 2.15 CPU).
+- **run_all:** yeni aşama `unetjit` → `D_unet_jit_s{1,2,3}` (D_unet dosyalarına dokunmaz). Değerlendirme (Gün 4): `infer_scene.py --exp D_unet_jit
+  --artifact_check` (tek geçiş vs faz-hizalı), analyze_preds'e D_unet_jit − D_unet. Fig. 9 kuralı ön-kayıtta.
+- **Metin (02_data §2.4):** sınıf sınırlarının gerekçesi — 0 okta tüm gökte bulutu dışlayan tek rapor; 5 okta METAR'da BKN'nin (5–7) alt
+  sınırı; ürünler aynı kuralla ikilileştirilmiyor, merkez piksel + 30 km bulutlu oranı (eşik train'de) — NWC SAF doğrulamasının kutu-oranı
+  kuralına benzer. TAAC 32+7 sayfa.
+- **R20 ön-kayda eklendi (17:22 TSİ, hiçbir analiz koşulmadan):** bulutlu ≥ 6 okta duyarlılığı, yalnız SYNOP.
+
 ---
 
 ## 3. Komutlar
@@ -986,6 +1000,7 @@ python src\analyze_preds.py --dir artifacts_v3 --out artifacts_v3/analysis --ref
 | `docs/mtgclm_kod_haritasi.html` | Kod haritası: dosya/sınıf/fonksiyon bağlantıları (otomatik, `src/make_code_map.py`; K19) |
 | `src/make_code_map.py` | Kodu `ast` ile tarayıp kod haritasını üretir; `MODULE_INFO` (grup/açıklama/eski), `EXTRA_DATA` |
 | `src/loss.py` | `MaskedBCELoss` — yalnız (16,16) pikselinde, `-1` yok sayılır |
+| `src/test_center_jitter.py` | P20 jitter birim testleri + P20 öncesi kodla bit bit eşitlik (mini H5) — K46 |
 | `src/train.py`, `src/train_unet.py` | Eğitim; `--h5 --split --aux --aux_channels --seed --epochs --limit_batches --results --outdir --model` + K16: `--loader --mem_splits --cache_dir --threads --no_deterministic --no_last_preds` |
 | `src/config.py` | Colab/yerel yollar, `MTGCLM_H5`, PATCH_SIZE 33, BATCH_SIZE 64, LR 1e-3 |
 | `paper/main.tex`, `preamble.tex`, `frontmatter.tex`, `backmatter.tex`, `sections/`, `supplementary.tex` | Makale LaTeX iskeleti (sn-jnl, sn-basic; `\ifTAAC`) — K22 |
@@ -1034,7 +1049,7 @@ geç-füzyon planıdır — **arşiv**, güncel hattı temsil etmez. `notebooks/
 - [x] ~~Kanal sırasını doğrula~~ — K24 (IR kesin; güneş kanalları için güncellenmiş betikle bir kez daha koş, `TAMAM` beklenir).
 - [x] ~~Bölüm 2.2: "5–30 km komşuluk" ifadesi~~ — K34'te "merkez ve 30 km" olarak düzeltildi.
 - [x] ~~Analiz raporunu makale bulgularına dönüştür; gece hataları~~ — K33, K35.
-- [ ] **P20 (revizyon R14):** U-Net hedef-piksel jitter — **33×33 içinde 25×25 rastgele kırpma**, kayıp gerçek konumda; H5 yeniden
+- [ ] **P20 (revizyon R14):** kod + testler hazır (K46); kalan: 3 tohum eğitimi (`--stage unetjit`) ve değerlendirme. U-Net hedef-piksel jitter — **33×33 içinde 25×25 rastgele kırpma**, kayıp gerçek konumda; H5 yeniden
       çıkarılmaz (eski "49×49 çıkar" maddesi K20/K44 ile değişti). Fig. 9'un yeniden üretim kuralı `docs/revizyon_onkayit.md`'de.
 - [x] ~~`infer_scene.py`~~ — yazıldı ve gerçek sahnelerde doğrulandı (K27).
 - [x] ~~Kanal permütasyon önemi / Integrated Gradients~~ — K26 (aydınlanma içi permütasyon).
