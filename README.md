@@ -111,6 +111,11 @@ lojistik regresyon, rastgele orman ve gradyan artırma; hepsi aynı bölme ve me
 Derin modeller tarafında MTGConvNet (Shallow/Medium/Deep × GAP/Flatten), 17 kanala uyarlanmış
 ResNet-18 ve U-Net karşılaştırılır.
 
+> **Anahtar adı uyarısı.** `artifacts_v3` sonuç dosyalarında ve Zenodo kaydında çift eşik modeli
+> `threshold2_ir_105+vis_06` adını taşır, ama bu koşu **IR10.5 ve IR13.3** kanallarını kullandı
+> (kanal sırası sonradan doğrulandı; adı kayıt için değiştirilmedi). Makalede "IR10.5 ve IR13.3" yazılıdır.
+> Güncel kodda `--ch2 vis_06` gerçek VIS0.6'yı seçer, yani farklı bir modeldir.
+
 ## v3 sonuçlarını yeniden üretme
 
 Güncel sonuçlar `artifacts_v3/` altındadır (etiket politikası *verify*: `splits/split_v2_verify.npz`, bloklu CV
