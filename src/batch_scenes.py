@@ -68,8 +68,13 @@ def main():
     ap.add_argument("--ckpt", default=None, help=argparse.SUPPRESS)
     ap.add_argument("--threads", type=int, default=None)
     ap.add_argument("--out", default=os.path.join(ROOT, "data/processed/cloud_freq"))
+    ap.add_argument("--unet_mode", choices=["aligned", "single"], default="aligned",
+                    help="aligned: 16 geçiş (D_unet için zorunlu); single: tek geçiş — yalnız P20 jitter'lı modelde (D_unet_jit; K47)")
     a = ap.parse_args()
-    a.pad, a.unet_mode = "train", "aligned"
+    a.pad = "train"
+    if a.unet_mode == "single" and "jit" not in a.exp:
+        raise SystemExit(f"--unet_mode single yalnız jitter'lı modelle kullanılmalı (D_unet tek geçişte maskenin %38–54'ünü değiştirir; K27). "
+                         f"--exp {a.exp} verildi.")
     if a.threads:
         torch.set_num_threads(a.threads)
 
@@ -102,6 +107,7 @@ def main():
             continue
         todo.append((key, nc))
     n_scene = sum(1 for _, p in todo if p)
+    print(f"Model: {a.exp} (seeds {a.seeds}, U-Net modu {a.unet_mode}) -> {a.out}")
     print(f"Nominal zaman: {len(times)}  tamamlanmış: {len(done)}  kalan: {len(todo)} (sahnesi olan {n_scene})")
     if not todo:
         return
@@ -141,7 +147,7 @@ def main():
         try:
             X, flag, grid, t_sat, info = IS.build_inputs(nc, a, norm, statics, awos)
             H, W = grid.shape
-            prob = np.mean([IS.predict_unet_full(net, X, H, W, "aligned") for _, _, net, _ in models], axis=0)
+            prob = np.mean([IS.predict_unet_full(net, X, H, W, a.unet_mode) for _, _, net, _ in models], axis=0)
             valid = (flag & (IS.FLAG_SAT_NAN | IS.FLAG_NO_RADAR)) == 0
             pu8 = np.where(valid, np.clip(np.rint(prob * 250), 0, 250), 255).astype(np.uint8)
             clm = np.full((H, W), -1, np.int8)
@@ -170,7 +176,7 @@ def main():
         mf.flush()
         el = time.perf_counter() - t_all
         if k % 10 == 0 or k == len(todo) - 1:
-            print(f"  {k + 1}/{len(todo)}  {ts}  ({el / (k + 1):.1f} s/sahne, kalan ~{el / (k + 1) * (len(todo) - k - 1) / 3600:.1f} sa)",
+            print(f"  {k + 1}/{len(todo)} (%{100 * (k + 1) / len(todo):.0f})  {ts}  ({el / (k + 1):.1f} s/sahne, kalan ~{el / (k + 1) * (len(todo) - k - 1) / 3600:.1f} sa)",
                   flush=True)
     mf.close()
     print(f"Bitti: {(time.perf_counter() - t_all) / 3600:.2f} sa")
