@@ -13,11 +13,17 @@ authors:
     orcid: "https://orcid.org/0000-0001-6729-5278"
 repository-code: "https://github.com/ysnre/MTGCLM"
 url: "https://github.com/ysnre/MTGCLM"
-doi: "10.5281/zenodo.24112650"
+doi: "10.5281/zenodo.24112649"
 identifiers:
   - type: doi
+    value: "10.5281/zenodo.24112649"
+    description: "Zenodo archive, all versions (concept DOI)"
+  - type: doi
+    value: "10.5281/zenodo.24368365"
+    description: "Zenodo archive, version 1.1 (release corresponding to the article)"
+  - type: doi
     value: "10.5281/zenodo.24112650"
-    description: "Zenodo archive of the dataset and the released code"
+    description: "Zenodo archive, version 1.0 (split files and run results only)"
 license: MIT
 version: "2.0.0"
 date-released: "2026-09-17"
