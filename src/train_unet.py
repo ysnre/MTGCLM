@@ -176,7 +176,29 @@ def buffered_shuffle_generator(dataloader, buffer_batches=128, batch_size=64):
             end = min(start + batch_size, num_samples)
             yield flat_features[start:end], flat_scalars[start:end], flat_labels[start:end]
 
-def train_one_epoch(model, dataloader, criterion, optimizer, device, limit_batches=None):
+def center_jitter_crop(features, crop, gen):
+    """P20 (K20, K44): 33x33 yamadan ÖRNEK BAŞINA rastgele crop x crop pencere keser.
+
+    İstasyon pikseli (16,16) pencerede (16-oy, 16-ox) konumuna düşer; oy, ox ∈ [0, 33-crop] olduğundan
+    25'lik pencerede konum 8..16 arasında değişir ve U-Net'in iki havuzlama katmanının 4x4 = 16 fazının hepsi
+    eğitimde görülür (tek merkez pikselli eğitimdeki faz bağımlılığının kaynağı). Kopya döndürür; girdi değişmez.
+    gen: CPU torch.Generator (yalnız jitter açıkken kullanılır; küresel RNG'ye dokunmaz).
+    Döndürür: (pencere [B,C,crop,crop], cy [B], cx [B]) — cy/cx istasyonun penceredeki satır/sütunu.
+    """
+    B, C, H, W = features.shape
+    m = H - crop
+    oy = torch.randint(0, m + 1, (B,), generator=gen)
+    ox = torch.randint(0, m + 1, (B,), generator=gen)
+    dev = features.device
+    ar = torch.arange(crop)
+    rows = (oy[:, None] + ar).to(dev)
+    cols = (ox[:, None] + ar).to(dev)
+    bidx = torch.arange(B, device=dev)[:, None, None]
+    x = features.permute(0, 2, 3, 1)[bidx, rows[:, :, None], cols[:, None, :]].permute(0, 3, 1, 2).contiguous()
+    return x, (H // 2 - oy).to(dev), (W // 2 - ox).to(dev)
+
+
+def train_one_epoch(model, dataloader, criterion, optimizer, device, limit_batches=None, jitter_crop=0, jitter_gen=None):
     model.train()
     running_loss = 0.0
     all_preds = []
@@ -210,11 +232,17 @@ def train_one_epoch(model, dataloader, criterion, optimizer, device, limit_batch
         scalars, labels = scalars.to(device), labels.to(device)
         
         # TRANSFORM FOR UNET
-        # Create a spatial mask [Batch, 33, 33] initialized to -1 (ignore)
         b_size = features.size(0)
-        spatial_labels = torch.full((b_size, 33, 33), -1, dtype=torch.long, device=device)
-        # Assign the station label to the center pixel (16, 16)
-        spatial_labels[:, 16, 16] = labels
+        if jitter_crop:
+            # P20: rastgele pencere; etiket istasyonun penceredeki GERÇEK konumuna yazılır
+            features, cy, cx = center_jitter_crop(features, jitter_crop, jitter_gen)
+            spatial_labels = torch.full((b_size, jitter_crop, jitter_crop), -1, dtype=torch.long, device=device)
+            spatial_labels[torch.arange(b_size, device=device), cy, cx] = labels
+        else:
+            # Create a spatial mask [Batch, 33, 33] initialized to -1 (ignore)
+            spatial_labels = torch.full((b_size, 33, 33), -1, dtype=torch.long, device=device)
+            # Assign the station label to the center pixel (16, 16)
+            spatial_labels[:, 16, 16] = labels
         
         optimizer.zero_grad()
         
@@ -240,7 +268,10 @@ def train_one_epoch(model, dataloader, criterion, optimizer, device, limit_batch
         _, preds = torch.max(outputs, 1) # preds is [Batch, 33, 33]
         
         # Only evaluate at the center pixel where we have ground truth
-        center_preds = preds[:, 16, 16]
+        if jitter_crop:
+            center_preds = preds[torch.arange(b_size, device=device), cy, cx]
+        else:
+            center_preds = preds[:, 16, 16]
         all_preds.extend(center_preds.cpu().numpy())
         all_targets.extend(labels.cpu().numpy())
         
@@ -343,11 +374,12 @@ def evaluate_partial(model, dataloader, device, limit_batches=None, return_probs
     return out
 
 def run_experiment(name: str, train_loader, val_loader, epochs: int = EPOCHS, limit_batches: int = None, test_loaders: dict = None,
-                   preds_path: str = None, save_last_preds: bool = True):
+                   preds_path: str = None, save_last_preds: bool = True, jitter_crop: int = 0, seed: int = 0):
     print(f"\n==========================================")
     print(f"Starting Experiment: {name}")
     print(f"Model Type: UNet")
-    print(f"Epochs: {epochs} | Limit Batches: {limit_batches}")
+    print(f"Epochs: {epochs} | Limit Batches: {limit_batches}"
+          + (f" | P20 merkez jitter: {jitter_crop}x{jitter_crop} pencere" if jitter_crop else ""))
     print(f"==========================================")
     
     _ds = train_loader.dataset
@@ -446,7 +478,10 @@ def run_experiment(name: str, train_loader, val_loader, epochs: int = EPOCHS, li
         if hasattr(train_loader, "set_epoch"):
             train_loader.set_epoch(epoch)     # çevirme rastgeleliği (seed, epoch) — devamda da aynı
         
-        train_loss, train_acc, train_f1 = train_one_epoch(model, train_loader, criterion, optimizer, DEVICE, limit_batches)
+        # P20: pencere konumları (seed, epoch)'a bağlı ayrı üreteçten — devam eden koşu kesintisizle aynı pencereleri görür
+        jgen = torch.Generator().manual_seed(int(seed) * 1_000_003 + epoch) if jitter_crop else None
+        train_loss, train_acc, train_f1 = train_one_epoch(model, train_loader, criterion, optimizer, DEVICE, limit_batches,
+                                                          jitter_crop=jitter_crop, jitter_gen=jgen)
         val_loss, vm = validate(model, val_loader, criterion, DEVICE, limit_batches)
         
         scheduler.step()
@@ -467,7 +502,10 @@ def run_experiment(name: str, train_loader, val_loader, epochs: int = EPOCHS, li
         history["val_auc"].append(vm["roc_auc"])
         history["epoch_time"].append(round(float(epoch_time), 1))
         
-        print(f"Epoch {epoch:02d}/{epochs:02d} | Time: {epoch_time:.1f}s")
+        done_ep = epoch - start_epoch + 1
+        eta_min = (time.time() - start_time) / done_ep * (epochs - epoch) / 60
+        print(f"Epoch {epoch:02d}/{epochs:02d} | Time: {epoch_time:.1f}s | Genel ilerleme: %{100 * epoch / epochs:.0f}"
+              f" | tahmini kalan ~{eta_min:.0f} dk")
         print(f"  Train Loss: {train_loss:.4f} | Acc: {train_acc:.4f} | F1: {train_f1:.4f}")
         print(f"  Val   Loss: {val_loss:.4f} | {format_metrics(vm)}")
         
@@ -570,7 +608,14 @@ def main():
     parser.add_argument("--threads", type=int, default=None, help="CPU eğitiminde torch iş parçacığı sayısı")
     parser.add_argument("--no_deterministic", action="store_true")
     parser.add_argument("--no_last_preds", action="store_true")
+    parser.add_argument("--center_jitter", action="store_true",
+                        help="P20: eğitimde 33x33 yamadan örnek başına rastgele --jitter_crop pencere; kayıp istasyonun gerçek konumunda. "
+                             "Doğrulama/test değişmez (33x33, merkez).")
+    parser.add_argument("--jitter_crop", type=int, default=25, help="P20 pencere boyu (4k+1, 33'ten küçük; varsayılan 25)")
     args = parser.parse_args()
+    jitter_crop = args.jitter_crop if args.center_jitter else 0
+    if jitter_crop and not (5 <= jitter_crop < 33 and (jitter_crop - 1) % 4 == 0):
+        raise SystemExit(f"--jitter_crop {jitter_crop}: 4k+1 biçiminde ve 5..29 arasında olmalı (U-Net up katmanları).")
     if args.limit_batches == 0:
         args.limit_batches = None
     if args.threads:
@@ -668,7 +713,8 @@ def main():
             limit_batches=limit_batches,
             test_loaders=test_loaders,
             preds_path=out_path("preds", preds_file) if test_loaders else None,
-            save_last_preds=not args.no_last_preds
+            save_last_preds=not args.no_last_preds,
+            jitter_crop=jitter_crop, seed=args.seed
         )
         results[name] = {
             "history": history,
@@ -678,6 +724,7 @@ def main():
             "test": test_results,
             "config": {"seed": args.seed, "aux": args.aux, "aux_channels": aux_channels, "split": args.split,
                        "epochs": epochs_to_run, "limit_batches": limit_batches,
+                       "center_jitter": bool(jitter_crop), "jitter_crop": int(jitter_crop) if jitter_crop else None,
                        "best_model_file": f"best_model_{RUN_TAG + '__' if RUN_TAG else ''}{name.lower()}.pth",
                        "preds_file": f"preds/{preds_file}" if test_loaders else None,
                        **sinfo, "env": env, "wall_minutes": round((time.time() - t_run) / 60, 1)}
