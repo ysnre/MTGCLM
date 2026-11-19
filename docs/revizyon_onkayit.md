@@ -31,6 +31,7 @@ başlamadan önce yazarların kendi kendine verdiği bir taahhüttür.
 | R13 | Normalizasyon kayması | Ay × aydınlanma sınıfı içinde kanal ortalaması kayması, eğitim kümesi istatistiğine göre σ biriminde | Yalnız IR kanallarında \|kayma\| > 0,5σ olursa yeniden eğitim için kullanıcı kararı istenir. Güneş kanalları tanısal raporlanır. |
 | R14 = P20 | U-Net hedef-piksel jitter | (i) Tek geçiş ↔ faz-hizalı ikili uyuşmazlık (3 test sahnesi, K27 ile aynı); (ii) D_unet_jit − D_unet test_time BalAcc, eşleştirilmiş, 3 tohum | Ek tabloya girer. **Fig. 9 jitter modeliyle yeniden üretilir, ancak** (i) < %5 VE (ii)'nin GA alt sınırı > −0,005 ise (eşdeğer-olmama sınırı). Aksi halde Fig. 9 faz-hizalı modelle kalır ve jitter sonucu ek tabloda raporlanır. |
 | R17 | Doğrulanmamış METAR açıkları | P9 keep satırları (test kümeleri) üzerinde yalnız bu alt kümede BalAcc / POD / FAR; model ve referanslar | Betimsel; ek tabloya. |
+| R20 | Bulutlu sınıf sınırı ≥ 6 okta (NWC SAF doğrulamasıyla uyumlu) | Yalnız SYNOP satırları (METAR'da BKN 5–7 ayrılamaz); 5 okta raporları dışarıda, açık = 0 okta; yeniden eğitim yok, eşik 0,5; test_time / test_station / test_both; modeller + CLM/NWC (merkez, r30) | Ek tabloya girer (etiket duyarlılığı tablosunun yanına). Model–referans farkının işareti değişirse Öz'deki "etiket tanımından bağımsız" ifadesi kaldırılır. |
 | R18 | IDW doğrulaması | t2m / rh2m leave-one-out RMSE ve bias; yükseklik farkı sınıflarına göre | Betimsel; Veri bölümüne bir cümle, ek tabloya. |
 
 ## 2. Metin kararları (sonuçlardan bağımsız)
@@ -48,3 +49,5 @@ başlamadan önce yazarların kendi kendine verdiği bir taahhüttür.
 - **18 Kas 2026:** §2'deki Öz cümlesi kararı uygulandı (N1). Uygulanan biçim: "validated only at full-disc scale, not against a national
   station network". Kaynaklar: EUMETSAT_CLMVR2025 ve NWCSAF_UMMTG2025 (NWC/GEO CMA, MTG için SYNOP/SHIP ile tam disk, POD %85,9).
   Bu bir metin kararıdır, analiz sonucu değildir.
+- **19 Kas 2026, 17:22 (TSİ):** R20 eklendi (≥ 6 okta duyarlılığı). Gerekçe: hakemlerin "ürün doğrulamaları > 5 okta kullanırken neden ≥ 5"
+  sorusu. Eklendiği anda ön-kayıttaki analizlerin hiçbiri koşulmamıştı.
