@@ -820,6 +820,26 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   kuralına benzer. TAAC 32+7 sayfa.
 - **R20 ön-kayda eklendi (17:22 TSİ, hiçbir analiz koşulmadan):** bulutlu ≥ 6 okta duyarlılığı, yalnız SYNOP.
 
+### K47 — 19 Kas 2026: P20 eğitimi bitti (D_unet_jit × 3, yerel CPU) — ölçüt (ii) sağlandı, ölçüt (i) sahne testi bekliyor
+- `run_all --stage unetjit`: 3 koşu × 15 epoch, ~101–103 dk/koşu (i7-12700, 12 iş parçacığı); git `a51df12` (s2/s3 "dirty" = yalnız koşu
+  sırasında değişen artifacts_v3/run_manifest.json; kod aynı). Log'larda hata/uyarı yok. En iyi epoch 4 / 2 / 8 (val eğrisi 2. epoch'tan
+  sonra ~0,940–0,943'te düz; D_unet 0,943–0,945). Val kaybı D_unet'ten yüksek (0,156–0,165 vs 0,148–0,151): eğitim 25×25, doğrulama 33×33
+  — beklenen pencere farkı.
+- **Ön-kayıt ölçütü (ii) (eşdeğer-olmama, alt GA > −0,005):** D_unet_jit − D_unet test_time −0,0011 [−0,0024, +0,00004]; test_station
+  −0,0010 [−0,0024, +0,0005]; test_both −0,0008 [−0,0036, +0,0017] → **sağlandı** (farklar sıfırdan ayırt edilemiyor). BalAcc: test_time
+  0,9563 vs 0,9574. Hesap `scratch/p20_pairs.py` → `scratch/p20_analysis/` (analyze_preds, ORDER'a geçici ekleme; yayımlanmış CSV'lere
+  dokunulmadı, D_unet satırları birebir aynı).
+- **Ölçüt (i)** (tek geçiş ↔ faz-hizalı maske uyuşmazlığı < %5; D_unet'te %38–54): kullanıcı makinesinde `infer_scene.py --exp D_unet_jit
+  --check --artifact_check` (K27'nin 3 sahnesi) bekleniyor. Not: D_unet Colab T4'te, D_unet_jit CPU'da eğitildi (donanım farkı).
+- **Ölçüt (i) sağlandı (19 Kas, 3 sahne):** tek geçiş ↔ faz-hizalı ikili maske uyuşmazlığı **%0,28 / %0,14 / %0,16** (D_unet %38 / %54 / %39);
+  ort. |fark| 0,002–0,003 (D_unet 0,34–0,42); 4 piksellik periyot gücü tek geçişte 0,005–0,014 (D_unet 0,85–1,54) → faz deseni kalktı.
+  `--check`: girdi farkı 0, istasyonlarda doğruluk D_unet ile aynı ya da yüksek. → **Ön-kayıt kuralı: Fig. 9 jitter'lı modelle yeniden üretilir.**
+- `scenes_summary.csv` yeniden üretildi: P5 sahne paketi koşularının (7 D_unet sahnesi, `--check` olmadan) satırları da girdi → o satırlarda
+  tutarlılık sütunları boş (NaN, beklenen). Tab. 5 `timing.csv`'den yalnız D_unet satırlarını kullanır; verify_numbers 356/0.
+- **`batch_scenes.py --unet_mode single`** eklendi (yalnız adında "jit" geçen modelle; D_unet'te reddeder); ilerleme satırına % eklendi.
+  Koşu: `--exp D_unet_jit --unet_mode single --out data/processed/cloud_freq_jit`, sonra `cloud_frequency.py --src data/processed/cloud_freq_jit
+  --out artifacts_v3/climatology_jit`. Eski `cloud_freq/` ve `climatology/` korunur; Fig. 9'un kaynağı sonuçlar incelendikten sonra değişecek.
+
 ---
 
 ## 3. Komutlar
