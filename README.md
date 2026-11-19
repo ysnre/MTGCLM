@@ -153,18 +153,17 @@ gözlemleri Meteoroloji Genel Müdürlüğü'ne aittir ve kurum izniyle kullanı
 depoda paylaşılmamaktadır.
 
 Bu depoda bulunanlar: veri setini ham kaynaklardan yeniden üretmek için gereken **tüm kod**,
-bölme dosyaları (`splits/*.npz`, ~2 MB) ve koşu sonuçları (`artifacts/*.json`). Türetilmiş
-veri seti (`mtg_train_v2.h5`, 19 GB) GitHub boyut sınırlarını aştığından Zenodo'da arşivlenir:
+bölme dosyaları (`splits/*.npz`, ~2 MB) ve koşu sonuçları (`artifacts/*.json`). Tam eğitim veri seti
+(`mtg_train_v2.h5`, 19 GB) MGM verisi içerdiği için **paylaşılmaz**; yerine ~2.000 satırlık tabakalı bir örneklem Zenodo'da arşivlenir:
 
-> **Zenodo DOI:** [10.5281/zenodo.24112650](https://doi.org/10.5281/zenodo.24112650)
-
-Kayıt şu anda taslak hâlindedir; bölme dosyaları ve koşu sonuçları yüklenmiştir.
+> **Zenodo DOI (tüm sürümler):** [10.5281/zenodo.24112649](https://doi.org/10.5281/zenodo.24112649)
 
 Türetilmiş veri seti iki katman hâlinde paylaşılır: **katman (a)** 16 FCI kanalı, statik alanlar
 (yükseklik, cos SZA) ve SYNOP/METAR etiketleri; **katman (b)** radar kanalı, `radar_cov`, t2m ve rh2m — MGM verisinden
-türetilmiştir ve MGM'nin izniyle paylaşılır. Zenodo kaydında iki katmanın ~2.000 satırlık örneklemi (`mtg_sample_core.h5`,
-`mtg_sample_mgm.h5`), bölmeler, koşu sonuçları, analiz tabloları, iki model ağırlığı ve bulut oluşum sıklığı haritaları
-bulunur (`src/make_zenodo_package.py --include_mgm`). Ham radar ve yer gözlemleri talep üzerine MGM'den temin edilir.
+türetilmiştir. Zenodo kaydının güncel sürümünde katman (a) örneklemi (`mtg_sample_core.h5`), bölmeler, koşu sonuçları, analiz tabloları,
+iki model ağırlığı ve bulut oluşum sıklığı haritaları bulunur. Katman (b) örneklemi (`mtg_sample_mgm.h5`, 9 MB) MGM'nin yazılı
+onayından sonra aynı kayda yeni sürüm olarak eklenecek (`src/make_zenodo_package.py --out zenodo_package/v1.2 --version 1.2 --include_mgm`); o zamana kadar MGM izniyle
+yazarlardan istenebilir. Ham radar ve yer gözlemleri talep üzerine MGM'den temin edilir.
 
 Eğitilmiş model ağırlıkları (`best_model_*.pth`) sürüm (release) eklerinde yayımlanır.
 
