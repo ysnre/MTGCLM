@@ -103,7 +103,8 @@ MODULE_INFO = {
     "metrics": ("model", "Dengeli doğruluk, MCC, F1, AUC, karışıklık matrisi, çoğunluk referansı", None),
     # 6 eğitim
     "train": ("egitim", "Sınıflandırma modellerinin eğitimi (MTGConvNet, ResNet18); test, tahmin kaydı", None),
-    "train_unet": ("egitim", "U-Net eğitimi (merkez piksel denetimi); test, tahmin kaydı", None),
+    "train_unet": ("egitim", "U-Net eğitimi (merkez piksel denetimi; P20 --center_jitter); test, tahmin kaydı", None),
+    "test_center_jitter": ("arac", "P20 jitter birim testleri + eski kodla bit bit eşitlik (mini H5; K46)", None),
     "run_utils": ("egitim", "Tekrarlanabilirlik, RNG checkpoint, ortam bilgisi, SYNOP-only metrik, tahmin kaydı", None),
     "baselines": ("egitim", "Klasik modeller: çoğunluk, eşikler, lojistik regresyon, RF, HGB", None),
     "bench_speed": ("egitim", "Sentetik batch'le model başına eğitim hızı ve koşu süresi tahmini", None),
