@@ -1,6 +1,6 @@
 # MTGCLM v1.0 — release notes (draft)
 
-Station-trained cloud mask for Meteosat Third Generation FCI over Türkiye. Archive: https://doi.org/10.5281/zenodo.24112650
+Station-trained cloud mask for Meteosat Third Generation FCI over Türkiye. Archive (all versions): https://doi.org/10.5281/zenodo.24112649
 
 ## Contents of this release
 - Full pipeline from raw inputs to the compact training set (`src/`), training and evaluation with crash-safe
@@ -16,9 +16,9 @@ Station-trained cloud mask for Meteosat Third Generation FCI over Türkiye. Arch
 - `best_model_D_unet_s1__mtgunet.pth` — U-Net, all inputs, seed 1
 
 ## Data
-Both layers of the stratified sample are in the Zenodo record: layer (a) (FCI channels, static fields, SYNOP/METAR
-labels) and layer (b) (radar and AWOS-derived fields, shared with the permission of the Turkish State Meteorological
-Service). The raw radar and surface observations are available from the Turkish State Meteorological Service on request.
+Layer (a) of the stratified sample (FCI channels, static fields, SYNOP/METAR labels) is in the Zenodo record. Layer (b)
+(radar and AWOS-derived fields) will be added as a new version once the Turkish State Meteorological Service has confirmed
+its release in writing. The raw radar and surface observations are available from the Turkish State Meteorological Service on request.
 
 ## Reproducibility
 Seeds 1–3, deterministic PyTorch settings (`src/run_utils.py`); see README, section "v3 sonuçlarını yeniden üretme".
