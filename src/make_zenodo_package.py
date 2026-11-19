@@ -1,10 +1,10 @@
 """
 make_zenodo_package.py
 ======================
-Zenodo kaydı (DOI 10.5281/zenodo.24112650) için yükleme paketini tek klasörde toplar (P17):
+Zenodo kaydı (concept DOI 10.5281/zenodo.24112649; v1.0 = 10.5281/zenodo.24112650) için yükleme paketini tek klasörde toplar (P17):
 
   sample/      açık örneklem katmanı (a): <önek>_core.h5 + _split.npz + _split.json   (make_public_sample.py)
-               katman (b) <önek>_mgm.h5 --include_mgm ile (MGM izni alındı, 17 Kas 2026)
+               katman (b) <önek>_mgm.h5 yalnız --include_mgm ile (MGM YAZILI onayından sonra; K42, K44)
   splits/      splits/*.npz|json (v1, v2_verify, cv5, cv5_verify)
   results/     artifacts_v3/*.json (koşu sonuçları), artifacts_v3/analysis/*.csv|json|md
   checkpoints/ seçili ağırlıklar (varsayılan B_full_s1, D_unet_s1)
@@ -14,8 +14,11 @@ Dosyalar kopyalanır (kaynak değişmez); MANIFEST.csv (yol, bayt, sha256, katma
 "deposit metadata" taslağı) ve README.md yazılır. Paket klasörü depoya girmez (.gitignore: zenodo_package/).
 
 Kullanım:
-    python src/make_zenodo_package.py --out zenodo_package --sample data/public/mtg_sample
-    python src/make_zenodo_package.py --out zenodo_package --sample data/public/mtg_sample --dry_run
+    python src/make_zenodo_package.py --out zenodo_package/v1.1 --version 1.1
+    python src/make_zenodo_package.py --out zenodo_package/v1.2 --version 1.2 --include_mgm   # MGM yazılı onayından sonra
+    python src/make_zenodo_package.py --dry_run
+Yeni sürümün DOI'sini Zenodo atar; metadata.json bu yüzden "doi" alanı taşımaz. README tüm sürümleri gösteren
+concept DOI'yi verir.
 """
 import argparse
 import csv
@@ -25,14 +28,14 @@ import json
 import os
 import shutil
 
-DOI = "10.5281/zenodo.24112650"
+CONCEPT_DOI = "10.5281/zenodo.24112649"  # tüm sürümler; v1.0 = 10.5281/zenodo.24112650
 REPO = "https://github.com/ysnre/MTGCLM"
 CKPT_DEFAULT = "best_model_B_full_s1__medium_flat.pth,best_model_D_unet_s1__mtgunet.pth"
 
 README = """# MTGCLM — derived data, results and weights
 
 Station-trained cloud mask for Meteosat Third Generation FCI over Türkiye. Code: {repo}
-(this record: https://doi.org/{doi}).
+Version {version}; all versions of this record: https://doi.org/{doi}
 
 ## Contents
 | Folder | Content |
@@ -43,7 +46,8 @@ Station-trained cloud mask for Meteosat Third Generation FCI over Türkiye. Code
 | `checkpoints/` | Trained weights: CNN with all inputs (`B_full_s1`) and U-Net (`D_unet_s1`) |
 | `climatology/` | Cloud occurrence frequency from 3-hourly full-scene U-Net maps (NetCDF) and summaries |
 
-`MANIFEST.csv` lists every file with its size and SHA-256 checksum.
+`MANIFEST.csv` lists every file with its size and SHA-256 checksum. On Zenodo, `splits/`, `results/`, `checkpoints/` and
+`climatology/` are uploaded as zip archives of the same name, and the files of `sample/` at the top level.
 
 ## Data layers
 * **Layer (a), open:** the 16 FCI channels (EUMETSAT, EO:EUM:DAT:0662), terrain elevation (Copernicus DEM GLO-90),
@@ -83,6 +87,7 @@ def main():
     ap.add_argument("--include_mgm", action="store_true", help="Katman (b)'yi de ekle (MGM izniyle)")
     ap.add_argument("--results_dir", default="artifacts_v3")
     ap.add_argument("--checkpoints", default=CKPT_DEFAULT, help="virgülle ayrılmış dosya adları (checkpoints/ altında)")
+    ap.add_argument("--version", default="1.1", help="Zenodo sürüm etiketi (ör. 1.1)")
     ap.add_argument("--dry_run", action="store_true")
     args = ap.parse_args()
 
@@ -127,9 +132,11 @@ def main():
         rows.append({"path": d, "bytes": os.path.getsize(dst), "sha256": sha256(dst), "layer": l})
     prefix = os.path.basename(pre)
     mgm_state = ("included in this record with the permission of TSMS" if args.include_mgm else
-                 "not included; they are available from TSMS on request (contact the corresponding author)")
+                 "not included in this version; they will be added in a later version of this record once TSMS has "
+                 "confirmed their release in writing, and are until then available from the corresponding author with "
+                 "the permission of TSMS")
     with open(os.path.join(args.out, "README.md"), "w", encoding="utf-8") as f:
-        f.write(README.format(repo=REPO, doi=DOI, prefix=prefix, mgm_state=mgm_state))
+        f.write(README.format(repo=REPO, doi=CONCEPT_DOI, version=args.version, prefix=prefix, mgm_state=mgm_state))
     rows.append({"path": "README.md", "bytes": os.path.getsize(os.path.join(args.out, "README.md")),
                  "sha256": sha256(os.path.join(args.out, "README.md")), "layer": "doc"})
 
@@ -145,13 +152,14 @@ def main():
                 for a in cff.get("authors", [])] or [{"name": "Koçer, Sabri"}, {"name": "Er, Yasin"}]
     meta = {"metadata": {
         "title": "MTGCLM: derived data, results and trained weights for a station-trained FCI cloud mask over Türkiye",
-        "upload_type": "dataset", "doi": DOI, "creators": creators,
+        "upload_type": "dataset", "version": args.version, "creators": creators,
         "description": "Stratified sample of FCI patches (open layer), split definitions, per-run results, analysis "
                        "tables, trained weights and cloud occurrence frequency maps of the MTGCLM project. See README.md.",
         "access_right": "open", "license": "cc-by-4.0",
         "keywords": ["cloud mask", "Meteosat Third Generation", "FCI", "Türkiye", "SYNOP", "deep learning"],
         "related_identifiers": [{"identifier": REPO, "relation": "isSupplementTo", "scheme": "url"}],
-        "notes": "Layer (b) (radar and AWOS-derived fields, TSMS) " + ("included." if args.include_mgm else "available on request."),
+        "notes": "Layer (b) (radar and AWOS-derived fields, TSMS) " + ("included." if args.include_mgm else
+                  "not included in this version; it will be added in a later version after written approval by TSMS."),
     }}
     with open(os.path.join(args.out, "metadata.json"), "w", encoding="utf-8") as f:
         json.dump(meta, f, indent=2, ensure_ascii=False)
