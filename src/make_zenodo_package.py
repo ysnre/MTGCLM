@@ -67,6 +67,10 @@ python src/make_public_sample.py --check sample/{prefix}
 python src/train.py --h5 sample/{prefix}_core.h5 --split sample/{prefix}_split.npz --model medium_flat --aux --epochs 3
 ```
 
+## Note on a result key
+The double-threshold baseline is stored under the key `threshold2_ir_105+vis_06`; it actually uses the IR10.5 and IR13.3
+channels (the channel order was verified after the run, and the key was kept unchanged for the record).
+
 ## Licence
 Code: MIT (repository). This record: CC BY 4.0, except where the source data policies above apply.
 """
