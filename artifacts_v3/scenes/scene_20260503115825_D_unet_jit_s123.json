@@ -1,0 +1,177 @@
+{
+  "scene": {
+    "nc": "turkiye_kesit_20260503115825_0072.nc",
+    "sat_time": "20260503115825",
+    "radar_file": "turkiye_kesit_20260503115825_0072.npy",
+    "awos_time": "202605031150",
+    "awos_n_t": 1783,
+    "awos_n_rh": 1725,
+    "radars_active": [
+      "AFY",
+      "ANK",
+      "ANT",
+      "BLK",
+      "BRS",
+      "ERZ",
+      "GZT",
+      "HTY",
+      "IST",
+      "IZM",
+      "KRM",
+      "MGL",
+      "SRF",
+      "SVS",
+      "TRZ"
+    ]
+  },
+  "exp": "D_unet_jit",
+  "seeds": "1,2,3",
+  "checkpoints": [
+    "best_model_D_unet_jit_s1__mtgunet.pth",
+    "best_model_D_unet_jit_s2__mtgunet.pth",
+    "best_model_D_unet_jit_s3__mtgunet.pth"
+  ],
+  "mode": "aligned",
+  "pad": "train",
+  "threshold": 0.5,
+  "roi": null,
+  "n_threads": 12,
+  "valid_frac": 1.0,
+  "cloud_frac_valid": 0.9717075,
+  "flag_frac": {
+    "sat_nan": 0.0,
+    "no_radar_file": 0.0,
+    "awos_filled": 0.00131,
+    "outside_radar_cov": 0.02926,
+    "static_cov": 0.0
+  },
+  "check": {
+    "n_rows": 130,
+    "n_in_grid": 130,
+    "input_absdiff_max": {
+      "ir_87": 0.0,
+      "vis_09": 0.0,
+      "wv_73": 0.0,
+      "ir_105": 0.0,
+      "nir_22": 0.0,
+      "ir_123": 0.0,
+      "wv_63": 0.0,
+      "vis_08": 0.0,
+      "ir_97": 0.0,
+      "ir_38": 0.0,
+      "vis_06": 0.0,
+      "nir_16": 0.0,
+      "nir_13": 0.0,
+      "ir_133": 0.0,
+      "vis_05": 0.0,
+      "vis_04": 0.0,
+      "radar": 0.0,
+      "t2m": 0.0,
+      "rh2m": 0.0,
+      "elev": 0.0,
+      "cos_sza": 0.0,
+      "radar_cov": 0.0
+    },
+    "input_absdiff_median": {
+      "ir_87": 0.0,
+      "vis_09": 0.0,
+      "wv_73": 0.0,
+      "ir_105": 0.0,
+      "nir_22": 0.0,
+      "ir_123": 0.0,
+      "wv_63": 0.0,
+      "vis_08": 0.0,
+      "ir_97": 0.0,
+      "ir_38": 0.0,
+      "vis_06": 0.0,
+      "nir_16": 0.0,
+      "nir_13": 0.0,
+      "ir_133": 0.0,
+      "vis_05": 0.0,
+      "vis_04": 0.0,
+      "radar": 0.0,
+      "t2m": 0.0,
+      "rh2m": 0.0,
+      "elev": 0.0,
+      "cos_sza": 0.0,
+      "radar_cov": 0.0
+    },
+    "prob_h5patch_vs_saved": {
+      "n": 130,
+      "median": 1.9868214962137642e-08,
+      "p95": 5.960464477539063e-08,
+      "max": 7.947285973752827e-08
+    },
+    "prob_rebuilt_vs_saved": {
+      "n": 130,
+      "median": 1.9868214962137642e-08,
+      "p95": 5.960464477539063e-08,
+      "max": 7.947285973752827e-08
+    },
+    "prob_rebuilt_vs_h5patch": {
+      "n": 130,
+      "median": 0.0,
+      "p95": 0.0,
+      "max": 0.0
+    },
+    "prob_map_vs_h5patch": {
+      "n": 130,
+      "median": 0.00014251470565795898,
+      "p95": 0.0015002340078353882,
+      "max": 0.007370471954345703
+    },
+    "prob_map_vs_saved": {
+      "n": 130,
+      "median": 0.0001424849033355713,
+      "p95": 0.0015002270539602011,
+      "max": 0.007370551427205441
+    },
+    "acc_map_on_labels": 0.9923076923076923,
+    "acc_h5patch_on_labels_same_rows": 0.9923076923076923,
+    "n_labelled": 130,
+    "verdict": "OK: yeniden üretilen girdi eğitimle uyumlu"
+  },
+  "artifact": {
+    "single_vs_aligned_absdiff_mean": 0.0022375097032636404,
+    "single_vs_aligned_absdiff_p99": 0.049271851778030396,
+    "mask_disagreement_frac": 0.00155,
+    "phase_absdiff_4x4": [
+      [
+        0.0,
+        0.00224,
+        0.00203,
+        0.00207
+      ],
+      [
+        0.00106,
+        0.00293,
+        0.0024,
+        0.00269
+      ],
+      [
+        0.00198,
+        0.00289,
+        0.00303,
+        0.00281
+      ],
+      [
+        0.00159,
+        0.00273,
+        0.00276,
+        0.0026
+      ]
+    ],
+    "col_power_ratio_period4_single": 0.008778550662100315,
+    "col_power_ratio_period4_aligned": 0.0016120034269988537,
+    "col_power_ratio_period33_aligned": 0.5565191507339478
+  },
+  "seconds": {
+    "inputs": 3.339,
+    "model": 49.186,
+    "check": 2.39,
+    "artifact_check": 0.923,
+    "write": 0.253
+  },
+  "seconds_total": 56.09,
+  "peak_mem_mb": 1715.8
+}
