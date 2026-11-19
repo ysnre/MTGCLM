@@ -774,8 +774,20 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   "validated only at full-disc scale, not against a national station network" oldu (250 kelime, sınırda); Giriş ¶2'ye iki ajans doğrulaması
   ve CLM'de kar testinin kapalı olduğu eklendi. refs.bib: `EUMETSAT_CLMVR2025`, `NWCSAF_UMMTG2025` (verified=yes; yedek `refs.bib.bak_20261118`).
   verify_numbers 356/0; TAAC 31+7, MAP 32+6 sayfa, 0 tanımsız, 0 \todo.
-- **Zenodo (18 Kas):** kayıt yayımlandı; rezerve DOI 10.5281/zenodo.24112650 artık **sürüm DOI'si** olarak çözümleniyor (kullanıcı). Concept DOI
-  kayıt sayfasındaki "Cite all versions" satırından alınacak. `zenodo_package/` katman (b) `mtg_sample_mgm.h5`'i de içeriyor (MGM sözlü onayı K42).
+- **Zenodo (18–19 Kas):** v1.0 yayımlandı, **katman (b) `mtg_sample_mgm.h5` yüklenmedi** (MGM yazılı izni bekleniyor). Sürüm DOI
+  10.5281/zenodo.24112650 (Code availability: makalenin sürümü), **concept DOI 10.5281/zenodo.24112649** (Data availability, README,
+  CITATION.cff, kapak mektupları). Data availability metni "katman (b) yazılı onaydan sonra aynı kayda eklenecek" olarak düzeltildi;
+  README'deki "19 GB H5 Zenodo'da" ifadesi yanlıştı, düzeltildi (tam H5 paylaşılmaz). Yayımlanan pakette README katman (b)'yi "included"
+  diye anlatıyor → v1.1'de (katman b eklenince) doğru olur.
+  **Düzeltme (19 Kas):** v1.0'a örneklem hiç yüklenmemiş, açıklama boş (kullanıcı). → **v1.1** paketi `zenodo_package/v1.1/` (128 dosya,
+  107,6 MB; katman (b) yok) — `make_zenodo_package.py` artık `--version` alır, metadata'da `doi` alanı yok (yeni sürüm DOI'sini Zenodo atar),
+  README concept DOI'yi verir. **v1.1 yayımlandı (19 Kas): DOI 10.5281/zenodo.24368365** → Code availability ve CITATION.cff'e işlendi. Katman (b) → v1.2.
+- **YÖK taraması (19 Kas, 15 tez):** çakışan çalışma yok; ayrıntı `docs/paper/literatur_tarama_kaydi_2026-11-19.md`.
+- **NWC/GEO MTG-I day-1 VR (NWC/CDOP4/MTG/MFL/SCI/VR/Cloud 1.0.1, 30 May 2025) okundu:** CMA v2025, 27 gün (Eki 2024–Şub 2025), tam disk
+  SYNOP/SHIP; bulutlu N > 5 okta, açık N < 3 okta (3–5 dışarıda), 7×7 kutu; POD %85,9 / FAR %6,4 (gündüz 83,6/4,6, gece 86,7/8,6). Raporun
+  kendisi "this is not a proper validation" diyor; bölgesel kırılım yok. EUMETSAT CLM VR'de CLM bölümünde yer gözlemi yok (ACTRIS yalnız OCA).
+- **Literatür taraması (18–19 Kas; Scopus 14, IEEE 5, EBSCO 2×50 kayıt):** kontrol makaleleri (Alves_2026, Kuter2026) bulundu → sorgu çalışıyor;
+  FCI bulut maskesini yer gözlemiyle değerlendiren hakemli çalışma yok. Kayıt `docs/paper/literatur_tarama_kaydi_2026-11-19.md`; CSV'ler `docs/paper/`.
 - **Uyarı (18 Kas):** depo herkese açık; `docs/` altındaki iç ön-inceleme belgeleri (hakem öz-değerlendirmesi, ret riski, madde madde değerlendirme,
   revizyon planı) push edildi → depodan çıkarılıp `docs/paper/` (gitignore) altına taşınması önerildi; geçmişten silme kararı kullanıcıda.
 
