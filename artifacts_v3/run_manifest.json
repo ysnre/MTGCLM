@@ -320,5 +320,26 @@
     "minutes": 1.5,
     "finished": "2026-11-16 18:42:17",
     "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\cloud_frequency.py"
+  },
+  "D_unet_jit_s1": {
+    "stage": "unetjit",
+    "ok": true,
+    "minutes": 103.3,
+    "finished": "2026-11-19 19:34:40",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train_unet.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\split_v2_verify.npz --model unet --aux --seed 1 --center_jitter --jitter_crop 25 --results E:\\belgeler\\MTGCLM\\artifacts_v3\\D_unet_jit_s1.json"
+  },
+  "D_unet_jit_s2": {
+    "stage": "unetjit",
+    "ok": true,
+    "minutes": 101.2,
+    "finished": "2026-11-19 21:15:53",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train_unet.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\split_v2_verify.npz --model unet --aux --seed 2 --center_jitter --jitter_crop 25 --results E:\\belgeler\\MTGCLM\\artifacts_v3\\D_unet_jit_s2.json"
+  },
+  "D_unet_jit_s3": {
+    "stage": "unetjit",
+    "ok": true,
+    "minutes": 101.7,
+    "finished": "2026-11-19 22:57:35",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train_unet.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\split_v2_verify.npz --model unet --aux --seed 3 --center_jitter --jitter_crop 25 --results E:\\belgeler\\MTGCLM\\artifacts_v3\\D_unet_jit_s3.json"
   }
 }
