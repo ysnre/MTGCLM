@@ -4,7 +4,7 @@ Bu dosya, Claude Code / Cowork oturumlarının projeyi sıfırdan anlamadan kald
 devam edebilmesi için tutulur. **Yeni bir karar alındığında (model seçimi, veri bölme,
 etiket politikası, eğitim komutu) bu dosyaya birkaç satır ekleyin.**
 
-Son güncelleme: 2026-11-18
+Son güncelleme: 2026-11-19
 
 ---
 
@@ -790,6 +790,21 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   FCI bulut maskesini yer gözlemiyle değerlendiren hakemli çalışma yok. Kayıt `docs/paper/literatur_tarama_kaydi_2026-11-19.md`; CSV'ler `docs/paper/`.
 - **Uyarı (18 Kas):** depo herkese açık; `docs/` altındaki iç ön-inceleme belgeleri (hakem öz-değerlendirmesi, ret riski, madde madde değerlendirme,
   revizyon planı) push edildi → depodan çıkarılıp `docs/paper/` (gitignore) altına taşınması önerildi; geçmişten silme kararı kullanıcıda.
+
+### K45 — 19 Kas 2026: revizyon Gün 1 — R3, R4, N2–N4 (metin; yeni analiz yok)
+- **R3:** `docs/paper/karar_kronolojisi.md` (karar · tarih · kanıt · küme · K). 03_methods "each test set is evaluated once" (2 yer) kaldırıldı;
+  §3.2 sonuna paragraf: analiz ön-kayıtlı değildi, verify politikası test sonuçlarından sonra, P1–P3 ablasyonları HGB ≈ CNN görüldükten sonra
+  eklendi; mimari, epoch ve eşikler yalnız val/train'de; tek bölme skoru ön-belirlenmiş değil, CV ve Tablo S(label) bağımlılığı gösterir.
+- **R4:** AI beyanı (03_methods, Software and hardware; declarations_taac.md) → "Claude, Anthropic … to draft the manuscript text …"; yazarlar
+  çalışmayı tasarladı, analizleri yönetti, her şeyi doğruladı. Code availability seçenek (a): "analysis tables … one command per output";
+  şekil/tablo dizgi betikleri talep üzerine (K22 ile uyumlu). Author contributions değiştirilmedi.
+- **N2:** 82 bozuk NWC karesi Veri §2.6'ya (18 354'ten 82, %0,45; tümü sınıf 15; ölçüt istasyonların ≥ %95'i); products.tex atıfla kısaldı.
+- **N3:** README'ye ve Zenodo README şablonuna `threshold2_ir_105+vis_06` = IR10.5 + IR13.3 notu (v1.2'de Zenodo'ya girer).
+- **N4:** BKN = 5–7 okta (alt sınır); 1–4 okta dışlaması NWC SAF doğrulama pratiğiyle (3–5 dışarıda) uyumlu + Tablo S(label) atfı; r30 yarıçapı
+  km cinsinden, ürünün kendi ızgarasında; mimari v2 etiketleriyle seçildi, v3'te aileler benzer.
+- **Not:** satır ortasına `% ref:` yorumu koymak cümlenin geri kalanını siler (18 Kas'ta Data availability'de oldu, 19 Kas düzeltildi) →
+  yorumu satır SONUNA koy, metne yeni satırda devam et.
+- verify_numbers 356/0; TAAC 31+7, MAP 32+6 sayfa; toplam 81 143 karakter (sınır 100 000, hedef 80 000 → hafif aşım).
 
 ---
 
