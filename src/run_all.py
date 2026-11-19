@@ -19,6 +19,7 @@ v3 matrisi (K16, 16 Eki 2026): etiket politikası "verify" (splits/split_v2_veri
 hızlı yükleyici (--loader), örnek bazlı tahmin kaydı (<outdir>/preds/), SYNOP-only metrikler.
   modality : A_sat, B_full, C_noawos, C_t2m (= C + yalnız t2m) x seed'ler          (Medium_Flat)
   unet     : D_unet x seed'ler
+  unetjit  : D_unet_jit x seed'ler — P20 hedef-piksel jitter (--center_jitter --jitter_crop 25; K44)
   resnet   : RESNET_s* (ImageNet stem) + RESNET_CIFAR_s* (CIFAR stem)
   cv       : CV_<A|B|C|Ct2m>_f<k>_s<seed> — 5 kat x 4 modalite                       (Medium_Flat)
   baselines: Z_baselines (tüm veri; majority, eşikler, logreg, rf, hgb)
@@ -54,7 +55,7 @@ import sys
 import time
 
 SRC = os.path.dirname(os.path.abspath(__file__))
-STAGES = ["arch", "modality", "unet", "resnet", "cv", "baselines", "hgbfs", "importance", "climatology"]
+STAGES = ["arch", "modality", "unet", "unetjit", "resnet", "cv", "baselines", "hgbfs", "importance", "climatology"]
 V3_STAGES = ["modality", "unet", "resnet", "cv", "baselines"]
 # Modalite varyantları: ad -> train.py ek argümanları
 MODALITIES = {
@@ -132,6 +133,10 @@ def build_matrix(args):
     # 3) U-Net
     for s in seeds:
         jobs.append(("unet", f"D_unet_s{s}", un + base + sp + ["--model", "unet", "--aux", "--seed", str(s)] + res(f"D_unet_s{s}")))
+    # 3b) P20: U-Net hedef-piksel jitter (25x25 pencere; ayrı ad, D_unet dosyalarına dokunmaz)
+    for s in seeds:
+        jobs.append(("unetjit", f"D_unet_jit_s{s}", un + base + sp + ["--model", "unet", "--aux", "--seed", str(s),
+                                                                     "--center_jitter", "--jitter_crop", "25"] + res(f"D_unet_jit_s{s}")))
     # 4) ResNet18 — iki giriş katmanı (danışman talebi: model karşılaştırması)
     for s in [int(x) for x in args.resnet_imagenet_seeds.split(",") if x.strip()]:
         jobs.append(("resnet", f"RESNET_s{s}", tr + base + sp + ["--model", "resnet18", "--aux", "--seed", str(s)] + res(f"RESNET_s{s}")))
