@@ -1,0 +1,11 @@
+{
+ "n_an": 288,
+ "n_awos": 1982,
+ "k": 8,
+ "power": 2.0,
+ "max_dist_km": 250.0,
+ "lapse_rate": 6.5,
+ "days_per_cell": 4,
+ "seed": 0,
+ "nn_km_medyan_tüm": 12.563751336707185
+}

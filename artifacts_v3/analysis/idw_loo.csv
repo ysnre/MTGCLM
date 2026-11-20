@@ -1,0 +1,127 @@
+değişken,hedef,grup_türü,grup,n,bias,MAE,RMSE,p95_abs,istasyon
+rh2m,tüm AWOS,tümü,tümü,393109,-0.1797,9.0733,12.7245,24.3421,1861
+rh2m,tüm AWOS,nn_grup,10–20 km,193951,-0.1771,9.2618,12.8899,24.5657,1209
+rh2m,tüm AWOS,nn_grup,5–10 km,94011,-0.0941,9.0251,12.8073,24.3990,542
+rh2m,tüm AWOS,nn_grup,> 20 km,57119,-0.3499,9.2456,12.4911,24.1690,502
+rh2m,tüm AWOS,nn_grup,≤ 5 km,48028,-0.1555,8.2011,12.1515,23.2881,251
+rh2m,tüm AWOS,dz_grup,100–300 m,113191,0.0409,8.8284,12.3202,23.5887,531
+rh2m,tüm AWOS,dz_grup,300–600 m,69204,-0.3542,9.7762,13.4145,24.9400,325
+rh2m,tüm AWOS,dz_grup,< 100 m,173159,-0.2083,8.3028,11.8328,22.4502,823
+rh2m,tüm AWOS,dz_grup,≥ 600 m,37555,-0.3916,12.0684,16.1292,31.1827,182
+rh2m,tüm AWOS,zaman,gece (18–00 UTC),146502,-0.2144,9.2477,12.9725,24.4848,1861
+rh2m,tüm AWOS,zaman,geçiş,151783,-0.1899,9.1154,12.8581,24.5081,1861
+rh2m,tüm AWOS,zaman,gündüz (09–12 UTC),94824,-0.1099,8.7362,12.1075,23.8603,1861
+rh2m,tüm AWOS,ay,2025-12,16801,-0.2781,8.7107,12.3569,22.9776,1824
+rh2m,tüm AWOS,ay,2025-3,55327,-0.1589,9.2844,12.6715,25.5196,1769
+rh2m,tüm AWOS,ay,2025-4,20603,-0.1571,9.1011,12.6436,24.5016,1753
+rh2m,tüm AWOS,ay,2026-1,55685,-0.2747,9.2749,13.2705,25.0267,1842
+rh2m,tüm AWOS,ay,2026-2,29435,-0.2061,8.8509,12.8501,24.1708,1831
+rh2m,tüm AWOS,ay,2026-3,45886,-0.1583,8.9816,12.6113,24.0929,1827
+rh2m,tüm AWOS,ay,2026-4,56513,-0.1382,9.2250,13.0897,24.5611,1832
+rh2m,tüm AWOS,ay,2026-5,56116,-0.1794,9.0820,12.7574,23.8644,1834
+rh2m,tüm AWOS,ay,2026-6,56743,-0.1313,8.7964,11.9665,23.4531,1839
+rh2m,etiket istasyonları,tümü,tümü,26937,2.3088,8.1052,10.9627,21.1767,131
+rh2m,etiket istasyonları,nn_grup,10–20 km,7403,3.2699,8.8996,11.5190,21.6881,69
+rh2m,etiket istasyonları,nn_grup,5–10 km,9953,2.1254,8.1892,11.3083,21.5155,65
+rh2m,etiket istasyonları,nn_grup,> 20 km,1230,3.4030,8.4319,10.6074,21.0012,18
+rh2m,etiket istasyonları,nn_grup,≤ 5 km,8351,1.5142,7.2527,10.0524,20.3315,45
+rh2m,etiket istasyonları,dz_grup,100–300 m,4521,1.5238,8.2749,11.1050,20.4768,22
+rh2m,etiket istasyonları,dz_grup,300–600 m,672,5.9040,8.5376,10.6099,20.7152,3
+rh2m,etiket istasyonları,dz_grup,< 100 m,20635,2.0020,7.7237,10.3945,20.0548,101
+rh2m,etiket istasyonları,dz_grup,≥ 600 m,1109,9.0389,14.2491,18.3797,36.5704,5
+rh2m,etiket istasyonları,zaman,gece (18–00 UTC),10104,1.6019,7.9500,10.7866,20.7745,131
+rh2m,etiket istasyonları,zaman,geçiş,10404,1.9139,8.1040,10.9657,21.3417,131
+rh2m,etiket istasyonları,zaman,gündüz (09–12 UTC),6429,4.0586,8.3510,11.2293,21.8286,131
+rh2m,etiket istasyonları,ay,2025-12,1035,1.4365,7.7005,10.5309,20.7880,129
+rh2m,etiket istasyonları,ay,2025-3,2800,2.5836,8.8268,11.5194,23.6830,88
+rh2m,etiket istasyonları,ay,2025-4,1052,3.2936,9.3790,11.8820,23.2754,88
+rh2m,etiket istasyonları,ay,2026-1,4138,0.9359,8.2390,11.8398,22.5095,130
+rh2m,etiket istasyonları,ay,2026-2,2169,0.6935,7.6032,10.5723,19.9734,130
+rh2m,etiket istasyonları,ay,2026-3,3360,2.2332,7.6795,11.0890,19.7000,130
+rh2m,etiket istasyonları,ay,2026-4,4143,2.4845,7.8514,10.6160,19.9006,131
+rh2m,etiket istasyonları,ay,2026-5,4075,2.7916,8.1993,10.6160,21.3135,131
+rh2m,etiket istasyonları,ay,2026-6,4165,3.7109,8.0312,10.2856,20.0772,131
+t2m,tüm AWOS,tümü,tümü,399503,0.0105,1.2412,1.8301,3.7678,1861
+t2m,tüm AWOS,nn_grup,10–20 km,196994,0.0111,1.2382,1.7986,3.7346,1168
+t2m,tüm AWOS,nn_grup,5–10 km,96242,0.0012,1.2459,1.8654,3.8832,536
+t2m,tüm AWOS,nn_grup,> 20 km,56736,0.0386,1.3116,1.8908,3.9314,460
+t2m,tüm AWOS,nn_grup,≤ 5 km,49531,-0.0063,1.1633,1.8146,3.5183,251
+t2m,tüm AWOS,dz_grup,100–300 m,114996,-0.0376,1.1727,1.7158,3.5624,531
+t2m,tüm AWOS,dz_grup,300–600 m,70619,-0.0467,1.3805,2.0193,4.2537,325
+t2m,tüm AWOS,dz_grup,< 100 m,175320,0.0765,1.1109,1.6286,3.3439,823
+t2m,tüm AWOS,dz_grup,≥ 600 m,38568,-0.0418,1.7829,2.5283,5.1759,182
+t2m,tüm AWOS,zaman,gece (18–00 UTC),149165,0.0307,1.3225,1.9513,4.1024,1861
+t2m,tüm AWOS,zaman,geçiş,154437,0.0134,1.2452,1.8650,3.8521,1861
+t2m,tüm AWOS,zaman,gündüz (09–12 UTC),95901,-0.0257,1.1083,1.5585,3.0922,1861
+t2m,tüm AWOS,ay,2025-12,17159,0.0276,1.0471,1.5354,3.2468,1838
+t2m,tüm AWOS,ay,2025-3,55783,0.0210,1.4731,2.1502,4.6629,1774
+t2m,tüm AWOS,ay,2025-4,20862,0.0137,0.9492,1.3882,2.6949,1759
+t2m,tüm AWOS,ay,2026-1,56634,0.0369,1.4274,2.3103,4.7427,1844
+t2m,tüm AWOS,ay,2026-2,30143,0.0173,1.0158,1.5513,3.0447,1836
+t2m,tüm AWOS,ay,2026-3,46671,0.0093,1.2478,1.7750,3.7562,1836
+t2m,tüm AWOS,ay,2026-4,57608,-0.0095,1.1460,1.6137,3.3798,1841
+t2m,tüm AWOS,ay,2026-5,57181,0.0010,1.1015,1.5460,3.1978,1842
+t2m,tüm AWOS,ay,2026-6,57462,-0.0053,1.3438,1.8229,3.8279,1847
+t2m,etiket istasyonları,tümü,tümü,26964,-0.0290,1.0960,1.5541,3.2494,131
+t2m,etiket istasyonları,nn_grup,10–20 km,7340,-0.0116,1.1665,1.6242,3.3691,66
+t2m,etiket istasyonları,nn_grup,5–10 km,9971,0.0126,1.0911,1.5840,3.3753,63
+t2m,etiket istasyonları,nn_grup,> 20 km,1205,-0.2871,1.0101,1.3093,2.6403,16
+t2m,etiket istasyonları,nn_grup,≤ 5 km,8448,-0.0565,1.0529,1.4870,3.0545,45
+t2m,etiket istasyonları,dz_grup,100–300 m,4521,-0.0140,1.1530,1.6206,3.5028,22
+t2m,etiket istasyonları,dz_grup,300–600 m,672,-0.2156,1.5837,2.0165,3.7496,3
+t2m,etiket istasyonları,dz_grup,< 100 m,20662,-0.0443,1.0385,1.4744,3.0584,101
+t2m,etiket istasyonları,dz_grup,≥ 600 m,1109,0.3082,1.6394,2.2482,4.6074,5
+t2m,etiket istasyonları,zaman,gece (18–00 UTC),10117,0.0254,1.1341,1.6038,3.3809,131
+t2m,etiket istasyonları,zaman,geçiş,10413,0.0592,1.0843,1.5602,3.2291,131
+t2m,etiket istasyonları,zaman,gündüz (09–12 UTC),6434,-0.2573,1.0551,1.4622,2.9919,131
+t2m,etiket istasyonları,ay,2025-12,1035,0.0162,0.9135,1.2876,2.8786,129
+t2m,etiket istasyonları,ay,2025-3,2800,-0.0720,1.2815,1.8423,3.8571,88
+t2m,etiket istasyonları,ay,2025-4,1054,-0.3429,0.9028,1.2312,2.6344,88
+t2m,etiket istasyonları,ay,2026-1,4143,0.2717,1.1711,1.7808,3.9193,130
+t2m,etiket istasyonları,ay,2026-2,2177,0.1181,0.9355,1.4188,2.7275,130
+t2m,etiket istasyonları,ay,2026-3,3361,0.0523,1.0885,1.4957,3.2126,130
+t2m,etiket istasyonları,ay,2026-4,4152,-0.0860,1.0216,1.3820,2.9535,131
+t2m,etiket istasyonları,ay,2026-5,4077,-0.1278,1.0288,1.4144,2.9593,131
+t2m,etiket istasyonları,ay,2026-6,4165,-0.2200,1.2209,1.6386,3.3898,131
+t2m_düzeltmesiz,tüm AWOS,tümü,tümü,399503,0.0374,1.7764,2.4449,5.0152,1861
+t2m_düzeltmesiz,tüm AWOS,nn_grup,10–20 km,196994,0.0864,1.8533,2.5060,5.1725,1168
+t2m_düzeltmesiz,tüm AWOS,nn_grup,5–10 km,96242,0.0453,1.7726,2.4611,4.9919,536
+t2m_düzeltmesiz,tüm AWOS,nn_grup,> 20 km,56736,-0.0786,1.7940,2.4351,5.0054,460
+t2m_düzeltmesiz,tüm AWOS,nn_grup,≤ 5 km,49531,-0.0394,1.4580,2.1623,4.2373,251
+t2m_düzeltmesiz,tüm AWOS,dz_grup,100–300 m,114996,0.0885,1.5598,2.0654,4.0925,531
+t2m_düzeltmesiz,tüm AWOS,dz_grup,300–600 m,70619,0.1536,2.1647,2.6875,5.1003,325
+t2m_düzeltmesiz,tüm AWOS,dz_grup,< 100 m,175320,-0.1199,1.3689,1.9479,3.9309,823
+t2m_düzeltmesiz,tüm AWOS,dz_grup,≥ 600 m,38568,0.3876,3.5641,4.3276,7.9869,182
+t2m_düzeltmesiz,tüm AWOS,zaman,gece (18–00 UTC),149165,0.0584,1.6931,2.3045,4.7194,1861
+t2m_düzeltmesiz,tüm AWOS,zaman,geçiş,154437,0.0399,1.7338,2.3928,4.9123,1861
+t2m_düzeltmesiz,tüm AWOS,zaman,gündüz (09–12 UTC),95901,0.0009,1.9746,2.7243,5.6219,1861
+t2m_düzeltmesiz,tüm AWOS,ay,2025-12,17159,0.0397,1.7265,2.3834,5.0363,1838
+t2m_düzeltmesiz,tüm AWOS,ay,2025-3,55783,0.0191,1.9225,2.5991,5.3414,1774
+t2m_düzeltmesiz,tüm AWOS,ay,2025-4,20862,0.0085,1.7429,2.4239,5.0297,1759
+t2m_düzeltmesiz,tüm AWOS,ay,2026-1,56634,0.0635,1.7907,2.5738,5.1968,1844
+t2m_düzeltmesiz,tüm AWOS,ay,2026-2,30143,0.0437,1.6217,2.3234,4.7472,1836
+t2m_düzeltmesiz,tüm AWOS,ay,2026-3,46671,0.0501,1.7526,2.3752,4.8899,1836
+t2m_düzeltmesiz,tüm AWOS,ay,2026-4,57608,0.0256,1.7109,2.3379,4.8102,1841
+t2m_düzeltmesiz,tüm AWOS,ay,2026-5,57181,0.0427,1.7208,2.3489,4.8180,1842
+t2m_düzeltmesiz,tüm AWOS,ay,2026-6,57462,0.0324,1.8692,2.5019,5.1128,1847
+t2m_düzeltmesiz,etiket istasyonları,tümü,tümü,26964,-0.8191,1.5134,2.0229,4.1083,131
+t2m_düzeltmesiz,etiket istasyonları,nn_grup,10–20 km,7340,-0.9809,1.7491,2.1719,4.0874,66
+t2m_düzeltmesiz,etiket istasyonları,nn_grup,5–10 km,9971,-0.9073,1.4977,1.9743,4.2179,63
+t2m_düzeltmesiz,etiket istasyonları,nn_grup,> 20 km,1205,-1.4545,1.6777,2.0902,4.1214,16
+t2m_düzeltmesiz,etiket istasyonları,nn_grup,≤ 5 km,8448,-0.4837,1.3037,1.9337,3.7857,45
+t2m_düzeltmesiz,etiket istasyonları,dz_grup,100–300 m,4521,-0.9249,1.6841,2.1165,4.0693,22
+t2m_düzeltmesiz,etiket istasyonları,dz_grup,300–600 m,672,-2.3986,2.6872,3.0604,5.0212,3
+t2m_düzeltmesiz,etiket istasyonları,dz_grup,< 100 m,20662,-0.6032,1.3197,1.7397,3.5202,101
+t2m_düzeltmesiz,etiket istasyonları,dz_grup,≥ 600 m,1109,-3.4523,3.7147,4.3790,7.9369,5
+t2m_düzeltmesiz,etiket istasyonları,zaman,gece (18–00 UTC),10117,-0.7652,1.4980,1.9856,4.0684,131
+t2m_düzeltmesiz,etiket istasyonları,zaman,geçiş,10413,-0.7326,1.4550,1.9521,3.9743,131
+t2m_düzeltmesiz,etiket istasyonları,zaman,gündüz (09–12 UTC),6434,-1.0437,1.6321,2.1870,4.3308,131
+t2m_düzeltmesiz,etiket istasyonları,ay,2025-12,1035,-0.8886,1.4342,1.9546,4.0985,129
+t2m_düzeltmesiz,etiket istasyonları,ay,2025-3,2800,-1.1600,1.8168,2.3862,4.8068,88
+t2m_düzeltmesiz,etiket istasyonları,ay,2025-4,1054,-1.4574,1.7714,2.2933,4.7017,88
+t2m_düzeltmesiz,etiket istasyonları,ay,2026-1,4143,-0.4844,1.4002,1.9487,4.1435,130
+t2m_düzeltmesiz,etiket istasyonları,ay,2026-2,2177,-0.6551,1.3111,1.8405,3.6958,130
+t2m_düzeltmesiz,etiket istasyonları,ay,2026-3,3361,-0.6367,1.4322,1.8659,3.7455,130
+t2m_düzeltmesiz,etiket istasyonları,ay,2026-4,4152,-0.8048,1.4755,1.9595,3.8168,131
+t2m_düzeltmesiz,etiket istasyonları,ay,2026-5,4077,-0.8452,1.4639,1.9414,3.8285,131
+t2m_düzeltmesiz,etiket istasyonları,ay,2026-6,4165,-0.9655,1.6339,2.1237,4.2275,131
