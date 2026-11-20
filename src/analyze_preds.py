@@ -57,14 +57,16 @@ ORDER = ["A_sat", "B_full", "C_noawos", "C_t2m", "D_unet", "RESNET", "RESNET_CIF
          # P1/P2 (15 Kas 2026) — sonda: mevcut tablo sırası değişmez
          "A_norad", "B_norad", "B_full_shuf", "hgb_center1", "hgb_center5", "hgb_current", "hgb_texture",
          # P20 (19 Kas 2026) — sonda
-         "D_unet_jit"]
+         "D_unet_jit",
+         # R13 ADIM 3 (20 Kas 2026) — sonda
+         "B_full_trainnorm"]
 LABEL = {"A_sat": "A_sat (uydu+radar)", "B_full": "B_full (+tüm aux)", "C_noawos": "C_noawos (aux, AWOS'suz)",
          "C_t2m": "C_t2m (C + t2m)", "D_unet": "U-Net", "RESNET": "ResNet18 (ImageNet girişi)",
          "RESNET_CIFAR": "ResNet18 (CIFAR girişi)", "hgb_aux": "HGB", "rf_aux": "Rastgele orman",
          "logreg_aux": "Lojistik regresyon", "A_norad": "A_norad (yalnız uydu)", "B_norad": "B_norad (uydu + aux, radarsız)",
          "B_full_shuf": "B_full (uzamsal karıştırma)", "hgb_center1": "HGB (merkez piksel)", "hgb_center5": "HGB (merkez 5x5)",
          "hgb_current": "HGB (mevcut öznitelikler)", "hgb_texture": "HGB (+ doku)",
-         "D_unet_jit": "U-Net (P20 merkez jitter)"}
+         "D_unet_jit": "U-Net (P20 merkez jitter)", "B_full_trainnorm": "B_full (eğitim kümesi z-skor sabitleri)"}
 DEFAULT_PAIRS = ("B_full-A_sat,C_noawos-A_sat,B_full-C_noawos,C_t2m-C_noawos,"
                  "D_unet-A_sat,RESNET-A_sat,RESNET_CIFAR-A_sat,D_unet-RESNET_CIFAR,hgb_aux-A_sat,hgb_aux-B_full,"
                  # P1: radarın katkısı (aux yokken / aux varken); P2: uzamsal yapı ve doku
