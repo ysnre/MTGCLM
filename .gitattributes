@@ -1,0 +1,3 @@
+# Windows (pandas) CRLF yazıyor; analiz çıktılarını depoda LF tut, yalnız satır sonu farkı commit gürültüsü yaratmasın.
+artifacts*/**/*.csv  text eol=lf
+artifacts*/**/*.json text eol=lf
