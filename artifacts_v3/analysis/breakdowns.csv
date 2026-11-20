@@ -255,6 +255,38 @@ test_station,D_unet,radar,kapsam dışı,BalAcc,964,0.9511189383427615
 test_station,D_unet,radar,kapsam içi,BalAcc,42901,0.9392602450504915
 test_station,D_unet,src,METAR,BalAcc,15627,0.9578188618573442
 test_station,D_unet,src,SYNOP,BalAcc,28238,0.9350093703290817
+test_station,D_unet_jit,açık etiket,METAR,özgüllük,1608,0.9637230514096186
+test_station,D_unet_jit,açık etiket,SYNOP,özgüllük,7236,0.9262483876911737
+test_station,D_unet_jit,elev_bin,250–750 m,BalAcc,6804,0.9575633572040488
+test_station,D_unet_jit,elev_bin,750–1250 m,BalAcc,12769,0.9531979891766529
+test_station,D_unet_jit,elev_bin,<250 m,BalAcc,17304,0.9333744136757925
+test_station,D_unet_jit,elev_bin,≥1250 m,BalAcc,6988,0.9192184427571064
+test_station,D_unet_jit,illum,alacakaranlık,BalAcc,3252,0.9437297810358021
+test_station,D_unet_jit,illum,gece,BalAcc,18375,0.9187055686767557
+test_station,D_unet_jit,illum,gündüz,BalAcc,22238,0.9552922510883978
+test_station,D_unet_jit,illum_radar,alacakaranlık / kapsam içi,BalAcc,3168,0.9441199690661172
+test_station,D_unet_jit,illum_radar,gece / kapsam dışı,BalAcc,448,0.9375021400445128
+test_station,D_unet_jit,illum_radar,gece / kapsam içi,BalAcc,17927,0.9181603563750876
+test_station,D_unet_jit,illum_radar,gündüz / kapsam dışı,BalAcc,432,0.9620427881297445
+test_station,D_unet_jit,illum_radar,gündüz / kapsam içi,BalAcc,21806,0.9550116778894987
+test_station,D_unet_jit,month,2025-03,BalAcc,8911,0.9226428947185142
+test_station,D_unet_jit,month,2025-04,BalAcc,1606,0.9232804232804233
+test_station,D_unet_jit,month,2025-12,BalAcc,1107,0.8731238784055685
+test_station,D_unet_jit,month,2026-01,BalAcc,9347,0.904725569131191
+test_station,D_unet_jit,month,2026-02,BalAcc,6641,0.9047716600009368
+test_station,D_unet_jit,month,2026-03,BalAcc,7243,0.9342890359907984
+test_station,D_unet_jit,month,2026-04,BalAcc,5407,0.9563955936638405
+test_station,D_unet_jit,month,2026-05,BalAcc,934,0.9498761303109129
+test_station,D_unet_jit,month,2026-06,BalAcc,2669,0.9216467255347984
+test_station,D_unet_jit,okta (bulutlu),5,yakalama,16616,0.9159645321778206
+test_station,D_unet_jit,okta (bulutlu),6,yakalama,6298,0.9432624113475178
+test_station,D_unet_jit,okta (bulutlu),7,yakalama,9351,0.981998360246676
+test_station,D_unet_jit,okta (bulutlu),8,yakalama,2603,0.9959021641695479
+test_station,D_unet_jit,okta (bulutlu),9,yakalama,153,0.8823529411764706
+test_station,D_unet_jit,radar,kapsam dışı,BalAcc,964,0.9480325185896751
+test_station,D_unet_jit,radar,kapsam içi,BalAcc,42901,0.9383512573007148
+test_station,D_unet_jit,src,METAR,BalAcc,15627,0.9552904436019488
+test_station,D_unet_jit,src,SYNOP,BalAcc,28238,0.9344205783169071
 test_station,RESNET,açık etiket,METAR,özgüllük,1608,0.9631011608623549
 test_station,RESNET,açık etiket,SYNOP,özgüllük,7236,0.9254192002948223
 test_station,RESNET,elev_bin,250–750 m,BalAcc,6804,0.9615032728663988
@@ -743,6 +775,31 @@ test_time,D_unet,okta (bulutlu),9,yakalama,114,0.9327485380116959
 test_time,D_unet,radar,kapsam içi,BalAcc,40830,0.9573531837875279
 test_time,D_unet,src,METAR,BalAcc,17768,0.9609142977910379
 test_time,D_unet,src,SYNOP,BalAcc,23100,0.9548668528228812
+test_time,D_unet_jit,açık etiket,METAR,özgüllük,3512,0.9707668944570994
+test_time,D_unet_jit,açık etiket,SYNOP,özgüllük,9303,0.9651366942563331
+test_time,D_unet_jit,elev_bin,250–750 m,BalAcc,4808,0.9613876021934722
+test_time,D_unet_jit,elev_bin,750–1250 m,BalAcc,12690,0.97059668848632
+test_time,D_unet_jit,elev_bin,<250 m,BalAcc,20301,0.9479421076436001
+test_time,D_unet_jit,elev_bin,≥1250 m,BalAcc,3069,0.9414926529766601
+test_time,D_unet_jit,illum,alacakaranlık,BalAcc,3049,0.9492950830460511
+test_time,D_unet_jit,illum,gece,BalAcc,16759,0.9372223909770717
+test_time,D_unet_jit,illum,gündüz,BalAcc,21060,0.9712449305797269
+test_time,D_unet_jit,illum_radar,alacakaranlık / kapsam içi,BalAcc,3046,0.9492484061709169
+test_time,D_unet_jit,illum_radar,gece / kapsam içi,BalAcc,16755,0.9372056183041669
+test_time,D_unet_jit,illum_radar,gündüz / kapsam içi,BalAcc,21029,0.971204117512265
+test_time,D_unet_jit,month,2025-12,BalAcc,7604,0.9530442787745762
+test_time,D_unet_jit,month,2026-01,BalAcc,2712,0.9405256796085762
+test_time,D_unet_jit,month,2026-03,BalAcc,7486,0.9437652050628359
+test_time,D_unet_jit,month,2026-05,BalAcc,19686,0.9430669723294444
+test_time,D_unet_jit,month,2026-06,BalAcc,3380,0.9735338612162984
+test_time,D_unet_jit,okta (bulutlu),5,yakalama,16777,0.9281953468041565
+test_time,D_unet_jit,okta (bulutlu),6,yakalama,3488,0.9377866972477064
+test_time,D_unet_jit,okta (bulutlu),7,yakalama,5506,0.9869233563385397
+test_time,D_unet_jit,okta (bulutlu),8,yakalama,2168,0.9912361623616236
+test_time,D_unet_jit,okta (bulutlu),9,yakalama,114,0.9415204678362573
+test_time,D_unet_jit,radar,kapsam içi,BalAcc,40830,0.9562210788531119
+test_time,D_unet_jit,src,METAR,BalAcc,17768,0.9597217375390623
+test_time,D_unet_jit,src,SYNOP,BalAcc,23100,0.9540234943824005
 test_time,RESNET,açık etiket,METAR,özgüllük,3512,0.9695330296127563
 test_time,RESNET,açık etiket,SYNOP,özgüllük,9303,0.9649217098427031
 test_time,RESNET,elev_bin,250–750 m,BalAcc,4808,0.9630160140567869
