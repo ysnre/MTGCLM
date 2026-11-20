@@ -106,6 +106,51 @@ def set_feature_transform(base_dataset, keep_base, spatial_shuffle, seed, device
     return n_in
 
 
+# R13 ADIM 3 (20 Kas 2026): temel 17 kanalın z-skor sabitlerini eğitim kümesinden yeniden hesaplama (--renorm train).
+# H5'teki yamalar ilk 5 sahneden hesaplanmış sabitlerle (attrs means/stds) z-skorlanmış olarak saklanıyor. Yeni z = a·z + b,
+# a = σ_eski / σ_yeni, b = (μ_eski − μ_yeni) / σ_yeni → fiziksel değer, dolgu (NaN→0) dahil, değişmez; yalnız ölçek değişir.
+# None iken prep_features eskisiyle birebir aynıdır.
+_RENORM = None    # (a[1,17,1,1], b[1,17,1,1]) ya da None
+
+
+def compute_train_norm(h5_path, train_idx, n_blocks=20, block=2048, seed=0):
+    """Eğitim kümesinin temel kanal istatistikleri (fiziksel birim). Kompakt H5 ön-karıştırılmış olduğundan rastgele ardışık
+    bloklar rastgele örnektir; blokta yalnız train satırları kullanılır. Tohum model tohumundan bağımsızdır (3 tohumda aynı sabit)."""
+    import h5py
+    train_idx = np.asarray(train_idx, dtype=np.int64)
+    with h5py.File(h5_path, "r") as f:
+        N, C = f["patches"].shape[0], f["patches"].shape[1]
+        mu_old = np.asarray(f.attrs["means"], dtype=np.float64)[:C]
+        sd_old = np.asarray(f.attrs["stds"], dtype=np.float64)[:C]
+        nb = max(1, N // block)
+        rng = np.random.default_rng(seed)
+        starts = np.sort(rng.choice(nb, size=min(n_blocks, nb), replace=False)) * block
+        is_tr = np.zeros(N, bool); is_tr[train_idx] = True
+        s1 = np.zeros(C); s2 = np.zeros(C); n = 0
+        for st in starts:
+            sel = np.nonzero(is_tr[st:st + block])[0]
+            if len(sel) == 0:
+                continue
+            z = f["patches"][st:st + block][sel].astype(np.float64)          # (n, C, H, W), z-skor (eski sabitler)
+            x = z * sd_old[None, :, None, None] + mu_old[None, :, None, None]
+            s1 += x.sum((0, 2, 3)); s2 += (x ** 2).sum((0, 2, 3)); n += x.shape[0] * x.shape[2] * x.shape[3]
+    mu_new = s1 / n
+    sd_new = np.sqrt(np.maximum(s2 / n - mu_new ** 2, 0)) + 1e-6
+    return {"mu_old": mu_old.tolist(), "sd_old": sd_old.tolist(), "mu_new": mu_new.tolist(), "sd_new": sd_new.tolist(),
+            "n_rows": int(n // (33 * 33)), "n_blocks": int(len(starts)), "block": block, "seed": seed}
+
+
+def set_renorm(stats, device):
+    global _RENORM
+    if stats is None:
+        _RENORM = None
+        return
+    mo, so, mn, sn = (np.asarray(stats[k], dtype=np.float64) for k in ("mu_old", "sd_old", "mu_new", "sd_new"))
+    a = torch.as_tensor(so / sn, dtype=torch.float32, device=device).view(1, -1, 1, 1)
+    b = torch.as_tensor((mo - mn) / sn, dtype=torch.float32, device=device).view(1, -1, 1, 1)
+    _RENORM = (a, b)
+
+
 def spatial_shuffle(x, gen):
     """P2: her örnekte 33x33 piksellerin konumlarını rastgele karıştırır; aynı permütasyon tüm kanallara uygulanır,
     merkez piksel (16,16) yerinde kalır. Spektral dağılım korunur, uzamsal yapı yok olur."""
@@ -124,6 +169,10 @@ def prep_features(features, device):
     x = features.to(device, non_blocking=True)
     if x.dtype != torch.float32:
         x = x.float()
+    if _RENORM is not None:
+        ra, rb = _RENORM
+        nb = ra.shape[1]
+        x = torch.cat([x[:, :nb] * ra + rb, x[:, nb:]], dim=1)
     if _AUX_NORM is not None:
         n_base, m, s = _AUX_NORM
         x = torch.cat([x[:, :n_base], (x[:, n_base:] - m) / s], dim=1)
@@ -635,6 +684,9 @@ def main():
                              "ya da 'all' (varsayılan). Aux seçimi --aux/--aux_channels ile ayrıdır.")
     parser.add_argument("--spatial_shuffle", action="store_true",
                         help="P2: her örnekte piksel konumlarını karıştır (merkez sabit; eğitim ve değerlendirmede)")
+    parser.add_argument("--renorm", type=str, default="none", choices=["none", "train"],
+                        help="R13: temel 17 kanalın z-skor sabitleri. none = H5 attrs (ilk 5 sahne; varsayılan, eski davranış); "
+                             "train = eğitim kümesinden yeniden hesapla (afin dönüşüm, --split gerekir)")
     parser.add_argument("--epochs", type=int, default=15,
                         help="Varsayılan 15 (her platformda; eskiden yerelde 3'tü). Hızlı deneme: --epochs 1 --limit_batches 50")
     parser.add_argument("--limit_batches", type=int, default=None, help="Yalnız deneme için; 0/None = tüm veri")
@@ -755,6 +807,26 @@ def main():
         )
     
     
+    renorm_stats = None
+    if args.renorm == "train":
+        if not args.split:
+            raise SystemExit("--renorm train için --split gerekir")
+        import json as _json
+        rn_path = out_path("norm_stats", f"train_{os.path.splitext(os.path.basename(args.split))[0]}.json")
+        if os.path.exists(rn_path):
+            renorm_stats = _json.load(open(rn_path, encoding="utf-8"))
+            print(f"Normalizasyon sabitleri (önbellek): {rn_path}")
+        else:
+            print("Normalizasyon sabitleri eğitim kümesinden hesaplanıyor ...", flush=True)
+            renorm_stats = compute_train_norm(h5_path, np.load(args.split)["train"])
+            os.makedirs(os.path.dirname(rn_path), exist_ok=True)
+            atomic_json(renorm_stats, rn_path)
+        mo, so = np.array(renorm_stats["mu_old"]), np.array(renorm_stats["sd_old"])
+        mn, sn = np.array(renorm_stats["mu_new"]), np.array(renorm_stats["sd_new"])
+        print(f"  {renorm_stats['n_rows']:,} train satırı; eski z'nin eğitimdeki ortalaması (kanal min/maks) "
+              f"{((mn - mo) / so).min():+.2f}/{((mn - mo) / so).max():+.2f}, s.s. oranı {(sn / so).min():.2f}/{(sn / so).max():.2f}")
+    set_renorm(renorm_stats, DEVICE)
+
     # Load existing results to support resuming from disconnects
     import json
     json_path = args.results or out_path("ablation_results.json")
@@ -806,6 +878,7 @@ def main():
             "config": {"seed": args.seed, "aux": args.aux, "aux_channels": aux_channels, "split": args.split,
                        "base_channels": "all" if keep_base is None else [BASE_CHANNELS[i] for i in keep_base],
                        "spatial_shuffle": bool(args.spatial_shuffle),
+                       "renorm": args.renorm, **({"renorm_stats": renorm_stats} if renorm_stats else {}),
                        "epochs": epochs_to_run, "limit_batches": limit_batches,
                        "best_model_file": f"best_model_{RUN_TAG + '__' if RUN_TAG else ''}{name.lower()}.pth",
                        "preds_file": f"preds/{preds_file}" if test_loaders else None,
