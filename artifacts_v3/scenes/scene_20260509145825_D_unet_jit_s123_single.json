@@ -1,0 +1,56 @@
+{
+  "scene": {
+    "nc": "turkiye_kesit_20260509145825_0090.nc",
+    "sat_time": "20260509145825",
+    "radar_file": "turkiye_kesit_20260509145825_0090.npy",
+    "awos_time": "202605091450",
+    "awos_n_t": 1770,
+    "awos_n_rh": 1758,
+    "radars_active": [
+      "AFY",
+      "ANK",
+      "ANT",
+      "BLK",
+      "BRS",
+      "ERZ",
+      "GZT",
+      "HTY",
+      "IST",
+      "IZM",
+      "KRM",
+      "MGL",
+      "SRF",
+      "SVS",
+      "TRZ",
+      "ZNG"
+    ]
+  },
+  "exp": "D_unet_jit",
+  "seeds": "1,2,3",
+  "checkpoints": [
+    "best_model_D_unet_jit_s1__mtgunet.pth",
+    "best_model_D_unet_jit_s2__mtgunet.pth",
+    "best_model_D_unet_jit_s3__mtgunet.pth"
+  ],
+  "mode": "single",
+  "pad": "train",
+  "threshold": 0.5,
+  "roi": null,
+  "n_threads": 12,
+  "valid_frac": 1.0,
+  "cloud_frac_valid": 0.586085,
+  "flag_frac": {
+    "sat_nan": 0.0,
+    "no_radar_file": 0.0,
+    "awos_filled": 0.00131,
+    "outside_radar_cov": 0.0268875,
+    "static_cov": 0.0
+  },
+  "seconds": {
+    "inputs": 2.491,
+    "model": 2.729,
+    "write": 0.436
+  },
+  "seconds_total": 5.66,
+  "peak_mem_mb": 1955.8
+}
