@@ -858,6 +858,30 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
 - **Bekleyen (kullanıcı, Windows):** Fig. 8 sahne paketi D_unet_jit ile (infer_scene 5 sahne, single → build_scene_pack) + `make_all.py`
   (Fig. 8, Fig. 9). Sonra fullmap.tex ilk paragrafındaki sahne doğrulukları güncellenecek. Zenodo v1.1'deki iklim dosyaları eski modelden → v1.2'de yenilenir.
 
+### K49 — 20 Kas 2026: revizyon Gün 2 analizleri — R6, R8, R17, R20 (ön-kayıtlı; yeniden eğitim yok)
+- **Fig. 8 ve Fig. 9 jitter'lı modelle yeniden üretildi** (kullanıcı, Windows, `_check` OK). Sahne paketinde istasyon doğrulukları değişmedi
+  (yalnız bulutlu alan oranları), fullmap.tex ilk paragrafı geçerli. Altyazılar "U-Net trained with centre-pixel jitter, mean of three seeds,
+  single pass" oldu.
+- **R6 `src/revision_metrics.py` → `analysis/contingency.csv`** (a/b/c/d, POD, POD_açık, POFD, FAR, bias, CSI, KSS, HSS; KSS/HSS için blok GA).
+  **KSS = 2·BalAcc − 1** (birebir) → BalAcc sonuçları Hanssen–Kuipers diline doğrudan çevrilir. test_time SYNOP: B_full POD 0,938, FAR 0,022,
+  bias 0,958, KSS 0,907; CLM r30 POD 0,913, FAR 0,063, bias 0,975, KSS 0,815; NWC r30 POD 0,916, FAR 0,050, KSS 0,855 → modelin üstünlüğü
+  hem daha az kaçırma hem daha az yanlış alarmdan. Modeller bulutu hafif az tahmin ediyor (bias ~0,96).
+- **R17 → `analysis/unverified_metar_clear.csv`:** doğrulanmamış METAR açıklarında (yalnız açık etiket) doğru açık oranı test_time B_full 0,877
+  [0,822, 0,925] vs CLM r30 0,798, NWC r30 0,816 (aynı satırlar 0,872); test_station 0,828 vs 0,667 / 0,666. Model bu satırlarda da önde.
+- **R20 → `analysis/label_ge6.csv`:** SYNOP, ≥ 6 okta bulutlu, 5 okta dışarıda: BalAcc test_time 0,970; model − CLM r30 +0,043 [+0,028, +0,060],
+  − NWC r30 +0,020 [+0,014, +0,026]; tüm kümelerde ve D_unet'te pozitif, GA sıfırı dışlıyor → **ön-kayıt kuralı: "etiket tanımından bağımsız"
+  ifadesi kalır.**
+- **R8 `src/inference_robustness.py` → `analysis/multiplicity.csv`, `block_length_sensitivity.csv`:** p = 2(k+1)/(B+1); BH (birincil), Holm.
+  **Aile 1** (model − referans, 48): hepsi BH ve Holm sonrası anlamlı; 1/2/3/5 günlük örtüşen bloklarda hepsi sıfırı dışlıyor (en düşük alt GA
+  +0,0115). **Aile 3** (CV, 10): 7'si BH ve Holm sonrası anlamlı (AWOS B − C, Ct2m − C, B − A, B − Bnorad; yalnız SYNOP B − Bnorad düşüyor).
+  **Aile 2** (tek bölme, 108): GA'sı sıfırı dışlayan 30 farkın **14'ü BH sonrası kalıyor, Holm sonrası 0**. BH'de düşenler: hgb_aux − B_full,
+  B_full − B_norad, B_full − B_full_shuf, hgb_texture − hgb_current, A_sat − A_norad (test_both), RESNET_CIFAR − A_sat (test_both),
+  C_noawos − A_sat (test_station). Kalanlar: hgb öznitelik kümeleri, B_full − hgb_texture (test_time tümü), B_full − C_noawos ve C_t2m − C_noawos
+  (test_station). Blok uzunluğu GA'yı test_time'da 1 → 5 gün %44 genişletiyor; RESNET_CIFAR − A_sat, B_full − B_full_shuf, hgb_aux − B_full
+  bloğa duyarlı. P20 farkı (D_unet_jit − D_unet) test_time'da her L'de alt GA > −0,0025.
+- **Metin etkisi (Gün 5/6):** inputs.tex ve models.tex'te "significant/significantly" yalnız BH sonrası kalanlar için; Yöntem §3.6'ya BH + Holm
+  ve blok uzunluğu cümlesi; ek tablolar (kontenjans, ≥6 okta, doğrulanmamış METAR, çoklu karşılaştırma).
+
 ---
 
 ## 3. Komutlar
@@ -1038,6 +1062,8 @@ python src\analyze_preds.py --dir artifacts_v3 --out artifacts_v3/analysis --ref
 | `docs/mtgclm_kod_haritasi.html` | Kod haritası: dosya/sınıf/fonksiyon bağlantıları (otomatik, `src/make_code_map.py`; K19) |
 | `src/make_code_map.py` | Kodu `ast` ile tarayıp kod haritasını üretir; `MODULE_INFO` (grup/açıklama/eski), `EXTRA_DATA` |
 | `src/loss.py` | `MaskedBCELoss` — yalnız (16,16) pikselinde, `-1` yok sayılır |
+| `src/revision_metrics.py` | Revizyon R6/R17/R20: kontenjans metrikleri, doğrulanmamış METAR açıkları, ≥6 okta — K49 |
+| `src/inference_robustness.py` | Revizyon R8: BH/Holm, örtüşen blok bootstrap — K49 |
 | `src/test_center_jitter.py` | P20 jitter birim testleri + P20 öncesi kodla bit bit eşitlik (mini H5) — K46 |
 | `src/train.py`, `src/train_unet.py` | Eğitim; `--h5 --split --aux --aux_channels --seed --epochs --limit_batches --results --outdir --model` + K16: `--loader --mem_splits --cache_dir --threads --no_deterministic --no_last_preds` |
 | `src/config.py` | Colab/yerel yollar, `MTGCLM_H5`, PATCH_SIZE 33, BATCH_SIZE 64, LR 1e-3 |
