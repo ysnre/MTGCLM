@@ -4,7 +4,7 @@ Bu dosya, Claude Code / Cowork oturumlarının projeyi sıfırdan anlamadan kald
 devam edebilmesi için tutulur. **Yeni bir karar alındığında (model seçimi, veri bölme,
 etiket politikası, eğitim komutu) bu dosyaya birkaç satır ekleyin.**
 
-Son güncelleme: 2026-11-19
+Son güncelleme: 2026-11-20
 
 ---
 
@@ -831,7 +831,7 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   dokunulmadı, D_unet satırları birebir aynı).
 - **Ölçüt (i)** (tek geçiş ↔ faz-hizalı maske uyuşmazlığı < %5; D_unet'te %38–54): kullanıcı makinesinde `infer_scene.py --exp D_unet_jit
   --check --artifact_check` (K27'nin 3 sahnesi) bekleniyor. Not: D_unet Colab T4'te, D_unet_jit CPU'da eğitildi (donanım farkı).
-- **Ölçüt (i) sağlandı (19 Kas, 3 sahne):** tek geçiş ↔ faz-hizalı ikili maske uyuşmazlığı **%0,28 / %0,14 / %0,16** (D_unet %38 / %54 / %39);
+- **Ölçüt (i) sağlandı (19 Kas, 3 sahne):** tek geçiş ↔ faz-hizalı ikili maske uyuşmazlığı **%0,27 / %0,14 / %0,16** (D_unet %38 / %54 / %39);
   ort. |fark| 0,002–0,003 (D_unet 0,34–0,42); 4 piksellik periyot gücü tek geçişte 0,005–0,014 (D_unet 0,85–1,54) → faz deseni kalktı.
   `--check`: girdi farkı 0, istasyonlarda doğruluk D_unet ile aynı ya da yüksek. → **Ön-kayıt kuralı: Fig. 9 jitter'lı modelle yeniden üretilir.**
 - `scenes_summary.csv` yeniden üretildi: P5 sahne paketi koşularının (7 D_unet sahnesi, `--check` olmadan) satırları da girdi → o satırlarda
@@ -839,6 +839,24 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
 - **`batch_scenes.py --unet_mode single`** eklendi (yalnız adında "jit" geçen modelle; D_unet'te reddeder); ilerleme satırına % eklendi.
   Koşu: `--exp D_unet_jit --unet_mode single --out data/processed/cloud_freq_jit`, sonra `cloud_frequency.py --src data/processed/cloud_freq_jit
   --out artifacts_v3/climatology_jit`. Eski `cloud_freq/` ve `climatology/` korunur; Fig. 9'un kaynağı sonuçlar incelendikten sonra değişecek.
+
+### K48 — 20 Kas 2026: bulut sıklığı jitter'lı U-Net ile yeniden üretildi; ürün modeli = D_unet_jit (tek geçiş)
+- `batch_scenes --exp D_unet_jit --unet_mode single` → `data/processed/cloud_freq_jit/` (1 437 sahne ok, 27 sahnesiz, 0 hata; medyan 7,3 s/sahne,
+  eski 43,6 s). `cloud_frequency.py` → iklim. **Klasörler yer değiştirdi:** `artifacts_v3/climatology/` = jitter'lı (ürün), eski 16 geçişli
+  `artifacts_v3/climatology_D_unet_aligned/` (arşiv). CLM tarafı birebir aynı (en büyük fark 2e-7).
+- **Sonuç farkları:** model her bölgede biraz daha bulutlu (Türkiye 0,609 → 0,626; doğu yaylaları +0,029, Haziran +0,05); istasyon
+  doğrulaması iyileşti (test haftaları bias −0,026 → −0,016, MAE 0,031 → 0,027, r 0,973 → 0,975; görülmemiş istasyonlar r 0,955 → 0,958).
+  **CLM − model doğu yaylaları +0,059 → +0,029** (yarıya indi); gündüz 06–12 UTC +0,106…+0,141, Ara +0,107, Oca +0,105; gece −0,049…−0,001;
+  Şub 2026'dan sonra −0,074…+0,023; Mar 2025 +0,168. Türkiye −0,012 → −0,030, iç kesim −0,032 → −0,046.
+  → Ön-kayıt R10 kuralına göre (tüm varyantlarda > +0,03 değil; taban zaten 0,029) **"CLM karı bulut sayıyor" hipotez düzeyine indi**:
+  metin "gündüz-kış imzası, ürünün kapalı kar testiyle (EUMETSAT_CLMVR2025) uyumlu; istasyon ağı piksel düzeyinde doğrulayamaz" diyor.
+- **Metin:** Yöntem §3.8 (merkez denetimli U-Net'in faz bağımlılığı → jitter eğitimi; tek geçiş %0,14–0,27; nokta skoru farkı −0,0011
+  [−0,0024, +0,0000]; tablolar merkez denetimli U-Net'i raporlar), fullmap.tex iklim paragrafları, Tartışma §5.5, Sonuç, TAAC özeti
+  ("cloudier on winter days over …", 250 kelime). analyze_preds: D_unet_jit ORDER sonuna + çift D_unet_jit − D_unet (eski CSV'ler birebir;
+  references.csv yalnız iki sütun kazandı). verify_numbers 363/0; TAAC 32+7, MAP 33+6.
+- `build_scene_pack.py`: dosya eşleşmesi tam ad (D_unet artık D_unet_jit'i yakalamaz) + `--unet_mode single`.
+- **Bekleyen (kullanıcı, Windows):** Fig. 8 sahne paketi D_unet_jit ile (infer_scene 5 sahne, single → build_scene_pack) + `make_all.py`
+  (Fig. 8, Fig. 9). Sonra fullmap.tex ilk paragrafındaki sahne doğrulukları güncellenecek. Zenodo v1.1'deki iklim dosyaları eski modelden → v1.2'de yenilenir.
 
 ---
 
