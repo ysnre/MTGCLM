@@ -341,5 +341,26 @@
     "minutes": 101.7,
     "finished": "2026-11-19 22:57:35",
     "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train_unet.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\split_v2_verify.npz --model unet --aux --seed 3 --center_jitter --jitter_crop 25 --results E:\\belgeler\\MTGCLM\\artifacts_v3\\D_unet_jit_s3.json"
+  },
+  "B_full_trainnorm_s1": {
+    "stage": "modality",
+    "ok": true,
+    "minutes": 49.9,
+    "finished": "2026-11-20 18:14:00",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\split_v2_verify.npz --model medium_flat --seed 1 --aux --renorm train --results E:\\belgeler\\MTGCLM\\artifacts_v3\\B_full_trainnorm_s1.json"
+  },
+  "B_full_trainnorm_s2": {
+    "stage": "modality",
+    "ok": true,
+    "minutes": 49.9,
+    "finished": "2026-11-20 19:03:52",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\split_v2_verify.npz --model medium_flat --seed 2 --aux --renorm train --results E:\\belgeler\\MTGCLM\\artifacts_v3\\B_full_trainnorm_s2.json"
+  },
+  "B_full_trainnorm_s3": {
+    "stage": "modality",
+    "ok": true,
+    "minutes": 50.0,
+    "finished": "2026-11-20 19:53:49",
+    "cmd": "C:\\Users\\yasiner\\AppData\\Local\\anaconda3\\envs\\MTGCLM\\python.exe E:\\belgeler\\MTGCLM\\src\\train.py --h5 C:\\mtg\\mtg_train_v2.h5 --outdir E:\\belgeler\\MTGCLM\\artifacts_v3 --loader auto --threads 12 --split E:\\belgeler\\MTGCLM\\splits\\split_v2_verify.npz --model medium_flat --seed 3 --aux --renorm train --results E:\\belgeler\\MTGCLM\\artifacts_v3\\B_full_trainnorm_s3.json"
   }
 }
