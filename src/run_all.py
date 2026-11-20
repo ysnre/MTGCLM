@@ -28,6 +28,7 @@ hızlı yükleyici (--loader), örnek bazlı tahmin kaydı (<outdir>/preds/), SY
   climatology: P6 — batch_scenes.py (3 saatte bir tam sahne, U-Net seed ortalaması, + FCI CLM; kaldığı yerden sürer)
                ve cloud_frequency.py (piksel başına bulut sıklığı, NetCDF + istasyon doğrulaması)
   P1/P2 modaliteleri (--modalities ile): A_norad, B_norad (radarsız), B_full_shuf (uzamsal karıştırma); CV: Bnorad
+  R13 modalitesi: B_full_trainnorm (z-skor sabitleri eğitim kümesinden; train.py --renorm train)
   arch     : 6 mimari varyantı (v2'de koşuldu, Medium_Flat kazandı; v3'te isteğe bağlı)
 --stage v3 = modality,unet,resnet,cv,baselines (arch hariç); --stage all = hepsi.
 --only / --skip: koşu adı ön ekleriyle süzme (ör. Colab'da --only RESNET_CIFAR, yerelde --skip RESNET_CIFAR).
@@ -68,6 +69,8 @@ MODALITIES = {
     "B_norad":  ["--base_channels", "fci", "--aux", "--aux_channels", "t2m,rh2m,elev,cos_sza"], # 16 FCI + 4 aux
     # P2: uzamsal yapı kontrolü — B_full girdileri, piksel konumları örnek başına karıştırılmış (merkez sabit)
     "B_full_shuf": ["--aux", "--spatial_shuffle"],
+    # R13 ADIM 3 (20 Kas 2026): B_full, temel kanal z-skor sabitleri eğitim kümesinden (afin; ön kayıt)
+    "B_full_trainnorm": ["--aux", "--renorm", "train"],
 }
 CV_SHORT = {"A": "A_sat", "B": "B_full", "C": "C_noawos", "Ct2m": "C_t2m", "Bnorad": "B_norad"}
 
