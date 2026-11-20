@@ -148,6 +148,7 @@ yollar depo köküne göredir):
 | Holdout ↔ AWOS ko-lokasyonu, okta-9 (R9) | `python src/awos_colocation.py --dir artifacts_v3` | `analysis/awos_colocation*.csv`, `awos_pixel_distance.csv`, `okta9_rh.csv` |
 | AWOS IDW leave-one-out (R18) | `python src/idw_loo.py` | `analysis/idw_loo.csv` |
 | Ay × aydınlanma kanal kayması (R13) | `python src/normalization_shift.py` | `analysis/normalization_shift*.csv` |
+| Z-skor sabitleri eğitim kümesinden yeniden eğitim (R13 ADIM 3) | `python src/run_all.py --h5 <h5> --outdir artifacts_v3 --stage modality --modalities B_full_trainnorm` → `python src/analyze_preds.py --dir artifacts_v3 --out artifacts_v3/analysis/r13 --pairs B_full_trainnorm-B_full` | `B_full_trainnorm_s*.json`, `analysis/r13/pairs.csv` |
 | Bulut sıklığı duyarlılığı (R10) | `python src/cloud_freq_sensitivity.py` | `climatology/cloud_freq_sensitivity.csv` |
 
 R9 ve R18 ham AWOS dosyasını (`data/raw_awos_observation/`) okur; ilk koşu istasyon kayıt sayılarını
