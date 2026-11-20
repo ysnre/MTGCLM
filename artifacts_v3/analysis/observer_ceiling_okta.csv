@@ -1,0 +1,18 @@
+küme,okta,n,hata_türü,hata_oranı,ort_olasılık
+test_time,0,9303,yanlış alarm,0.029990,0.048766
+test_time,5,3321,kaçırma,0.167118,0.784914
+test_time,6,3488,kaçırma,0.065367,0.894443
+test_time,7,5506,kaçırma,0.012713,0.972641
+test_time,8,1460,kaçırma,0.006849,0.975596
+test_time,9,22,kaçırma,0.045455,0.846986
+test_station,0,7236,yanlış alarm,0.067855,0.088449
+test_station,5,3999,kaçırma,0.181295,0.764847
+test_station,6,6298,kaçırma,0.055891,0.899026
+test_station,7,9351,kaçırma,0.017110,0.958183
+test_station,8,1310,kaçırma,0.002290,0.978821
+test_station,9,44,kaçırma,0.090909,0.813266
+test_both,0,2832,yanlış alarm,0.039548,0.057261
+test_both,5,889,kaçırma,0.175478,0.769742
+test_both,6,1056,kaçırma,0.060606,0.904400
+test_both,7,1530,kaçırma,0.018954,0.968552
+test_both,8,321,kaçırma,0.003115,0.985231

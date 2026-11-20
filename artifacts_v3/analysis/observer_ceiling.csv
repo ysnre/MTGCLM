@@ -1,0 +1,6 @@
+analiz,alt_küme,BalAcc,POD,FAR,POFD,n,n_bulutlu,n_açık,BalAcc_GA,havalimanı,SYNOP_açık_METAR_bulutlu,SYNOP_bulutlu_METAR_açık,bir_rapor_1_4_payı,METAR_BalAcc,METAR_BalAcc_GA,B_full_BalAcc,B_full_eksi_METAR,B_full_eksi_METAR_GA,D_unet_BalAcc,D_unet_eksi_METAR,D_unet_eksi_METAR_GA
+METAR→SYNOP ikili uyum,tüm çiftler,0.956264,0.913531,0.000408,0.001004,40456,29502.000000,10954.000000,"[0.9449, 0.9660]",42,11.000000,2551.000000,0.017390,,,,,,,,
+METAR→SYNOP ikili uyum,yalnız test kümeleri,0.973780,0.948064,0.000270,0.000503,11775,7798.000000,3977.000000,"[0.9647, 0.9816]",42,2.000000,405.000000,0.017390,,,,,,,,
+aynı çiftlerde model vs METAR,test_time,,,,,5595,,,,34,,,,0.971485,"[0.9535, 0.9836]",0.952130,-0.019354,"[-0.0321, -0.0052]",0.953762,-0.017723,"[-0.0299, -0.0041]"
+aynı çiftlerde model vs METAR,test_station,,,,,4941,,,,8,,,,0.972328,"[0.9541, 0.9879]",0.952635,-0.019693,"[-0.0455, +0.0059]",0.950583,-0.021746,"[-0.0517, +0.0064]"
+aynı çiftlerde model vs METAR,test_both,,,,,1239,,,,8,,,,0.991481,"[0.9843, 0.9969]",0.952921,-0.038560,"[-0.0545, -0.0257]",0.955503,-0.035978,"[-0.0506, -0.0242]"
