@@ -1,0 +1,17 @@
+{
+ "exp": "D_unet_jit",
+ "sklearn": "1.9.1",
+ "val_n": 43152,
+ "val_cloudy_frac": 0.8376900259547646,
+ "t_bias": 0.176,
+ "t_iso": 0.1,
+ "n_files": 1437,
+ "scenes": {
+  "tüm dönem": 1420,
+  "kış gündüzü (Ara–Mar, 06–12 UTC)": 311
+ },
+ "rule": 0.03,
+ "verdict": "hipotez",
+ "min_diff_all_period": -0.08862974201357776,
+ "max_diff_all_period": 0.06204868496688387
+}
