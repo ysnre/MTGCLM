@@ -1,0 +1,43 @@
+etiket,grup,çift,n,istasyon,B_full_BalAcc,C_noawos_BalAcc,fark,GA,GA_sifiri_disliyor,C_t2m_BalAcc,A_sat_BalAcc,not
+tümü,ko-lokasyon (≤ 1 km),B_full − C_noawos,29114,24,0.934038,0.931769,0.002269,"[+0.0001, +0.0046]",True,,,
+tümü,ko-lokasyon (≤ 1 km),C_t2m − C_noawos,29114,24,,0.931769,0.001136,"[-0.0002, +0.0024]",False,0.932904,,
+tümü,ko-lokasyon (≤ 1 km),B_full − A_sat,29114,24,0.934038,,-0.000631,"[-0.0047, +0.0037]",False,,0.934669,
+tümü,ko-lokasyon yok (> 1 km),B_full − C_noawos,14751,6,0.958160,0.952884,0.005277,"[+0.0009, +0.0113]",True,,,
+tümü,ko-lokasyon yok (> 1 km),C_t2m − C_noawos,14751,6,,0.952884,0.007891,"[+0.0014, +0.0182]",True,0.960775,,
+tümü,ko-lokasyon yok (> 1 km),B_full − A_sat,14751,6,0.958160,,0.000477,"[-0.0037, +0.0050]",False,,0.957683,
+tümü,kendi hariç en yakın ≤ 5 km,B_full − C_noawos,12157,9,0.921125,0.914330,0.006795,"[+0.0017, +0.0120]",True,,,
+tümü,kendi hariç en yakın ≤ 5 km,C_t2m − C_noawos,12157,9,,0.914330,0.006658,"[-0.0001, +0.0145]",False,0.920988,,
+tümü,kendi hariç en yakın ≤ 5 km,B_full − A_sat,12157,9,0.921125,,0.001797,"[-0.0018, +0.0051]",False,,0.919329,
+tümü,kendi hariç en yakın > 5 km,B_full − C_noawos,31708,21,0.949206,0.947587,0.001619,"[-0.0003, +0.0042]",False,,,
+tümü,kendi hariç en yakın > 5 km,C_t2m − C_noawos,31708,21,,0.947587,0.001664,"[-0.0004, +0.0039]",False,0.949251,,
+tümü,kendi hariç en yakın > 5 km,B_full − A_sat,31708,21,0.949206,,-0.001257,"[-0.0049, +0.0026]",False,,0.950462,
+tümü,kendi AWOS'u var (aynı wmoid),B_full − C_noawos,43865,30,0.940381,0.937302,0.003079,"[+0.0009, +0.0058]",True,,,
+tümü,kendi AWOS'u var (aynı wmoid),C_t2m − C_noawos,43865,30,,0.937302,0.003003,"[+0.0005, +0.0062]",True,0.940306,,
+tümü,kendi AWOS'u var (aynı wmoid),B_full − A_sat,43865,30,0.940381,,-0.000284,"[-0.0033, +0.0028]",False,,0.940666,
+tümü,kendi AWOS'u yok,B_full − C_noawos,0,0,,,,,,,,grup boş
+tümü,kendi AWOS'u yok,C_t2m − C_noawos,0,0,,,,,,,,grup boş
+tümü,kendi AWOS'u yok,B_full − A_sat,0,0,,,,,,,,grup boş
+tümü,tümü,B_full − C_noawos,43865,30,0.940381,0.937302,0.003079,"[+0.0008, +0.0057]",True,,,
+tümü,tümü,C_t2m − C_noawos,43865,30,,0.937302,0.003003,"[+0.0006, +0.0065]",True,0.940306,,
+tümü,tümü,B_full − A_sat,43865,30,0.940381,,-0.000284,"[-0.0031, +0.0027]",False,,0.940666,
+yalnız SYNOP,ko-lokasyon (≤ 1 km),B_full − C_noawos,24037,24,0.933161,0.930609,0.002552,"[+0.0003, +0.0049]",True,,,
+yalnız SYNOP,ko-lokasyon (≤ 1 km),C_t2m − C_noawos,24037,24,,0.930609,0.001280,"[-0.0002, +0.0026]",False,0.931889,,
+yalnız SYNOP,ko-lokasyon (≤ 1 km),B_full − A_sat,24037,24,0.933161,,0.001452,"[-0.0014, +0.0041]",False,,0.931709,
+yalnız SYNOP,ko-lokasyon yok (> 1 km),B_full − C_noawos,4201,6,0.951203,0.941590,0.009613,"[+0.0039, +0.0175]",True,,,
+yalnız SYNOP,ko-lokasyon yok (> 1 km),C_t2m − C_noawos,4201,6,,0.941590,0.009962,"[+0.0010, +0.0224]",True,0.951552,,
+yalnız SYNOP,ko-lokasyon yok (> 1 km),B_full − A_sat,4201,6,0.951203,,0.004217,"[+0.0008, +0.0091]",True,,0.946986,
+yalnız SYNOP,kendi hariç en yakın ≤ 5 km,B_full − C_noawos,8961,9,0.918275,0.912752,0.005523,"[+0.0013, +0.0118]",True,,,
+yalnız SYNOP,kendi hariç en yakın ≤ 5 km,C_t2m − C_noawos,8961,9,,0.912752,0.003515,"[-0.0003, +0.0102]",False,0.916267,,
+yalnız SYNOP,kendi hariç en yakın ≤ 5 km,B_full − A_sat,8961,9,0.918275,,0.003195,"[+0.0001, +0.0059]",True,,0.915080,
+yalnız SYNOP,kendi hariç en yakın > 5 km,B_full − C_noawos,19277,21,0.945371,0.942763,0.002608,"[+0.0003, +0.0051]",True,,,
+yalnız SYNOP,kendi hariç en yakın > 5 km,C_t2m − C_noawos,19277,21,,0.942763,0.002254,"[+0.0003, +0.0045]",True,0.945017,,
+yalnız SYNOP,kendi hariç en yakın > 5 km,B_full − A_sat,19277,21,0.945371,,0.000864,"[-0.0017, +0.0039]",False,,0.944507,
+yalnız SYNOP,kendi AWOS'u var (aynı wmoid),B_full − C_noawos,28238,30,0.935849,0.932246,0.003603,"[+0.0015, +0.0062]",True,,,
+yalnız SYNOP,kendi AWOS'u var (aynı wmoid),C_t2m − C_noawos,28238,30,,0.932246,0.002573,"[+0.0006, +0.0049]",True,0.934819,,
+yalnız SYNOP,kendi AWOS'u var (aynı wmoid),B_full − A_sat,28238,30,0.935849,,0.001864,"[-0.0005, +0.0041]",False,,0.933985,
+yalnız SYNOP,kendi AWOS'u yok,B_full − C_noawos,0,0,,,,,,,,grup boş
+yalnız SYNOP,kendi AWOS'u yok,C_t2m − C_noawos,0,0,,,,,,,,grup boş
+yalnız SYNOP,kendi AWOS'u yok,B_full − A_sat,0,0,,,,,,,,grup boş
+yalnız SYNOP,tümü,B_full − C_noawos,28238,30,0.935849,0.932246,0.003603,"[+0.0014, +0.0062]",True,,,
+yalnız SYNOP,tümü,C_t2m − C_noawos,28238,30,,0.932246,0.002573,"[+0.0007, +0.0049]",True,0.934819,,
+yalnız SYNOP,tümü,B_full − A_sat,28238,30,0.935849,,0.001864,"[-0.0006, +0.0042]",False,,0.933985,
