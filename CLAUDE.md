@@ -929,6 +929,18 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   yeterli kayıtlı AWOS 1 849 → 1 844; awos_colocation.csv ve istasyon tablosunun kayıt sayısı dışındaki sütunları birebir aynı.
 - README'ye "Revizyon analizleri" tablosu (R6–R20, P20); §7'ye tekrarlanabilirlik kuralı.
 
+### K53 — 20 Kas 2026: R13 ADIM 3 — z-skor sabitleri eğitim kümesinden (kod hazır, koşu bekliyor)
+- **Bulgu:** H5 `means/stds` (create_patch_dataset, ilk 5 sahne) eğitim kümesinden IR'de 1,3–1,8σ sapıyor (istasyon pikseli; IR3.8
+  eğitimde 270,8 ± 20,0 K, sabit 286,3 ± 8,7 K) → girdi z'si IR'de ort. ≈ −1,4, s.s. ≈ 2. Eğitim, test ve tam harita aynı sabitleri
+  kullandığı için uyumsuzluk yok; afin fark ilk conv + BN ile kuramsal olarak telafi edilir. Kullanıcı ADIM 3'ü onayladı; ön kayda
+  (`docs/revizyon_onkayit.md` §3, 20 Kas 17:10) birincil ölçütle koşudan önce eklendi.
+- **`train.py --renorm train`:** temel 17 kanal için yeni z = a·z + b (a = σ_eski/σ_yeni, b = (μ_eski − μ_yeni)/σ_yeni); sabitler eğitim
+  kümesinden, ön-karıştırılmış H5'te 20 rastgele ardışık blok × 2048 satır (tohum 0, model tohumundan bağımsız), önbellek
+  `<outdir>/norm_stats/train_<split>.json`; JSON `config.renorm`, `config.renorm_stats`. Dolgu (NaN→0) aynı fiziksel değerde kalır.
+  `--renorm none` (varsayılan) eski kodla bit bit aynı tahmin (mini H5'te doğrulandı); `train` ile eğitimdeki yeni z ort. |≤ 0,04|, s.s. 0,97–1,01.
+- `run_all.py` modalitesi `B_full_trainnorm`; `analyze_preds.py` ORDER/LABEL sonuna (varsayılan çiftlere EKLENMEDİ → R8 aileleri değişmez).
+  Birincil fark ayrı çağrıyla: `analyze_preds.py --pairs B_full_trainnorm-B_full --out artifacts_v3/analysis/r13`.
+
 ---
 
 ## 3. Komutlar
