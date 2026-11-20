@@ -133,6 +133,8 @@ MODULE_INFO = {
     "label_sensitivity": ("analiz", "P9: etiket tanımı duyarlılığı — verify / keep / 0–≥1 okta; model ve CLM/NWC aynı satırlarda", None),
     "revision_metrics": ("analiz", "Revizyon R6/R17/R20: kontenjans metrikleri (POD/FAR/KSS/HSS), doğrulanmamış METAR açıkları, ≥6 okta duyarlılığı (K49)", None),
     "inference_robustness": ("analiz", "Revizyon R8: aile içi BH/Holm düzeltmesi ve örtüşen blok bootstrap duyarlılığı (K49)", None),
+    "reference_calibrated_baseline": ("analiz", "Revizyon R12: CLM/NWC sınıf oranlarıyla kalibre kıyas modeli (K50)", None),
+    "observer_ceiling": ("analiz", "Revizyon R11: SYNOP–METAR gözlemci uyumu ve okta başına hata (K50)", None),
     "parallax_shift": ("analiz", "P10: paralaks kaydırmasının büyüklüğü (analitik, istasyonlar ve ızgara)", None),
     "summarize_scenes": ("analiz", "P4: sahne JSON'larından tutarlılık/faz/süre özeti (scenes_summary.csv)", None),
     "infer_scene": ("analiz", "P4: tek sahne tam harita çıkarımı (U-Net faz-hizalı / CNN kayan pencere), NetCDF+GeoTIFF+PNG, H5/preds tutarlılık testi", None),
