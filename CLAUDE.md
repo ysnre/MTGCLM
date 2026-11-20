@@ -885,12 +885,12 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
 ### K50 — 20 Kas 2026: revizyon Gün 3 — R12 referans-kalibre kıyas, R11 gözlemci tavanı (ön-kayıtlı)
 - **R12 `src/reference_calibrated_baseline.py` → `analysis/reference_calibrated.csv` (+ `_info.json`):** CLM (6 grup × 4 geçerli sınıf + geçerli
   oran + merkez durumu, 34 öz.) ve NWC CT (6 grup × 16 sınıf + merkez sınıf, 112 öz.) oranlarıyla HGB/LR, yalnız train SYNOP (~91 bin),
-  `baselines.py` ayarları, arama yok, eşik 0,5. sklearn **1.7.2** (VM; Windows 1.9.1 ile tekrar önerildi). Süre ~1 dk.
-- **Birincil (test_time SYNOP, CLM+NWC ortak kapsam, n 18 992):** REF_cal (HGB) 0,941; **CNN − REF_cal +0,0057 [+0,0022, +0,0089]**,
-  U-Net +0,0080 [+0,0046, +0,0114] → ön-kayıt kuralı: GA sıfırı dışlıyor, "kalibrasyonun ötesinde ek bilgi" ifadesi kalır, ama küçük.
+  `baselines.py` ayarları, arama yok, eşik 0,5. sklearn 1.9.1 (Windows; VM'deki 1.7.2 ile 4. ondalıkta aynı). Süre ~1 dk.
+- **Birincil (test_time SYNOP, CLM+NWC ortak kapsam, n 18 992):** REF_cal (HGB) 0,941; **CNN − REF_cal +0,0057 [+0,0024, +0,0089]**,
+  U-Net +0,0080 [+0,0048, +0,0111] → ön-kayıt kuralı: GA sıfırı dışlıyor, "kalibrasyonun ötesinde ek bilgi" ifadesi kalır, ama küçük.
   **Ayrıştırma:** aynı satırlarda ham NWC r30 0,928, ham CLM r30 0,899; CNN 0,947. NWC'ye karşı farkın ~%70'i (+0,013 / +0,019) kalibrasyonla
   kapanıyor (REF_cal ≈ NWC-only kalibre 0,940); CLM'yi kalibre etmek yalnız +0,004 kazandırıyor (0,903) → CLM farkı (+0,044) ürün içeriğinden.
-  İkincil: test_station HGB farkı GA sıfırı içeriyor (+0,0054 [−0,0001, +0,0110]); test_both sınırda (+0,0069 [−0,0003, +0,0125]); LR'ye karşı
+  İkincil: test_station HGB farkı GA sıfırı içeriyor (+0,0045 [−0,0008, +0,0100]); test_both sınırda (+0,0071 [−0,0003, +0,0129]); LR'ye karşı
   hepsi pozitif. Sensör kuşağı (NWC CT SEVIRI tabanlı) bu analizle ayrılamaz.
 - **R11 `src/observer_ceiling.py` → `analysis/observer_ceiling.csv`, `_confusion.csv`, `_okta.csv`:** SYNOP HH:00 ↔ METAR HH−1:50, 42 havalimanı,
   42 804 çift. METAR→SYNOP ikili uyum BalAcc 0,956 [0,945, 0,966] (tüm çiftler), 0,974 (test kümeleri); FAR ≈ 0 (SYNOP açık/METAR bulutlu
@@ -898,6 +898,27 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   gözlemci gürültüsü değil. Aynı çiftlerde B_full 0,952 vs METAR 0,972 (test_time −0,019 [−0,032, −0,005]) → tavan iyimser; model ona ulaşmıyor.
   Okta başına (test_time SYNOP, 3 tohum ort.): okta 0 yanlış alarm %3,0; kaçırma okta 5 %16,7, 6 %6,5, 7 %1,3, 8 %0,7 → hatalar sınıf sınırında.
 - **Karar Noktası 1 (dergi):** kullanıcıda. R12 TAAC'ın ana iddiasını korur ama NWC'ye karşı üstünlüğün çoğu hizalamadan; Öz/Tartışma buna göre.
+
+### K51 — 20 Kas 2026: revizyon Gün 4 — R9, R18, R13, R10 (ön-kayıtlı; yeniden eğitim yok)
+- **R9 `src/awos_colocation.py` → `analysis/awos_colocation*.csv`, `awos_pixel_distance.csv`, `okta9_rh.csv`:** 30 holdout istasyonunun
+  **hepsinin kendi AWOS'u var** (aynı wmoid; 24'ü ≤ 1 km, 6'sı listeler arası 1–3 km koordinat farkı). Ön-kayıtlı kıyas: B_full − C_noawos
+  test_station ≤ 1 km grubu +0,0023 [+0,0001, +0,0046], > 1 km grubu +0,0053 [+0,0009, +0,0113] → "yalnız ko-lokasyonlu grupta" koşulu
+  sağlanmadı, "transfer edilemez" yazılmıyor. **Ama** kendi AWOS'u olmayan holdout istasyonu yok → test_station AWOS katkısını yalnız
+  enstrümanlı noktalarda ölçüyor. Türkiye piksellerinde en yakın AWOS medyan 9,7 km (%95 20,1 km; ≤ 1 km payı %0,7) → Sınırlılıklar'a.
+  okta 9 test satırlarının %0,3'ü (114 / 153); B_full doğru %95,6 / %90,2, C_noawos %94,7 / %91,5 → RH bağlaşımı önemsiz.
+- **R18 `src/idw_loo.py` → `analysis/idw_loo.csv` (+ `_info.json`, önbellek `data/processed/idw_loo_sample.npz`):** 288 an (9 ay × 8 saat ×
+  4 gün), 1 861 AWOS, aux ile aynı IDW, kendisi dışarıda. t2m RMSE 1,83 K (bias +0,01; etiket istasyonları 1,55 K); yükseklik düzeltmesiz
+  2,44 K (etiket ist. bias −0,82 K) → 6,5 K/km düzeltmesi işe yarıyor. Komşuya |Δz| ≥ 600 m'de 2,53 K. rh2m RMSE %12,7 (etiket ist. %11,0,
+  bias +2,3, gündüz +4,1). Hata komşu mesafesiyle neredeyse değişmiyor (≤ 5 km 1,81 K, > 20 km 1,89 K) → yerel etkiler baskın.
+- **R13 `src/normalization_shift.py` → `analysis/normalization_shift*.csv`:** istasyon pikseli, ay × aydınlanma, train σ. **Kural (a) tetiklendi:**
+  Haz 2026'da 8 IR kanalının hepsinde 3 aydınlanma sınıfında |kayma| 0,69–1,52σ (sıcak yaz; diğer aylar < 0,5σ). Haziran eğitimde var
+  (9 948 satır); B_full Haz BalAcc test_time 0,974 (en iyi ay), test_station 0,919 (aylar 0,875–0,958). Tanısal (b) aynı ay içinde
+  test − train IR en büyük 0,89σ (WV6.3, Ara 2025). **Yeniden eğitim kararı kullanıcıda** (öneri: hayır; Tem–Kas yokluğu Sınırlılıklar'da).
+- **R10 `src/cloud_freq_sensitivity.py` → `climatology/cloud_freq_sensitivity.csv` (+ `_info.json`):** D_unet_jit, doğu yaylaları, CLM − model
+  (joint), tüm dönem: eşik 0,4 / 0,5 / 0,6 → +0,004 / +0,029 / +0,061; val bias = 1 (eşik 0,176) −0,053; izotonik ≥ 0,5 (eşik 0,100) −0,083;
+  izotonik ortalama −0,057; yarıçap 15 / 50 km ±0,007. **Kural: hipotez** (en küçük −0,089). Val'de bulutlu oranı 0,838 (verify politikası
+  METAR açıkları çıkarıyor) → val kalibrasyonu sahne önceline uymuyor; not edilecek. Tanısal kış gündüzü (Ara–Mar, 06–12 UTC) tüm
+  varyantlarda +0,12…+0,24 → fark kar mevsimi gündüzünde sağlam, tüm dönem ortalamasında değil. Metin zaten hipotez düzeyinde (K48).
 
 ---
 
@@ -1083,6 +1104,10 @@ python src\analyze_preds.py --dir artifacts_v3 --out artifacts_v3/analysis --ref
 | `src/inference_robustness.py` | Revizyon R8: BH/Holm, örtüşen blok bootstrap — K49 |
 | `src/reference_calibrated_baseline.py` | Revizyon R12: CLM/NWC oranlarıyla kalibre kıyas modeli (HGB/LR) — K50 |
 | `src/observer_ceiling.py` | Revizyon R11: SYNOP–METAR gözlemci uyumu, okta başına hata — K50 |
+| `src/awos_colocation.py` | Revizyon R9: holdout ↔ AWOS ko-lokasyonu, piksel–AWOS mesafesi, okta-9 — K51 |
+| `src/idw_loo.py` | Revizyon R18: t2m/rh2m IDW leave-one-out — K51 |
+| `src/normalization_shift.py` | Revizyon R13: ay × aydınlanma kanal kayması (σ) — K51 |
+| `src/cloud_freq_sensitivity.py` | Revizyon R10: doğu yaylaları sıklık farkının eşik/kalibrasyon/maske duyarlılığı — K51 |
 | `src/test_center_jitter.py` | P20 jitter birim testleri + P20 öncesi kodla bit bit eşitlik (mini H5) — K46 |
 | `src/train.py`, `src/train_unet.py` | Eğitim; `--h5 --split --aux --aux_channels --seed --epochs --limit_batches --results --outdir --model` + K16: `--loader --mem_splits --cache_dir --threads --no_deterministic --no_last_preds` |
 | `src/config.py` | Colab/yerel yollar, `MTGCLM_H5`, PATCH_SIZE 33, BATCH_SIZE 64, LR 1e-3 |
