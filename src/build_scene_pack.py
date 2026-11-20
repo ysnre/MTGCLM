@@ -104,6 +104,8 @@ def main():
     ap.add_argument("--scenes", default=os.path.join(ROOT, "artifacts_v3/scenes/scenes_selected.csv"))
     ap.add_argument("--scene_dir", default=os.path.join(ROOT, "artifacts_v3/scenes"))
     ap.add_argument("--exp", default="D_unet")
+    ap.add_argument("--unet_mode", choices=["aligned", "single"], default="aligned",
+                    help="Hangi infer_scene çıktısı okunacak: aligned (16 geçiş) ya da single (tek geçiş; D_unet_jit için)")
     ap.add_argument("--nc_dir", default="F:/turkiye_kesitler")
     ap.add_argument("--clm_dir", default="F:/mtg_fci_clm")
     ap.add_argument("--nwc_dir", default="F:/nwcsaf")
@@ -139,8 +141,13 @@ def main():
         grid = LatLonGrid.from_nc(nc[0])
         img, is_day = composite(nc[0], grid, t_sat)
 
-        pf = sorted(glob.glob(os.path.join(a.scene_dir, f"scene_{ts}_{a.exp}*.nc")))
-        pf = [p for p in pf if "_single" not in p and "_patch" not in p and "_reflect" not in p]
+        # tam ad eşleşmesi: "D_unet" deneyi "D_unet_jit" dosyalarını yakalamasın; mod son eki --unet_mode ile (K47)
+        pat = re.compile(rf"^scene_{ts}_{re.escape(a.exp)}(_s\d+)?(_single)?\.nc$")
+        pf = []
+        for p in sorted(glob.glob(os.path.join(a.scene_dir, f"scene_{ts}_*.nc"))):
+            m = pat.match(os.path.basename(p))
+            if m and (m.group(2) is not None) == (a.unet_mode == "single"):
+                pf.append(p)
         if not pf:
             print(f"! {ts}: model çıktısı yok — önce infer_scene.py --time {ts[:12]}")
             continue
