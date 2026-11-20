@@ -51,3 +51,11 @@ başlamadan önce yazarların kendi kendine verdiği bir taahhüttür.
   Bu bir metin kararıdır, analiz sonucu değildir.
 - **19 Kas 2026, 17:22 (TSİ):** R20 eklendi (≥ 6 okta duyarlılığı). Gerekçe: hakemlerin "ürün doğrulamaları > 5 okta kullanırken neden ≥ 5"
   sorusu. Eklendiği anda ön-kayıttaki analizlerin hiçbiri koşulmamıştı.
+- **20 Kas 2026, 17:10 (TSİ):** R13 ADIM 3 eklendi (kullanıcı onayı). R13 tanısı (ay × aydınlanma, eğitim σ'sı) Haz 2026 IR
+  kanallarında kuralı tetikledi; ek denetimde z-skor sabitlerinin (H5 `means/stds`, ilk 5 sahneden) eğitim kümesi istatistiğinden
+  IR'de 1,3–1,8σ saptığı görüldü. **ADIM 3:** B_full (Medium_Flat + tüm aux), yalnız temel 17 kanalın z-skor sabitleri eğitim
+  kümesinden yeniden hesaplanarak (afin dönüşüm; tabakalı olmayan, deterministik 20 blok × 2048 satırlık örnek, tohum 0; dolgu
+  değerleri aynı fiziksel değerde kalır), diğer her şey aynı, tohum 1–3. **Birincil:** B_full_trainnorm − B_full test_time BalAcc,
+  3 tohum ortalaması, eşleştirilmiş gün-blok bootstrap (analyze_preds). **İkincil:** test_station, test_both, yalnız SYNOP, CV yok.
+  **Yorum:** GA sıfırı içeriyorsa "sonuçlar normalizasyon sabitlerine duyarsız"; dışlıyorsa fark ek tabloda raporlanır ve Yöntem'de
+  yazılır. Her durumda ana tablo değişmez, U-Net yeniden eğitilmez. Eklendiği anda bu koşu başlamamıştı.
