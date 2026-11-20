@@ -882,6 +882,23 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
 - **Metin etkisi (Gün 5/6):** inputs.tex ve models.tex'te "significant/significantly" yalnız BH sonrası kalanlar için; Yöntem §3.6'ya BH + Holm
   ve blok uzunluğu cümlesi; ek tablolar (kontenjans, ≥6 okta, doğrulanmamış METAR, çoklu karşılaştırma).
 
+### K50 — 20 Kas 2026: revizyon Gün 3 — R12 referans-kalibre kıyas, R11 gözlemci tavanı (ön-kayıtlı)
+- **R12 `src/reference_calibrated_baseline.py` → `analysis/reference_calibrated.csv` (+ `_info.json`):** CLM (6 grup × 4 geçerli sınıf + geçerli
+  oran + merkez durumu, 34 öz.) ve NWC CT (6 grup × 16 sınıf + merkez sınıf, 112 öz.) oranlarıyla HGB/LR, yalnız train SYNOP (~91 bin),
+  `baselines.py` ayarları, arama yok, eşik 0,5. sklearn **1.7.2** (VM; Windows 1.9.1 ile tekrar önerildi). Süre ~1 dk.
+- **Birincil (test_time SYNOP, CLM+NWC ortak kapsam, n 18 992):** REF_cal (HGB) 0,941; **CNN − REF_cal +0,0057 [+0,0022, +0,0089]**,
+  U-Net +0,0080 [+0,0046, +0,0114] → ön-kayıt kuralı: GA sıfırı dışlıyor, "kalibrasyonun ötesinde ek bilgi" ifadesi kalır, ama küçük.
+  **Ayrıştırma:** aynı satırlarda ham NWC r30 0,928, ham CLM r30 0,899; CNN 0,947. NWC'ye karşı farkın ~%70'i (+0,013 / +0,019) kalibrasyonla
+  kapanıyor (REF_cal ≈ NWC-only kalibre 0,940); CLM'yi kalibre etmek yalnız +0,004 kazandırıyor (0,903) → CLM farkı (+0,044) ürün içeriğinden.
+  İkincil: test_station HGB farkı GA sıfırı içeriyor (+0,0054 [−0,0001, +0,0110]); test_both sınırda (+0,0069 [−0,0003, +0,0125]); LR'ye karşı
+  hepsi pozitif. Sensör kuşağı (NWC CT SEVIRI tabanlı) bu analizle ayrılamaz.
+- **R11 `src/observer_ceiling.py` → `analysis/observer_ceiling.csv`, `_confusion.csv`, `_okta.csv`:** SYNOP HH:00 ↔ METAR HH−1:50, 42 havalimanı,
+  42 804 çift. METAR→SYNOP ikili uyum BalAcc 0,956 [0,945, 0,966] (tüm çiftler), 0,974 (test kümeleri); FAR ≈ 0 (SYNOP açık/METAR bulutlu
+  yalnız 11 çift), uyuşmazlık neredeyse tamamen SYNOP ≥ 5 / METAR NSC (2 551) → büyük ölçüde NSC tanımı (yüksek bulut METAR'da raporlanmaz),
+  gözlemci gürültüsü değil. Aynı çiftlerde B_full 0,952 vs METAR 0,972 (test_time −0,019 [−0,032, −0,005]) → tavan iyimser; model ona ulaşmıyor.
+  Okta başına (test_time SYNOP, 3 tohum ort.): okta 0 yanlış alarm %3,0; kaçırma okta 5 %16,7, 6 %6,5, 7 %1,3, 8 %0,7 → hatalar sınıf sınırında.
+- **Karar Noktası 1 (dergi):** kullanıcıda. R12 TAAC'ın ana iddiasını korur ama NWC'ye karşı üstünlüğün çoğu hizalamadan; Öz/Tartışma buna göre.
+
 ---
 
 ## 3. Komutlar
@@ -1064,6 +1081,8 @@ python src\analyze_preds.py --dir artifacts_v3 --out artifacts_v3/analysis --ref
 | `src/loss.py` | `MaskedBCELoss` — yalnız (16,16) pikselinde, `-1` yok sayılır |
 | `src/revision_metrics.py` | Revizyon R6/R17/R20: kontenjans metrikleri, doğrulanmamış METAR açıkları, ≥6 okta — K49 |
 | `src/inference_robustness.py` | Revizyon R8: BH/Holm, örtüşen blok bootstrap — K49 |
+| `src/reference_calibrated_baseline.py` | Revizyon R12: CLM/NWC oranlarıyla kalibre kıyas modeli (HGB/LR) — K50 |
+| `src/observer_ceiling.py` | Revizyon R11: SYNOP–METAR gözlemci uyumu, okta başına hata — K50 |
 | `src/test_center_jitter.py` | P20 jitter birim testleri + P20 öncesi kodla bit bit eşitlik (mini H5) — K46 |
 | `src/train.py`, `src/train_unet.py` | Eğitim; `--h5 --split --aux --aux_channels --seed --epochs --limit_batches --results --outdir --model` + K16: `--loader --mem_splits --cache_dir --threads --no_deterministic --no_last_preds` |
 | `src/config.py` | Colab/yerel yollar, `MTGCLM_H5`, PATCH_SIZE 33, BATCH_SIZE 64, LR 1e-3 |
