@@ -920,6 +920,15 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   METAR açıkları çıkarıyor) → val kalibrasyonu sahne önceline uymuyor; not edilecek. Tanısal kış gündüzü (Ara–Mar, 06–12 UTC) tüm
   varyantlarda +0,12…+0,24 → fark kar mevsimi gündüzünde sağlam, tüm dönem ortalamasında değil. Metin zaten hipotez düzeyinde (K48).
 
+### K52 — 20 Kas 2026: dergi kararı ve tekrarlanabilirlik düzeltmeleri
+- **Karar Noktası 1 (kullanıcı):** birincil dergi **TAAC** (ilk karar süresi en kısa); kapsam dışı reddine karşı MAP sürümü de gönderime
+  hazır tutulur (`\ifTAAC` iki sürüm). Öz/Tartışma R12'ye göre: "station-scale", NWC'ye karşı farkın çoğu hizalamadan.
+- R10 Windows'ta sklearn 1.9.1 ile yeniden koşuldu: sayılar aynı (hipotez; −0,089…+0,062).
+- R9'un AWOS kayıt sayısı önbelleği ilk koşuda bir awk komutuyla üretilmişti (depoda değil). Betiğin kendi sayımıyla
+  (`awos_colocation.awos_counts`) yeniden üretildi: 555 istasyonda sayı ~%1 farklı (awk boş olmayan dizeyi, pandas sayısal değeri sayıyor),
+  yeterli kayıtlı AWOS 1 849 → 1 844; awos_colocation.csv ve istasyon tablosunun kayıt sayısı dışındaki sütunları birebir aynı.
+- README'ye "Revizyon analizleri" tablosu (R6–R20, P20); §7'ye tekrarlanabilirlik kuralı.
+
 ---
 
 ## 3. Komutlar
@@ -1207,4 +1216,7 @@ Yereldeki diğer notlar: `MTG Cloud Phase Web Service Development.md`,
 - İş paketi bitince dosya başına ayrı İngilizce commit komutları üret, çalıştırma (Kural 1 / `.agent/rules/rule_commit_per_file.md`).
 - Anlamlı her değişiklikte `docs/mtgclm_infografik.html`'i güncelle; her kod değişikliğinden sonra `python src/make_code_map.py`
   ile `docs/mtgclm_kod_haritasi.html`'i yeniden üret (Kural 3 / `.agent/rules/rule_update_infographic.md`).
+- **Tekrarlanabilirlik kuralı (20 Kas):** makaleye ya da CLAUDE.md'ye giren her sayı depodaki bir `src/` betiğinin yazdığı bir dosyadan
+  gelir; geçici `python -c` / awk denetimleri yalnız kontrol içindir, kaynak sayılmaz. Bulut ortamında (VM) koşulan analizler
+  kullanıcının `mtgclm` ortamında bir kez yeniden koşulur; README "Revizyon analizleri" tablosuna her yeni betik eklenir.
 - `.agent/` ve `archive_v1/` .gitignore'da; bu dosyalar için commit komutu verme, yerelde kalır.
