@@ -135,6 +135,25 @@ Güncel sonuçlar `artifacts_v3/` altındadır (etiket politikası *verify*: `sp
 | Tam sahne haritaları | `python src/select_scenes.py --h5 <h5>` → `python src/infer_scene.py --h5 <h5> --time <YYYYMMDDhhmm> --check` → `python src/summarize_scenes.py --dir artifacts_v3/scenes` |
 | Bulut oluşum sıklığı (NetCDF) | `python src/run_all.py --h5 <h5> --outdir artifacts_v3 --stage climatology` (`batch_scenes.py` + `cloud_frequency.py`) |
 
+**Revizyon analizleri** (ön kayıt: `docs/revizyon_onkayit.md`; hepsi yukarıdaki çıktıları okur, yeniden eğitim yoktur; varsayılan
+yollar depo köküne göredir):
+
+| Analiz | Komut | Çıktı |
+|---|---|---|
+| U-Net hedef-piksel jitter (P20 / R14) | `python src/run_all.py --h5 <h5> --outdir artifacts_v3 --stage unetjit` | `D_unet_jit_s*.json`, `preds/` |
+| Kontenjans metrikleri, doğrulanmamış METAR açıkları, ≥ 6 okta (R6, R17, R20) | `python src/revision_metrics.py --dir artifacts_v3` | `analysis/contingency.csv`, `unverified_metar_clear.csv`, `label_ge6.csv` |
+| Çoklu karşılaştırma (BH / Holm) ve blok uzunluğu (R8) | `python src/inference_robustness.py --dir artifacts_v3` | `analysis/multiplicity.csv`, `block_length_sensitivity.csv` |
+| Referans ürünlerin aynı etiketlerle kalibrasyonu (R12) | `python src/reference_calibrated_baseline.py --dir artifacts_v3` | `analysis/reference_calibrated.csv` |
+| SYNOP–METAR gözlemci uyumu (R11) | `python src/observer_ceiling.py --dir artifacts_v3` | `analysis/observer_ceiling*.csv` |
+| Holdout ↔ AWOS ko-lokasyonu, okta-9 (R9) | `python src/awos_colocation.py --dir artifacts_v3` | `analysis/awos_colocation*.csv`, `awos_pixel_distance.csv`, `okta9_rh.csv` |
+| AWOS IDW leave-one-out (R18) | `python src/idw_loo.py` | `analysis/idw_loo.csv` |
+| Ay × aydınlanma kanal kayması (R13) | `python src/normalization_shift.py` | `analysis/normalization_shift*.csv` |
+| Bulut sıklığı duyarlılığı (R10) | `python src/cloud_freq_sensitivity.py` | `climatology/cloud_freq_sensitivity.csv` |
+
+R9 ve R18 ham AWOS dosyasını (`data/raw_awos_observation/`) okur; ilk koşu istasyon kayıt sayılarını
+`data/processed/awos_station_counts.csv`, R18 örneklemini `data/processed/idw_loo_sample.npz` olarak önbelleğe alır.
+`center_values.npz` için önce `src/export_center_values.py --h5 <h5>` çalıştırılmalıdır.
+
 Referans ürün çıkarımları (FCI CLM, NWC SAF CT) ham ürün dosyalarını gerektirir: `src/extract_fci_clm.py`,
 `src/extract_nwcsaf_ct.py`, ardından `src/eval_clm_on_splits.py` ve `src/eval_nwc_and_metar.py`.
 
