@@ -149,6 +149,7 @@ yollar depo köküne göredir):
 | AWOS IDW leave-one-out (R18) | `python src/idw_loo.py` | `analysis/idw_loo.csv` |
 | Ay × aydınlanma kanal kayması (R13) | `python src/normalization_shift.py` | `analysis/normalization_shift*.csv` |
 | Z-skor sabitleri eğitim kümesinden yeniden eğitim (R13 ADIM 3) | `python src/run_all.py --h5 <h5> --outdir artifacts_v3 --stage modality --modalities B_full_trainnorm` → `python src/analyze_preds.py --dir artifacts_v3 --out artifacts_v3/analysis/r13 --pairs B_full_trainnorm-B_full` | `B_full_trainnorm_s*.json`, `analysis/r13/pairs.csv` |
+| Kar ve görüş açısı (VZA) kırılımı (R7) | `python src/snow_vza_breakdown.py` | `analysis/snow_vza*.csv` |
 | Bulut sıklığı duyarlılığı (R10) | `python src/cloud_freq_sensitivity.py` | `climatology/cloud_freq_sensitivity.csv` |
 
 R9 ve R18 ham AWOS dosyasını (`data/raw_awos_observation/`) okur; ilk koşu istasyon kayıt sayılarını
