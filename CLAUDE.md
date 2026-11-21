@@ -946,6 +946,19 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   0,9557. **Ön kayıt kuralı: "sonuçlar normalizasyon sabitlerine duyarsız"** → Yöntem'e bir cümle + ek tablo satırı; ana tablo değişmez.
   JSON'larda git `b24b716` + dirty (çalışma ağacındaki kod sonraki `9a7e37e` commit'iyle aynı). summary.* yalnız 7 satır ekledi, eski satırlar birebir.
 
+### K54 — 20 Kas 2026: revizyon Gün 5 — R7 kar ve VZA kırılımı (ön-kayıtlı)
+- **`src/snow_vza_breakdown.py` → `analysis/snow_vza.csv`, `snow_vza_diff.csv`, `snow_vza_stations.csv`:** verify test kümeleri + birleşimi
+  ("tüm test", gün blokları), B_full / D_unet / D_unet_jit (tohum başına) ve CLM / NWC (merkez, r30; ortak kapsamda fark). n < 300 → belirsiz.
+- **Kar imzalı gündüz açık** (VIS0.6 ≥ %30, NIR1.6 ≤ 0,4·VIS0.6; n 185–199 → kural gereği "belirsiz" işaretli): yanlış alarm B_full %1,2,
+  CLM r30 %99,5, NWC r30 %4,9.
+- **Kış gündüzü (Ara–Mar), istasyon > 1500 m** (n 2 963–2 997, açık 336–356): BalAcc B_full 0,946, CLM r30 0,540, NWC r30 0,916; açıkların
+  yanlış alarm oranı 0,064 / 0,914 / 0,147. B_full − CLM r30 +0,406 [+0,372, +0,435], − NWC r30 +0,029 [+0,004, +0,061]. Kıyas: kış ≤ 1500 m
+  CLM 0,924; ilkbahar–yaz > 1500 m CLM 0,927 (model ile fark yok, +0,002 [−0,023, +0,023]) → CLM sorunu kar mevsimine özgü.
+  Açık raporlar 9 istasyondan (17096 171 / 356); CLM merkez yanlış alarm 9 istasyonun 8'inde ≥ 0,87, model ≤ 0,13 → tek istasyona dayanmıyor.
+  **İstasyon düzeyinde bulgu** (R10'un harita düzeyi "hipotez" kararı ayrı; ikisi birlikte yazılacak).
+- **VZA (istasyon dilimleri < 55,6° / 55,6–58,5° / ≥ 58,5°; istasyonlar 51,6–64,4°):** B_full 0,943 / 0,959 / 0,947; CLM r30 0,917 / 0,915 / 0,859;
+  NWC r30 0,917 / 0,927 / 0,919. CLM en yüksek VZA diliminde düşüyor (dilim doğuyla karışık; betimsel).
+
 ---
 
 ## 3. Komutlar
@@ -1134,6 +1147,7 @@ python src\analyze_preds.py --dir artifacts_v3 --out artifacts_v3/analysis --ref
 | `src/idw_loo.py` | Revizyon R18: t2m/rh2m IDW leave-one-out — K51 |
 | `src/normalization_shift.py` | Revizyon R13: ay × aydınlanma kanal kayması (σ) — K51 |
 | `src/cloud_freq_sensitivity.py` | Revizyon R10: doğu yaylaları sıklık farkının eşik/kalibrasyon/maske duyarlılığı — K51 |
+| `src/snow_vza_breakdown.py` | Revizyon R7: kar imzası / kış yüksek istasyon / VZA kırılımı, istasyon başına yanlış alarm — K54 |
 | `src/test_center_jitter.py` | P20 jitter birim testleri + P20 öncesi kodla bit bit eşitlik (mini H5) — K46 |
 | `src/train.py`, `src/train_unet.py` | Eğitim; `--h5 --split --aux --aux_channels --seed --epochs --limit_batches --results --outdir --model` + K16: `--loader --mem_splits --cache_dir --threads --no_deterministic --no_last_preds` |
 | `src/config.py` | Colab/yerel yollar, `MTGCLM_H5`, PATCH_SIZE 33, BATCH_SIZE 64, LR 1e-3 |
