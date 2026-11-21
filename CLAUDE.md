@@ -958,6 +958,13 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   **İstasyon düzeyinde bulgu** (R10'un harita düzeyi "hipotez" kararı ayrı; ikisi birlikte yazılacak).
 - **VZA (istasyon dilimleri < 55,6° / 55,6–58,5° / ≥ 58,5°; istasyonlar 51,6–64,4°):** B_full 0,943 / 0,959 / 0,947; CLM r30 0,917 / 0,915 / 0,859;
   NWC r30 0,917 / 0,927 / 0,919. CLM en yüksek VZA diliminde düşüyor (dilim doğuyla karışık; betimsel).
+- **Teyit (21 Kas, `.agent/rules/rule_fci_clm.md` ölçeğiyle):** eşleme kurala uygun (1 ve 8 = açık, 2 ve 3 = bulutlu). Ama ~7,8 milyon
+  istasyon-merkez CLM değerinde ve r30 alanlarında **sınıf 8 (kar/buz, açık) hiç yok** → ürün kar sınıfı üretmiyor. EUMETSAT doğrulama
+  raporu (EUM2045564; `uydu ile ilgili makale/FCI_Level_2_product_validation_report…pdf`) bunu yazıyor: kar/buz, toz ve kül testleri
+  kapalı, "no detection of snow/ice", karlı açık pikseller bulutlu sınıflanabilir (bilinen anomali, düzeltme bekliyor; NIR2.2 kullanılmıyor).
+  Kış > 1500 m açık raporlarda CLM merkez durumu O döneminde %77 opak (3), %18 kısmi (2), %6 açık (1); C döneminde (Mar 2025) %39 / %23 / %38.
+  Aynı istasyonlarda Nis–Haz açıklarda %81–84 açık → konum/indeks hatası yok. **Sonuç:** karışıklık bizim eşlememizden değil, ürünün
+  belgelenmiş sınırlılığından; metinde EUMETSAT raporuna atıfla yazılır.
 
 ---
 
@@ -1250,4 +1257,6 @@ Yereldeki diğer notlar: `MTG Cloud Phase Web Service Development.md`,
 - **Tekrarlanabilirlik kuralı (20 Kas):** makaleye ya da CLAUDE.md'ye giren her sayı depodaki bir `src/` betiğinin yazdığı bir dosyadan
   gelir; geçici `python -c` / awk denetimleri yalnız kontrol içindir, kaynak sayılmaz. Bulut ortamında (VM) koşulan analizler
   kullanıcının `mtgclm` ortamında bir kez yeniden koşulur; README "Revizyon analizleri" tablosuna her yeni betik eklenir.
+- FCI CLM `cloud_state` sınıf tablosu `.agent/rules/rule_fci_clm.md`'de (0 işlenmedi, 1 açık, 2 kısmi, 3 opak, 4–7 toz/kül, 8 açık-kar/buz, 9 tanımsız);
+  CLM ile ilgili her analizden önce okunur. Mevcut ürün sürümü 8 üretmiyor (K54).
 - `.agent/` ve `archive_v1/` .gitignore'da; bu dosyalar için commit komutu verme, yerelde kalır.
