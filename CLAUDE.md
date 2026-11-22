@@ -966,6 +966,23 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   Aynı istasyonlarda Nis–Haz açıklarda %81–84 açık → konum/indeks hatası yok. **Sonuç:** karışıklık bizim eşlememizden değil, ürünün
   belgelenmiş sınırlılığından; metinde EUMETSAT raporuna atıfla yazılır.
 
+### K55 — 21 Kas 2026: keşifsel CLM kar duyarlılığı; makale Word çıktısı (Mendeley alanlı)
+- **Keşifsel (ön kayıtta yok; `docs/revizyon_onkayit.md` §3, 21 Kas 09:40, yorum kuralı yok) `src/clm_snow_exclusion.py` →
+  `analysis/clm_snow_exclusion.csv`:** model − referans farkı, kış (Ara–Mar) > 1500 m satırları çıkarılarak. Yalnız SYNOP, test_time:
+  CNN − CLM r30 +0,045 → +0,041 (kış gündüzü > 1500 m hariç, 267 satır) → +0,040 (tüm kış > 1500 m hariç); test_station +0,040 → +0,035 →
+  +0,034; GA'lar sıfırı dışlamaya devam ediyor. NWC farkı değişmiyor (+0,019). → CLM'ye üstünlüğün yalnız ~%10–15'i kar satırlarından;
+  asıl fark başka koşullarda da var.
+- **Word (kullanıcı kararı):** LaTeX ana kaynak kalır (verify_numbers yalnız .tex'i denetler); Word her seferinde üretilir.
+  `paper/tools/build_docx.py` (+ `mendeley_fields.lua`, `springer-basic-author-date.csl`) → `paper/submission/word/{TAAC,MAP}_{manuscript,ESM}.docx`.
+  Düzleştirme (\input, \ifTAAC, makrolar, \ref numaraları son LaTeX derlemesinin `*_final.aux`'ından) → pandoc ≥ 3.1 + citeproc
+  (Springer Basic author-date) → Lua süzgeci her atıfı Mendeley alan koduna (`ADDIN CSL_CITATION {…itemData…}`) ve kaynakçayı
+  `ADDIN Mendeley Bibliography CSL_BIBLIOGRAPHY` alanına çevirir. Kullanıcı Mendeley web + Mendeley Cite (Word eklentisi) kullanıyor:
+  Cite, eski eklenti alanlarını dönüştürmeyi önerir; önce refs.bib Mendeley kitaplığına aktarılmalı. Biçim: Times New Roman 12 pt, 1,5 aralık,
+  satır numaraları, tablolar içeriğe göre sütun genişliği (9 pt). Basit satır içi matematik ($-$, $>$, $p$) Unicode metne çevrilir.
+- **Sıra:** önce `python tools/build.py --journal both --final` (aux güncellensin), sonra `python tools/build_docx.py --journal both`.
+  Windows'ta bir kez: `pip install pypandoc_binary python-docx` (pandoc 3.x ile gelir). İlk üretim: atıf alanı TAAC 44 / MAP 39,
+  kaynakça 43 / 37 (LaTeX .bbl ile aynı), tablo 4 / 5, şekil 8 / 9; çözülmemiş \ref 0. `paper/` .gitignore'da → commit yok.
+
 ---
 
 ## 3. Komutlar
@@ -1155,6 +1172,8 @@ python src\analyze_preds.py --dir artifacts_v3 --out artifacts_v3/analysis --ref
 | `src/normalization_shift.py` | Revizyon R13: ay × aydınlanma kanal kayması (σ) — K51 |
 | `src/cloud_freq_sensitivity.py` | Revizyon R10: doğu yaylaları sıklık farkının eşik/kalibrasyon/maske duyarlılığı — K51 |
 | `src/snow_vza_breakdown.py` | Revizyon R7: kar imzası / kış yüksek istasyon / VZA kırılımı, istasyon başına yanlış alarm — K54 |
+| `src/clm_snow_exclusion.py` | Keşifsel: kış > 1500 m satırları olmadan model − CLM/NWC farkı — K55 |
+| `paper/tools/build_docx.py` | LaTeX → Word (.docx), Mendeley atıf alanlarıyla; TAAC/MAP ana metin + ESM (paper/ depoda değil) — K55 |
 | `src/test_center_jitter.py` | P20 jitter birim testleri + P20 öncesi kodla bit bit eşitlik (mini H5) — K46 |
 | `src/train.py`, `src/train_unet.py` | Eğitim; `--h5 --split --aux --aux_channels --seed --epochs --limit_batches --results --outdir --model` + K16: `--loader --mem_splits --cache_dir --threads --no_deterministic --no_last_preds` |
 | `src/config.py` | Colab/yerel yollar, `MTGCLM_H5`, PATCH_SIZE 33, BATCH_SIZE 64, LR 1e-3 |
