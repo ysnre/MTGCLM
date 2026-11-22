@@ -140,6 +140,7 @@ MODULE_INFO = {
     "normalization_shift": ("analiz", "Revizyon R13: ay × aydınlanma kanal kayması (K51)", None),
     "cloud_freq_sensitivity": ("analiz", "Revizyon R10: bulut sıklığı farkının eşik/kalibrasyon/maske duyarlılığı (K51)", None),
     "snow_vza_breakdown": ("analiz", "Revizyon R7: kar ve VZA kırılımı (K54)", None),
+    "clm_snow_exclusion": ("analiz", "Keşifsel: kış yüksek istasyon satırları olmadan model − referans farkı (K55)", None),
     "parallax_shift": ("analiz", "P10: paralaks kaydırmasının büyüklüğü (analitik, istasyonlar ve ızgara)", None),
     "summarize_scenes": ("analiz", "P4: sahne JSON'larından tutarlılık/faz/süre özeti (scenes_summary.csv)", None),
     "infer_scene": ("analiz", "P4: tek sahne tam harita çıkarımı (U-Net faz-hizalı / CNN kayan pencere), NetCDF+GeoTIFF+PNG, H5/preds tutarlılık testi", None),
