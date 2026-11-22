@@ -59,3 +59,7 @@ başlamadan önce yazarların kendi kendine verdiği bir taahhüttür.
   3 tohum ortalaması, eşleştirilmiş gün-blok bootstrap (analyze_preds). **İkincil:** test_station, test_both, yalnız SYNOP, CV yok.
   **Yorum:** GA sıfırı içeriyorsa "sonuçlar normalizasyon sabitlerine duyarsız"; dışlıyorsa fark ek tabloda raporlanır ve Yöntem'de
   yazılır. Her durumda ana tablo değişmez, U-Net yeniden eğitilmez. Eklendiği anda bu koşu başlamamıştı.
+- **21 Kas 2026, 09:40 (TSİ):** Ön kayıtta OLMAYAN keşifsel bir analiz eklendi (kullanıcı isteği): R7'de CLM'nin kış gündüzü > 1500 m
+  satırlarında açıkların %91'ini bulutlu saydığı görüldükten sonra, model − CLM / NWC farkı bu satırlar çıkarılarak yeniden hesaplanacak
+  (varyantlar: kış gündüzü > 1500 m hariç; tüm kış > 1500 m hariç). Sonuç görülerek tanımlandığı için **yorum kuralı yoktur**; ek tabloda
+  "keşifsel" etiketiyle, ana sonuçlarla yan yana raporlanır ve ana tablo değişmez.
