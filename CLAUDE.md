@@ -1007,6 +1007,16 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   kadar sapma) ve yeniden eğitim sonucu (−0,0004 [−0,0011, +0,0002]).
 - verify_numbers 387/0; LaTeX 0 tanımsız (TAAC 33, MAP 34 sayfa); Word yeniden üretildi. Eski sürümler `paper/_prev/*_20261123.tex`.
 
+### K58 — 23 Kas 2026: R8 metne işlendi — "significant" yalnız BH sonrası
+- **Yöntem §3.6:** p = 2(k+1)/(B+1); üç ön-kayıtlı aile (model–ürün 48, tek bölme 108, CV 10); Benjamini–Hochberg (birincil) ve Holm;
+  "significant" = BH sonrası anlamlı, aksi halde "nominal"; örtüşen 1–5 günlük bloklarda model–ürün sonuçları aynı. refs.bib'e Benjamini1995,
+  Holm1979 (verified = {no}, yöntem kaynağı).
+- **Bulgular:** "nominal" oldu: hgb_aux − B_full (test_time), RESNET_CIFAR − A_sat (test_both), hgb_texture − hgb_current, B_full − B_full_shuf,
+  C_noawos − A_sat ve C_t2m − C_noawos (test_station), A_sat − A_norad (test_both), B_full − B_norad (test_time). "Significant" kalan:
+  B_full − C_noawos (test_station), B_full − hgb_texture (test_time), bütün CV farkları (tümü), model–ürün 48 farkın hepsi (products.tex'e cümle).
+  Tartışma 5.2: uzamsal yapı "yalnız nominal".
+- verify_numbers 387/0; LaTeX TAAC 34, MAP 34 sayfa; Word yeniden üretildi. Eski sürümler `paper/_prev/*_20261123b.tex`.
+
 ---
 
 ## 3. Komutlar
