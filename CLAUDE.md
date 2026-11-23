@@ -996,6 +996,17 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   duyarlılığı. Başlık alternatifleri kullanıcıya sunuldu (seçim kullanıcıda).
 - Eski sürümler `paper/_prev/*_20261122.tex`. verify_numbers 369/0; LaTeX 0 tanımsız; Word yeniden üretildi. Toplam karakter 84 976 (hedef 80 000).
 
+### K57 — 23 Kas 2026: revizyon Gün 5 metin — R16, R19, R12/R13/R18 cümleleri
+- **Tartışma 5.1:** R12 kalibrasyon paragrafı (NWC CT 0,928 → 0,940, CLM 0,899 → 0,903, ikisi birlikte 0,941; CNN 0,947, fark 0,006
+  [0,002, 0,009]); NWC farkı çoğunlukla hizalama, CLM farkı ürünün kendisinde; keşifsel kar analizi (0,045 → 0,040, "ön kayıtta yok").
+- **R16 (5.2):** "Neden derin ağ?" paragrafı — istasyonda HGB + doku en az CNN kadar iyi (BH sonrası anlamlı); ağın gerekçesi ürün (U-Net tek
+  geçişte harita, komşuluk özniteliklerini öğreniyor); öneri: nokta doğrulamada HGB referans, haritada U-Net.
+- **R19 Sınırlılıklar** genişletildi: Haziran IR kayması (1,5σ, skor düşmüyor), gözlemci uyumu (42 havalimanı, 0,956, NSC tanımı), holdout'ların
+  hepsi kendi AWOS'lu + piksel–AWOS medyan 9,7 km (%95 20,1 km), val kümesinin bulutlu ağırlığı, yayımlanmış DL maskeleri yeniden eğitilmedi.
+- **Veri 2.x:** IDW dışarıda-bırak (t2m 1,83 K / düzeltmesiz 2,44 K, rh2m %12,7). **Yöntem 3.4:** normalizasyon sabitleri (5 sahne, IR'de 1,8σ'ya
+  kadar sapma) ve yeniden eğitim sonucu (−0,0004 [−0,0011, +0,0002]).
+- verify_numbers 387/0; LaTeX 0 tanımsız (TAAC 33, MAP 34 sayfa); Word yeniden üretildi. Eski sürümler `paper/_prev/*_20261123.tex`.
+
 ---
 
 ## 3. Komutlar
