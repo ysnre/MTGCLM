@@ -983,6 +983,19 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   Windows'ta bir kez: `pip install pypandoc_binary python-docx` (pandoc 3.x ile gelir). İlk üretim: atıf alanı TAAC 44 / MAP 39,
   kaynakça 43 / 37 (LaTeX .bbl ile aynı), tablo 4 / 5, şekil 8 / 9; çözülmemiş \ref 0. `paper/` .gitignore'da → commit yok.
 
+### K56 — 22 Kas 2026: revizyon Gün 5 metin — R1 (Öz, Sonuç) ve R2 (ürün tanımı)
+- **TAAC Öz (249 kelime):** tek skor yerine aralık (görülmemiş haftalar 0,956; bloklu CV katları 0,931–0,959); "her etiket tanımında"
+  ifadesi; R12 cümlesi (kalibre edilince NWC'ye karşı fark 0,007, CLM'ye karşı 0,044); CLM kar cümlesi (kar testi kapalı, > 1500 m'de
+  kış gündüzü açıkların %91'i bulutlu); doğu yaylaları harita iddiası Öz'den çıkarıldı (R10: hipotez). **MAP Öz (249):** "çoklu karşılaştırmaya
+  göre düzeltilmiş" eklendi; uzamsal düzen katkısı (0,0016) BH'de düştüğü için çıkarıldı; CV aralığı ve R12 cümlesi eklendi.
+- **Sonuç:** CV aralığı, R12 ayrıştırması (NWC farkı çoğunlukla hizalama; CLM farkı kalibrasyonla açıklanmıyor, kar ancak küçük bir kısmı),
+  TAAC paragrafı R7 istasyon kanıtı + R10 belirsizliği + Kuter2026 ile.
+- **R2:** Yöntem §3.8 başına ürün tanımı paragrafı (çıktı = o pikseldeki bir istasyonun ≥ 5 okta bildirme olasılığı; istasyon ölçekli bulut
+  oluşum ürünü, 1,7 × 1,1 km piksel bulut örtüsü değil; "cloud mask" = 0,5 eşiğindeki ikili biçim). Fig. 9 altyazısına aynı ayrım
+  (make_fig09 betiği + txt + tex). Bulgular 4.x (fullmap) ve Tartışma 5.5: "istasyon ağı doğrulayamaz" → R7 istasyon kanıtı + R10 eşik
+  duyarlılığı. Başlık alternatifleri kullanıcıya sunuldu (seçim kullanıcıda).
+- Eski sürümler `paper/_prev/*_20261122.tex`. verify_numbers 369/0; LaTeX 0 tanımsız; Word yeniden üretildi. Toplam karakter 84 976 (hedef 80 000).
+
 ---
 
 ## 3. Komutlar
