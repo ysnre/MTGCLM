@@ -1017,6 +1017,18 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   Tartışma 5.2: uzamsal yapı "yalnız nominal".
 - verify_numbers 387/0; LaTeX TAAC 34, MAP 34 sayfa; Word yeniden üretildi. Eski sürümler `paper/_prev/*_20261123b.tex`.
 
+### K59 — 23 Kas 2026: revizyon ek tabloları (7 yeni) ve ek materyal numaraları
+- **`paper/figures/make_tables_revision.py`** (make_all'a eklendi) → `paper/tables/`: tabS8_contingency (R6), tabS9_label_checks (R20 + R17),
+  tabS10_calibrated (R12 + keşifsel kar), tabS11_multiplicity (R8: aileler, BH/Holm, örtüşen blok), tabS12_robustness (R13, P20, R18, R11, R9),
+  tabS13_snow_vza (R7; n < 300 hücresi † ile), tabS14_freq_sensitivity (R10). Dosya adları kaynak; makaledeki numara ilk atıf sırasından.
+- **Numaralama:** preamble.tex `\ST…` makroları ilk atıf sırasına göre yeniden yazıldı. TAAC: S1 paralaks, S2 sağlamlık, S3 etiket duyarlılığı,
+  S4 etiket denetimleri, S5 maliyet, S6 çoklu karşılaştırma, S7 model çiftleri, S8 doku, S9 CV, S10 kontenjans, S11 CLM dönemi, S12 kar/VZA,
+  S13 sıklık duyarlılığı, S14 kalibre referans. MAP: aynı sıra, maliyet yok (ana metinde Tablo). supplementary.tex aynı sırada.
+  Sıra kontrolü: build_docx düzleştirme fonksiyonlarıyla ilk `\ST…` geçişi (sıra değişirse yeniden hesaplanmalı).
+- Metin: "Supplementary Material" geçen yerler numaralandı; products.tex'e kontenjans cümlesi, breakdowns.tex'e VZA cümlesi (CNN 0,943–0,959,
+  CLM en yüksek VZA diliminde 0,859), Yöntem 3.1'e ≥6 okta / doğrulanmamış METAR atfı.
+- verify_numbers 390/0; LaTeX 0 tanımsız, 0 taşan kutu (ESM TAAC 11, MAP 10 sayfa); Word yeniden üretildi. Toplam karakter 89 967.
+
 ---
 
 ## 3. Komutlar
