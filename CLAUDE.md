@@ -4,7 +4,7 @@ Bu dosya, Claude Code / Cowork oturumlarının projeyi sıfırdan anlamadan kald
 devam edebilmesi için tutulur. **Yeni bir karar alındığında (model seçimi, veri bölme,
 etiket politikası, eğitim komutu) bu dosyaya birkaç satır ekleyin.**
 
-Son güncelleme: 2026-11-20
+Son güncelleme: 2026-11-24
 
 ---
 
@@ -1028,6 +1028,12 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
 - Metin: "Supplementary Material" geçen yerler numaralandı; products.tex'e kontenjans cümlesi, breakdowns.tex'e VZA cümlesi (CNN 0,943–0,959,
   CLM en yüksek VZA diliminde 0,859), Yöntem 3.1'e ≥6 okta / doğrulanmamış METAR atfı.
 - verify_numbers 390/0; LaTeX 0 tanımsız, 0 taşan kutu (ESM TAAC 11, MAP 10 sayfa); Word yeniden üretildi. Toplam karakter 89 967.
+
+### K60 — 24 Kas 2026: karakter kısaltması (hedef 80 000) tamamlandı
+- Yöntem (23,3 → 19,0 kB), Tartışma (12,5 → 9,5 kB), Veri (13,4 → 10,8 kB), Giriş ve results/fullmap kısaltıldı; yalnız ifade
+  sıkıştırıldı, sayı/atıf/etiket çıkarılmadı (iki sahne cümlesi tek cümlede birleşti). Yedekler `paper/_prev/*_20261124.tex`.
+- Sonuç: TAAC 89 967 → **79 910** karakter (ana metin 60,5k → ~50,5k), MAP 83 634; öz 249 kelime. verify_numbers 390/0;
+  final derleme TAAC 31 + 11, MAP 32 + 10 sayfa, 0 tanımsız, 0 taşan kutu, 0 \todo; Word (build_docx) iki dergi için yeniden üretildi.
 
 ---
 
