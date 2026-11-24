@@ -1035,6 +1035,16 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
 - Sonuç: TAAC 89 967 → **79 910** karakter (ana metin 60,5k → ~50,5k), MAP 83 634; öz 249 kelime. verify_numbers 390/0;
   final derleme TAAC 31 + 11, MAP 32 + 10 sayfa, 0 tanımsız, 0 taşan kutu, 0 \todo; Word (build_docx) iki dergi için yeniden üretildi.
 
+### K61 — 24 Kas 2026: danışman atıfları, Word biçim denetimi, revizyon soru–cevap dosyası
+- **Danışman çalışmaları** (`docs/paper/hocalar/*.csv`, yalnız başlık + öz okundu → refs.bib `verified = {abstract}`; yedek `refs.bib.bak_20261124`):
+  SekerErtugrul2025 (Kodaz; kanal tabanlı füzyon + U-Net → Yöntem/girdiler), Dinsel2026 (Kodaz; rastgele kırpma → §3.8 jitter),
+  Karadag2018 (Erdaş; derin özniteliklerin kaymaya duyarlılığı → §3.8), Kocer2017 (Koçer, öz-atıf; CNN doğruluk–hız → Tartışma §5.2),
+  Jama2025 (Hacıbeyoğlu; uzamsal/kanal dikkat → Sınırlılıklar). Konu dışı görünebilir → hakem isterse kaldırılır (soru–cevap G4).
+- **Word:** TAAC kılavuzu Word ister, dergi şablonu yok (≥ 11 pt, ≥ 1,5 aralık, satır no, otomatik sayfa no, şekiller metin içinde,
+  "do not use field functions"). build_docx'e alt bilgide sayfa numarası eklendi. Mendeley alanları gönderimden önce Mendeley Cite ile düz metne çevrilmeli.
+- `docs/paper/revizyon_soru_cevap_2026-11-24.md`: olası hakem soruları (A–G) + İngilizce yanıt taslakları + dikkat edilecek riskler (H).
+- Derleme: TAAC 32 + 11, MAP 33 + 10 sayfa, 0 tanımsız; verify_numbers 390/0; toplam ~80 400 karakter.
+
 ---
 
 ## 3. Komutlar
