@@ -1040,6 +1040,8 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   SekerErtugrul2025 (Kodaz; kanal tabanlı füzyon + U-Net → Yöntem/girdiler), Dinsel2026 (Kodaz; rastgele kırpma → §3.8 jitter),
   Karadag2018 (Erdaş; derin özniteliklerin kaymaya duyarlılığı → §3.8), Kocer2017 (Koçer, öz-atıf; CNN doğruluk–hız → Tartışma §5.2),
   Jama2025 (Hacıbeyoğlu; uzamsal/kanal dikkat → Sınırlılıklar). Konu dışı görünebilir → hakem isterse kaldırılır (soru–cevap G4).
+  **Güncelleme (24 Kas akşam):** Kocer2017 çıkarıldı (kullanıcı: ortak yazar, katkısı yok); diğer dördü tam metinden okundu → `verified = {yes}`;
+  SekerErtugrul2025 cümlesi makalenin gerçek yöntemine göre (öznitelik düzeyinde birleştirme) düzeltildi. Notlar `literature_notes.md`.
 - **Word:** TAAC kılavuzu Word ister, dergi şablonu yok (≥ 11 pt, ≥ 1,5 aralık, satır no, otomatik sayfa no, şekiller metin içinde,
   "do not use field functions"). build_docx'e alt bilgide sayfa numarası eklendi. Mendeley alanları gönderimden önce Mendeley Cite ile düz metne çevrilmeli.
 - `docs/paper/revizyon_soru_cevap_2026-11-24.md`: olası hakem soruları (A–G) + İngilizce yanıt taslakları + dikkat edilecek riskler (H).
