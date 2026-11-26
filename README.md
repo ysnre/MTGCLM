@@ -189,7 +189,7 @@ kullanılmıştır; paylaşılmaz, talep üzerine MGM'den temin edilir.
 
 **Zenodo** ([10.5281/zenodo.24112649](https://doi.org/10.5281/zenodo.24112649), tüm sürümler): satır dizini, bölme dosyaları,
 koşu sonuçları ve analiz tabloları, model ağırlıkları, bulut oluşum sıklığı haritaları (`src/make_zenodo_package.py --index ...`).
-Bunlar özgün sayısal veri içermez. Sürüm 1.3 makaleye karşılık gelir; 1.0–1.2 yerine geçmiştir.
+Bunlar özgün sayısal veri içermez. Sürüm 1.3 ([10.5281/zenodo.24560405](https://doi.org/10.5281/zenodo.24560405)) makaleye karşılık gelir.
 Contains modified EUMETSAT Meteosat data (2025–2026).
 
 ## Atıf
