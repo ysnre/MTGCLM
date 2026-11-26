@@ -1072,6 +1072,8 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   README/metadata yeni düzene göre. **v1.3** = dizin + bölmeler + sonuçlar + 3 ağırlık + iklim.
 - Makale: Data/Code availability yeniden yazıldı (Zenodo concept DOI, "version 1.3"); CITATION.cff'ten v1.1 DOI'si çıkarıldı
   (v1.1 hiç yayımlanmadı; v1.0 → v1.2). verify_numbers 390/0; TAAC 31 + 11, MAP 33 + 10 sayfa; ~80 260 karakter.
+- **v1.3 yayımlandı (26 Kas): DOI 10.5281/zenodo.24560405**; v1.2 kullanıcı tarafından silindi (30 gün içinde). Code availability,
+  CITATION.cff ve README bu DOI'ye bağlandı.
 
 ---
 
