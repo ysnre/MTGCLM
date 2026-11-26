@@ -19,6 +19,9 @@ identifiers:
     value: "10.5281/zenodo.24112649"
     description: "Zenodo archive, all versions (concept DOI)"
   - type: doi
+    value: "10.5281/zenodo.24560405"
+    description: "Zenodo archive, version 1.3 (release corresponding to the article)"
+  - type: doi
     value: "10.5281/zenodo.24112650"
     description: "Zenodo archive, version 1.0 (split files and run results only)"
 license: MIT
