@@ -163,36 +163,34 @@ Referans ürün çıkarımları (FCI CLM, NWC SAF CT) ham ürün dosyalarını g
 ## Açık örneklemle hızlı deneme
 
 `src/make_public_sample.py` kompakt veri setinden tabakalı (küme × sınıf × gündüz/gece) ~2.000 satırlık bir örneklem
-üretir, iki dosya hâlinde: `mtg_sample_core.h5` (katman a: 16 FCI kanalı, yükseklik, cos SZA, etiketler) ve
-`mtg_sample_mgm.h5` (katman b: radar, `radar_cov`, t2m, rh2m). Satır sırası ortaktır; `--merge` tam biçimi geri kurar.
+üretir (`mtg_sample_core.h5`: 16 FCI kanalı, yükseklik, cos SZA, etiketler; `mtg_sample_mgm.h5`: radar, `radar_cov`, t2m,
+rh2m). Bu dosyalar **yerel deneme içindir, paylaşılmaz** (aşağıdaki "Veri bulunabilirliği").
 
 ```bash
 python src/make_public_sample.py --h5 <h5> --split splits/split_v2_verify.npz --out data/public/mtg_sample --n 2000
 python src/train.py --h5 data/public/mtg_sample_core.h5 --split data/public/mtg_sample_split.npz \
     --model medium_flat --aux --epochs 3 --outdir artifacts_sample
-python src/make_zenodo_package.py --out zenodo_package --sample data/public/mtg_sample   # Zenodo yükleme paketi
 ```
 
 ## Veri bulunabilirliği
 
-MTG FCI verisi EUMETSAT Data Store üzerinden ücretsiz kayıtla herkese açıktır. Radar ve yer
-gözlemleri Meteoroloji Genel Müdürlüğü'ne aittir ve kurum izniyle kullanılmıştır; ham hâlleri bu
-depoda paylaşılmamaktadır.
+**FCI.** MTG FCI Level-1c (EO:EUM:DAT:0662) ve FCI CLM (EO:EUM:DAT:0678, Level-2) EUMETSAT Data Store'dan ücretsiz kayıtla
+indirilir. EUMETSAT Data Policy (25 Kas 2025) saatlik olmayan Level-1 verisini "Recommended" sayar ve özgün sayısal
+değerlerinin yeniden dağıtımını yasaklar (Art. 4, 6.2); bu yüzden FCI yamaları paylaşılmaz. Bunun yerine her örneğin FCI
+sahne zamanı, istasyonu, ızgara konumu ve bölme kümesi bir **satır dizininde** verilir; yamalar indirilen FCI dosyalarından
+`src/coknc.py` ve `src/create_patch_dataset.py` ile yeniden üretilir.
 
-Bu depoda bulunanlar: veri setini ham kaynaklardan yeniden üretmek için gereken **tüm kod**,
-bölme dosyaları (`splits/*.npz`, ~2 MB) ve koşu sonuçları (`artifacts/*.json`). Tam eğitim veri seti
-(`mtg_train_v2.h5`, 19 GB) MGM verisi içerdiği için **paylaşılmaz**; yerine ~2.000 satırlık tabakalı bir örneklem Zenodo'da arşivlenir:
+```bash
+python src/make_sample_index.py --h5 <kompakt h5> --split splits/split_v2_verify.npz --out data/public/mtg_index.csv
+```
 
-> **Zenodo DOI (tüm sürümler):** [10.5281/zenodo.24112649](https://doi.org/10.5281/zenodo.24112649)
+**MGM verisi.** Radar kompozitleri ve SYNOP, METAR, AWOS gözlemleri Meteoroloji Genel Müdürlüğü'ne aittir ve kurum izniyle
+kullanılmıştır; paylaşılmaz, talep üzerine MGM'den temin edilir.
 
-Türetilmiş veri seti iki katman hâlinde paylaşılır: **katman (a)** 16 FCI kanalı, statik alanlar
-(yükseklik, cos SZA) ve SYNOP/METAR etiketleri; **katman (b)** radar kanalı, `radar_cov`, t2m ve rh2m — MGM verisinden
-türetilmiştir. Zenodo kaydının güncel sürümünde katman (a) örneklemi (`mtg_sample_core.h5`), bölmeler, koşu sonuçları, analiz tabloları,
-iki model ağırlığı ve bulut oluşum sıklığı haritaları bulunur. Katman (b) örneklemi (`mtg_sample_mgm.h5`, 9 MB) MGM'nin yazılı
-onayından sonra aynı kayda yeni sürüm olarak eklenecek (`src/make_zenodo_package.py --out zenodo_package/v1.2 --version 1.2 --include_mgm`); o zamana kadar MGM izniyle
-yazarlardan istenebilir. Ham radar ve yer gözlemleri talep üzerine MGM'den temin edilir.
-
-Eğitilmiş model ağırlıkları (`best_model_*.pth`) sürüm (release) eklerinde yayımlanır.
+**Zenodo** ([10.5281/zenodo.24112649](https://doi.org/10.5281/zenodo.24112649), tüm sürümler): satır dizini, bölme dosyaları,
+koşu sonuçları ve analiz tabloları, model ağırlıkları, bulut oluşum sıklığı haritaları (`src/make_zenodo_package.py --index ...`).
+Bunlar özgün sayısal veri içermez. Sürüm 1.3 makaleye karşılık gelir; 1.0–1.2 yerine geçmiştir.
+Contains modified EUMETSAT Meteosat data (2025–2026).
 
 ## Atıf
 
