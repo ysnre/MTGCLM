@@ -3,8 +3,12 @@ make_zenodo_package.py
 ======================
 Zenodo kaydı (concept DOI 10.5281/zenodo.24112649; v1.0 = 10.5281/zenodo.24112650) için yükleme paketini tek klasörde toplar (P17):
 
-  sample/      açık örneklem katmanı (a): <önek>_core.h5 + _split.npz + _split.json   (make_public_sample.py)
-               katman (b) <önek>_mgm.h5 yalnız --include_mgm ile (MGM YAZILI onayından sonra; K42, K44)
+  index/       satır dizinleri (make_sample_index.py): FCI sahne zamanı, istasyon, ızgara konumu, küme — v1.3'ten beri
+               (K63). FCI kanal değerleri, radar/AWOS alanları ve etiketler dağıtılmaz:
+               EUMETSAT Data Policy Art. 6.2 (saatlik olmayan Level-1 = Recommended, yeniden dağıtım yasak) ve MGM
+               verisi için yalnız kullanım izni.
+  sample/      (yalnız --include_sample ile; v1.0–v1.2 düzeni) açık örneklem <önek>_core.h5 + _split.npz|json,
+               --include_mgm ile <önek>_mgm.h5
   splits/      splits/*.npz|json (v1, v2_verify, cv5, cv5_verify)
   results/     artifacts_v3/*.json (koşu sonuçları), artifacts_v3/analysis/*.csv|json|md
   checkpoints/ seçili ağırlıklar (varsayılan B_full_s1, D_unet_s1)
@@ -14,8 +18,8 @@ Dosyalar kopyalanır (kaynak değişmez); MANIFEST.csv (yol, bayt, sha256, katma
 "deposit metadata" taslağı) ve README.md yazılır. Paket klasörü depoya girmez (.gitignore: zenodo_package/).
 
 Kullanım:
-    python src/make_zenodo_package.py --out zenodo_package/v1.1 --version 1.1
-    python src/make_zenodo_package.py --out zenodo_package/v1.2 --version 1.2 --include_mgm   # MGM yazılı onayından sonra
+    python src/make_zenodo_package.py --out zenodo_package/v1.3 --version 1.3 \
+        --index data/public/mtg_index.csv,data/public/mtg_sample_index.csv
     python src/make_zenodo_package.py --dry_run
 Yeni sürümün DOI'sini Zenodo atar; metadata.json bu yüzden "doi" alanı taşımaz. README tüm sürümleri gösteren
 concept DOI'yi verir.
@@ -30,7 +34,9 @@ import shutil
 
 CONCEPT_DOI = "10.5281/zenodo.24112649"  # tüm sürümler; v1.0 = 10.5281/zenodo.24112650
 REPO = "https://github.com/ysnre/MTGCLM"
-CKPT_DEFAULT = "best_model_B_full_s1__medium_flat.pth,best_model_D_unet_s1__mtgunet.pth"
+EXCLUDE_ANALYSIS = {"error_cases.csv"}  # örnek bazlı FCI kanal değerleri ve AWOS alanları içerir (K63)
+CKPT_DEFAULT = ("best_model_B_full_s1__medium_flat.pth,best_model_D_unet_s1__mtgunet.pth,"
+                "best_model_D_unet_jit_s1__mtgunet.pth")
 
 README = """# MTGCLM — derived data, results and weights
 
@@ -40,32 +46,28 @@ Version {version}; all versions of this record: https://doi.org/{doi}
 ## Contents
 | Folder | Content |
 |---|---|
-| `sample/` | Stratified sample of the training/evaluation patches (layer a; see below) and its split file |
+| `index/` | Row index of the dataset: FCI scene time, station, grid position and split membership of every sample (no data values) |
 | `splits/` | Split definitions (row indices of the compact dataset): single split and blocked 5-fold CV |
 | `results/` | Per-run result files (`*.json`) and the analysis tables (`analysis/*.csv`) |
-| `checkpoints/` | Trained weights: CNN with all inputs (`B_full_s1`) and U-Net (`D_unet_s1`) |
-| `climatology/` | Cloud occurrence frequency from 3-hourly full-scene U-Net maps (NetCDF) and summaries |
+| `checkpoints/` | Trained weights: CNN with all inputs (`B_full_s1`), centre-supervised U-Net (`D_unet_s1`) and the U-Net trained with centre-pixel jitter used for full scenes (`D_unet_jit_s1`) |
+| `climatology/` | Cloud occurrence frequency from 3-hourly single-pass maps of the jitter-trained U-Net (NetCDF) and summaries |
 
-`MANIFEST.csv` lists every file with its size and SHA-256 checksum. On Zenodo, `splits/`, `results/`, `checkpoints/` and
-`climatology/` are uploaded as zip archives of the same name, and the files of `sample/` at the top level.
+`MANIFEST.csv` lists every file with its size and SHA-256 checksum. On Zenodo, each folder is uploaded as a zip archive
+of the same name.
 
-## Data layers
-* **Layer (a), open:** the 16 FCI channels (EUMETSAT, EO:EUM:DAT:0662), terrain elevation (Copernicus DEM GLO-90),
-  the cosine of the solar zenith angle, and the SYNOP/METAR cloud labels. FCI data are subject to the EUMETSAT data
-  policy; surface synoptic reports are exchanged under the WMO Unified Data Policy.
-* **Layer (b):** the radar reflectivity channel, the radar coverage field and the interpolated 2 m
-  temperature and relative humidity. These derive from data of the Turkish State Meteorological Service (TSMS/MGM)
-  and are {mgm_state}.
-
-Both layers carry the same row order (`row`); `python src/make_public_sample.py --merge <prefix> --out full.h5`
-rebuilds the full 17 + 5-channel format used by the code.
-
-## Quick start
-```bash
-git clone {repo} && cd MTGCLM && pip install -r requirements.txt
-python src/make_public_sample.py --check sample/{prefix}
-python src/train.py --h5 sample/{prefix}_core.h5 --split sample/{prefix}_split.npz --model medium_flat --aux --epochs 3
-```
+## Data and how to rebuild the patches
+This record contains no satellite, radar or station data values.
+* **FCI:** the Level-1c data (EUMETSAT, EO:EUM:DAT:0662) are available without charge from the EUMETSAT Data Store.
+  Non-hourly Level-1 data are "Recommended" data under the EUMETSAT Data Policy, whose original numerical data may not be
+  redistributed; the patches are therefore not included. `index/` gives the FCI scene (`fci_scene`, UTC) and grid position
+  (`station_y`, `station_x` on the 800 × 1000 grid, lon 25.01–44.99° E in 0.02° steps, lat 42.995–35.005° N in 0.01°
+  steps) of every sample; `src/coknc.py` and `src/create_patch_dataset.py` in the repository rebuild the patches from the
+  downloaded files.
+* **Radar, AWOS fields and cloud labels (SYNOP/METAR):** data of the Turkish State Meteorological Service (TSMS/MGM),
+  available from TSMS on request.
+* **Derived products in this record** (splits, results, analysis tables, model weights, cloud occurrence frequency maps)
+  contain no original numerical data. Contains modified EUMETSAT Meteosat data (2025–2026).
+* Earlier versions 1.0–1.2 of this record are superseded; please use this version.
 
 ## Note on a result key
 The double-threshold baseline is stored under the key `threshold2_ir_105+vis_06`; it actually uses the IR10.5 and IR13.3
@@ -88,7 +90,9 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--out", default="zenodo_package")
     ap.add_argument("--sample", default="data/public/mtg_sample", help="make_public_sample.py çıktı öneki")
-    ap.add_argument("--include_mgm", action="store_true", help="Katman (b)'yi de ekle (MGM izniyle)")
+    ap.add_argument("--index", default="", help="virgülle ayrılmış dizin CSV'leri (make_sample_index.py) → index/")
+    ap.add_argument("--include_sample", action="store_true", help="eski düzen: FCI yamalı açık örneklem (v1.0–v1.2)")
+    ap.add_argument("--include_mgm", action="store_true", help="Katman (b)'yi de ekle (MGM yeniden dağıtım izniyle)")
     ap.add_argument("--results_dir", default="artifacts_v3")
     ap.add_argument("--checkpoints", default=CKPT_DEFAULT, help="virgülle ayrılmış dosya adları (checkpoints/ altında)")
     ap.add_argument("--version", default="1.1", help="Zenodo sürüm etiketi (ör. 1.1)")
@@ -98,9 +102,12 @@ def main():
     R = args.results_dir
     plan = []  # (kaynak, hedef, katman)
     pre = args.sample
-    for suf in ("_core.h5", "_split.npz", "_split.json"):
-        plan.append((pre + suf, "sample/" + os.path.basename(pre + suf), "a"))
-    if args.include_mgm:
+    for f in [c.strip() for c in args.index.split(",") if c.strip()]:
+        plan.append((f, "index/" + os.path.basename(f), "index"))
+    if args.include_sample:
+        for suf in ("_core.h5", "_split.npz", "_split.json"):
+            plan.append((pre + suf, "sample/" + os.path.basename(pre + suf), "a"))
+    if args.include_sample and args.include_mgm:
         plan.append((pre + "_mgm.h5", "sample/" + os.path.basename(pre + "_mgm.h5"), "b"))
     for f in sorted(glob.glob("splits/*.npz") + glob.glob("splits/*.json")):
         plan.append((f, "splits/" + os.path.basename(f), "a"))
@@ -109,6 +116,8 @@ def main():
             plan.append((f, "results/" + os.path.basename(f), "derived"))
     for f in sorted(glob.glob(os.path.join(R, "analysis", "*.csv")) + glob.glob(os.path.join(R, "analysis", "*.json"))
                     + glob.glob(os.path.join(R, "analysis", "*.md"))):
+        if os.path.basename(f) in EXCLUDE_ANALYSIS:
+            continue
         plan.append((f, "results/analysis/" + os.path.basename(f), "derived"))
     for n in [c.strip() for c in args.checkpoints.split(",") if c.strip()]:
         plan.append((os.path.join(R, "checkpoints", n), "checkpoints/" + n, "derived"))
@@ -134,13 +143,8 @@ def main():
         os.makedirs(os.path.dirname(dst), exist_ok=True)
         shutil.copy2(s, dst)
         rows.append({"path": d, "bytes": os.path.getsize(dst), "sha256": sha256(dst), "layer": l})
-    prefix = os.path.basename(pre)
-    mgm_state = ("included in this record with the permission of TSMS" if args.include_mgm else
-                 "not included in this version; they will be added in a later version of this record once TSMS has "
-                 "confirmed their release in writing, and are until then available from the corresponding author with "
-                 "the permission of TSMS")
     with open(os.path.join(args.out, "README.md"), "w", encoding="utf-8") as f:
-        f.write(README.format(repo=REPO, doi=CONCEPT_DOI, version=args.version, prefix=prefix, mgm_state=mgm_state))
+        f.write(README.format(repo=REPO, doi=CONCEPT_DOI, version=args.version))
     rows.append({"path": "README.md", "bytes": os.path.getsize(os.path.join(args.out, "README.md")),
                  "sha256": sha256(os.path.join(args.out, "README.md")), "layer": "doc"})
 
@@ -157,13 +161,14 @@ def main():
     meta = {"metadata": {
         "title": "MTGCLM: derived data, results and trained weights for a station-trained FCI cloud mask over Türkiye",
         "upload_type": "dataset", "version": args.version, "creators": creators,
-        "description": "Stratified sample of FCI patches (open layer), split definitions, per-run results, analysis "
-                       "tables, trained weights and cloud occurrence frequency maps of the MTGCLM project. See README.md.",
+        "description": "Row index (FCI scene time, station, grid position, split) of the MTGCLM dataset, split "
+                       "definitions, per-run results, analysis tables, trained weights and cloud occurrence frequency "
+                       "maps. No satellite, radar or station data values are included. See README.md.",
         "access_right": "open", "license": "cc-by-4.0",
         "keywords": ["cloud mask", "Meteosat Third Generation", "FCI", "Türkiye", "SYNOP", "deep learning"],
         "related_identifiers": [{"identifier": REPO, "relation": "isSupplementTo", "scheme": "url"}],
-        "notes": "Layer (b) (radar and AWOS-derived fields, TSMS) " + ("included." if args.include_mgm else
-                  "not included in this version; it will be added in a later version after written approval by TSMS."),
+        "notes": "FCI Level-1c data: EUMETSAT Data Store (EO:EUM:DAT:0662). Radar, AWOS and SYNOP/METAR data: "
+                 "Turkish State Meteorological Service, on request. Contains modified EUMETSAT Meteosat data (2025-2026).",
     }}
     with open(os.path.join(args.out, "metadata.json"), "w", encoding="utf-8") as f:
         json.dump(meta, f, indent=2, ensure_ascii=False)
@@ -171,7 +176,7 @@ def main():
         w = csv.DictWriter(f, fieldnames=["path", "bytes", "sha256", "layer"])
         w.writeheader(); w.writerows(rows)
     print(f"Yazıldı: {args.out}/ ({len(rows)} dosya, {sum(r['bytes'] for r in rows) / 1e6:.1f} MB) "
-          f"+ MANIFEST.csv, metadata.json. Katman (b): {'EKLENDİ' if args.include_mgm else 'eklenmedi'}.")
+          f"+ MANIFEST.csv, metadata.json. FCI yamaları: {'EKLENDİ' if args.include_sample else 'yok'}.")
 
 
 if __name__ == "__main__":
