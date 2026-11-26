@@ -4,7 +4,7 @@ Bu dosya, Claude Code / Cowork oturumlarının projeyi sıfırdan anlamadan kald
 devam edebilmesi için tutulur. **Yeni bir karar alındığında (model seçimi, veri bölme,
 etiket politikası, eğitim komutu) bu dosyaya birkaç satır ekleyin.**
 
-Son güncelleme: 2026-11-24
+Son güncelleme: 2026-11-26
 
 ---
 
@@ -1047,6 +1047,32 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
 - `docs/paper/revizyon_soru_cevap_2026-11-24.md`: olası hakem soruları (A–G) + İngilizce yanıt taslakları + dikkat edilecek riskler (H).
 - Derleme: TAAC 32 + 11, MAP 33 + 10 sayfa, 0 tanımsız; verify_numbers 390/0; toplam ~80 400 karakter.
 
+### K62 — 25 Kas 2026: başlıklar kesinleşti, son derleme, Zenodo v1.2 paketi
+- **Başlıklar (kullanıcı):** TAAC "Deep learning-based fusion of Meteosat Third Generation FCI, weather radar and surface observations for
+  station-scale cloud masking over Türkiye"; MAP "Machine learning cloud masking over Türkiye from Meteosat Third Generation FCI and weather
+  radar, trained on surface observations". frontmatter.tex, supplementary.tex ve kapak mektuplarına işlendi; kapak mektuplarındaki eski
+  ifadeler (yer gözlemiyle doğrulanmadı, "her biri 0,001–0,002", doğu yaylaları harita iddiası) güncel öze göre düzeltildi.
+- **Son hâl:** `paper/submission/{taac,map}/` = manuscript + ESM (PDF ve Word), Fig/ESM_Fig (PDF+TIF), figure_map.csv, cover_letter.md.
+  verify_numbers 390/0; TAAC 31 + 11, MAP 33 + 10 sayfa; 0 tanımsız, 0 taşan kutu, 0 \todo; TAAC 80 384 karakter, öz 249 kelime.
+- **Zenodo v1.2 paketi** `zenodo_package/v1.2/` + `v1.2_upload/` (zip'ler; 158 dosya, 108,9 MB; katman b yok): revizyon analizleri ve
+  D_unet_jit ağırlığı dahil, iklim dosyaları jitter'lı modelden. `make_zenodo_package.py` varsayılan ağırlıklara D_unet_jit_s1 eklendi.
+  **Kalan:** GitHub'da v1.2 sürümü + Zenodo yüklemesi → yeni sürüm DOI'si backmatter Code availability'ye (şu an v1.1, 10.5281/zenodo.24368365)
+  ve CITATION.cff'e; ardından build + build_docx yeniden.
+
+### K63 — 26 Kas 2026: veri paylaşımı EUMETSAT ve MGM kurallarına göre yeniden kuruldu (Zenodo v1.3)
+- **EUMETSAT Data Policy (25 Kas 2025):** yalnız *saatlik* FCI Level-1 verisi ve türetilmiş ürünler (FCI CLM dahil, Level-2)
+  "Core" (CC BY 4.0, yeniden dağıtılabilir); diğer Level-1 verisi "Recommended": araştırma için ücretsiz ama özgün sayısal
+  değerlerin yeniden dağıtımı yasak (Art. 4, 6.2, 12). Açık örneklemin (v1.2'de yayımlandı) yamalarının ≥ %38'i saatlik olmayan
+  taramalardan (:48, :18) → **FCI yamaları artık paylaşılmaz**; Zenodo destekten v1.2'deki `mtg_sample_core.h5`'in kaldırılması istenecek.
+  Atıf satırı "contains modified EUMETSAT Meteosat data (2025–2026)" Teşekkür'e eklendi.
+- **MGM (kullanıcı kararı):** dergiler yalnız veri erişim beyanı istiyor → MGM'den yalnız **kullanım izni** istenir, yeniden dağıtım
+  değil; katman (b) hiç yayımlanmayacak. "Yazılı onaydan sonra eklenecek" ifadeleri makale, README, kapak mektupları ve paket betiğinden kaldırıldı.
+- **Yeni `src/make_sample_index.py`:** satır dizini (row, set, fci_scene, obs_time_utc, wmoid, station_y/x, lat, lon; veri değeri yok).
+  `make_zenodo_package.py`: `--index` (→ `index/`), FCI örneklemi yalnız `--include_sample` ile, `error_cases.csv` paketten çıkarıldı;
+  README/metadata yeni düzene göre. **v1.3** = dizin + bölmeler + sonuçlar + 3 ağırlık + iklim.
+- Makale: Data/Code availability yeniden yazıldı (Zenodo concept DOI, "version 1.3"); CITATION.cff'ten v1.1 DOI'si çıkarıldı
+  (v1.1 hiç yayımlanmadı; v1.0 → v1.2). verify_numbers 390/0; TAAC 31 + 11, MAP 33 + 10 sayfa; ~80 260 karakter.
+
 ---
 
 ## 3. Komutlar
@@ -1194,6 +1220,7 @@ python src\analyze_preds.py --dir artifacts_v3 --out artifacts_v3/analysis --ref
 | `src/export_compact_h5.py` | Bölmedeki örnekler, global permütasyon, float16 → `mtg_train_v2.h5` |
 | `src/make_dem_npy.py` | DEM GeoTIFF → 800×1000 `.npy` (metre) — Copernicus GLO-90 ile çalıştırıldı |
 | `src/make_public_sample.py` | İki katmanlı tabakalı örneklem (a: FCI+statik+etiket, b: MGM radar/AWOS) + bölme; `--merge`, `--check` (K38) |
+| `src/make_sample_index.py` | Satır dizini (sahne zamanı, istasyon, ızgara konumu, küme; veri değeri yok) — Zenodo v1.3 (K63) |
 | `src/make_zenodo_package.py` | Zenodo yükleme paketi + MANIFEST (sha256) + metadata.json (K38) |
 | `src/metrics.py` | Balanced Acc, MCC, F1(clear/cloudy), AUC, karışıklık matrisi, majority |
 | `src/baselines.py` | majority, threshold_ir_105, threshold2_ir_105+vis_06, logreg_aux, rf_aux, hgb_aux (K16: blok okuma, SYNOP-only, tahmin kaydı) |
