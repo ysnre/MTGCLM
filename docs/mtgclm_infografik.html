@@ -291,6 +291,7 @@
         <div class="it"><div class="k">K51 · 20 Kas</div><div class="t">Revizyon Gün 4</div><div class="d">Holdout istasyonlarının hepsinin kendi AWOS’u var (piksel–AWOS medyanı 9,7 km). IDW çapraz doğrulaması: t2m 1,8 K, rh2m %12,7. Haziran IR kanallarında > 0,5σ mevsimsel kayma (performans düşmüyor). Doğu yaylaları CLM − model farkı eşik/kalibrasyona duyarlı → hipotez; kış gündüzünde sağlam (+0,12…+0,24).</div></div>
         <div class="it"><div class="k">K52–53 · 20 Kas</div><div class="t">TAAC öncelikli; normalizasyon testi</div><div class="d">Birincil dergi TAAC, MAP sürümü hazır tutulacak. Z-skor sabitleri ilk 5 sahneden geliyordu (IR’de 1,3–1,8σ sapma); eğitim kümesi sabitleriyle yeniden eğitim farkı −0,0004 [−0,0011, +0,0002] → sonuçlar sabitlere duyarsız.</div></div>
         <div class="it"><div class="k">K54 · 20 Kas</div><div class="t">Kar ve VZA (R7)</div><div class="d">Kış gündüzü, 1500 m üstü istasyonlarda açık raporların %91’ini CLM bulutlu sayıyor (model %6, NWC %15); BalAcc 0,54 / 0,95 / 0,92. 9 istasyonun 8’inde aynı desen; ilkbahar–yazda fark yok. CLM en yüksek VZA diliminde de düşüyor.</div></div>
+        <div class="it"><div class="k">K55–62 · 21–25 Kas</div><div class="t">Metin revizyonu ve son hâl</div><div class="d">Keşifsel kar analizi (CLM farkının ~%10–15’i kar satırlarından); Word çıktısı (Mendeley alanlı); öz, ürün tanımı, çoklu karşılaştırma dili, 7 ek tablo; metin ~80 000 karaktere kısaltıldı; danışman atıfları; yeni başlıklar (TAAC: deep learning-based fusion…, MAP: machine learning cloud masking…).</div></div>
       </div>
     </div>
   </div>
@@ -335,21 +336,19 @@
   <div class="sec-h"><h2>Sıradaki adımlar</h2><span class="k">makaleye giden yol</span></div>
   <div class="grid g2">
     <div class="card">
-      <h3>Olmazsa olmaz</h3>
+      <h3>Gönderimden önce</h3>
       <ul class="lst">
-        <li>Referans ürünleri aynı etiketlerle kalibre eden kıyas (R12) — en güçlü hakem itirazına cevap</li>
-        <li>Öz’de iddiayı daraltma: skor aralığı, “istasyon ölçeği”, ilk cümle (yer gözlemi)</li>
-        <li>Gözlemci belirsizlik tavanı ve atılan METAR satırlarında performans</li>
-        <li>POD/FAR/KSS, çoklu karşılaştırma, blok uzunluğu duyarlılığı</li>
+        <li>Zenodo v1.3: FCI yamaları yerine satır dizini (EUMETSAT politikası); v1.2'deki örneklemin kaldırılması için Zenodo desteğine yaz</li>
+        <li>Word'de Mendeley atıflarını düz metne çevir (TAAC: alan kodu kullanılmaz)</li>
+        <li>Benzerlik raporu (E5) ve danışmana son okuma</li>
       </ul>
     </div>
     <div class="card">
-      <h3>Güçlendirir</h3>
+      <h3>Sonra</h3>
       <ul class="lst">
-        <li>P20: U-Net hedef-piksel jitter → tek geçişli tam harita</li>
-        <li>Bulut sıklığının eşik/kalibrasyon/maske duyarlılığı (doğu yaylaları)</li>
-        <li>Gözlemci belirsizlik tavanı; holdout–AWOS ve IDW doğrulaması</li>
-        <li>MGM yazılı izni → Zenodo v1.2 (katman b)</li>
+        <li>MGM'den kullanım izni yazısı (yeniden dağıtım istenmiyor; K63)</li>
+        <li>Hakem yanıtları: docs/paper/revizyon_soru_cevap_2026-11-24.md</li>
+        <li>Piksel düzeyinde kar denetimi (FCI H43) — gelecek çalışma</li>
       </ul>
     </div>
   </div>
@@ -361,7 +360,7 @@
 </section>
 
 <footer>
-  MTGCLM proje infografiği · güncelleme: <b>20 Kasım 2026</b> · Bu sayfa projedeki her anlamlı değişiklikte güncellenir.
+  MTGCLM proje infografiği · güncelleme: <b>26 Kasım 2026</b> · Bu sayfa projedeki her anlamlı değişiklikte güncellenir.
   Sayılar <code>artifacts_v3/analysis/analysis.md</code>, <code>artifacts/summary.md</code>, <code>artifacts/clm_on_splits.json</code> ve <code>artifacts/nwc_metar_on_splits.json</code>’dan türetilmiştir.
 </footer>
 
