@@ -151,6 +151,11 @@ yollar depo köküne göredir):
 | Z-skor sabitleri eğitim kümesinden yeniden eğitim (R13 ADIM 3) | `python src/run_all.py --h5 <h5> --outdir artifacts_v3 --stage modality --modalities B_full_trainnorm` → `python src/analyze_preds.py --dir artifacts_v3 --out artifacts_v3/analysis/r13 --pairs B_full_trainnorm-B_full` | `B_full_trainnorm_s*.json`, `analysis/r13/pairs.csv` |
 | Kar ve görüş açısı (VZA) kırılımı (R7) | `python src/snow_vza_breakdown.py` | `analysis/snow_vza*.csv` |
 | Keşifsel: kış > 1500 m satırları olmadan model − CLM/NWC farkı | `python src/clm_snow_exclusion.py` | `analysis/clm_snow_exclusion.csv` |
+| Tohumları da yeniden örnekleyen iç içe bootstrap (ikinci iç tur) | `python src/seed_nested_boot.py --dir artifacts_v3` | `analysis/seed_nested_pairs.csv` |
+| Tüm satırlar için CLM / NWC SAF önbelleği (aşağıdaki üç analiz okur) | `python src/ref_rows_cache.py` | `data/processed/ref_rows_all.npz` |
+| Ürün kapsamı yanlılığı (B1) | `python src/coverage_bias.py` | `analysis/coverage_bias.csv`, `coverage_bias_strata.csv` |
+| Doğrulanmamış METAR açıklarının profili (B2) | `python src/removed_metar_profile.py` | `analysis/removed_metar_profile.csv`, `_strata.csv` |
+| Yükseklik ve kıyı kırılımı (B3) | `python src/surface_breakdown.py --dir artifacts_v3` | `analysis/surface_breakdown.csv` |
 | Bulut sıklığı duyarlılığı (R10) | `python src/cloud_freq_sensitivity.py` | `climatology/cloud_freq_sensitivity.csv` |
 
 R9 ve R18 ham AWOS dosyasını (`data/raw_awos_observation/`) okur; ilk koşu istasyon kayıt sayılarını
