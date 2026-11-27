@@ -60,17 +60,11 @@ MODULE_INFO = {
     "grid_utils": ("ham", "Düzenli enlem/boylam ızgarası, km projeksiyonu, cos(SZA), 10 dk pencere yardımcıları", None),
     "resampler": ("ham", "Radar görüntüsünü uydu ızgarasına en yakın komşu ile yeniden örnekler", None),
     "radar_loader": ("ham", "Radar PNG + radar.csv meta verisini okur; dBZ mavi kanalda", None),
-    "process_radar_pipeline": ("ham", "Radarı uydu zamanlarına hizalayıp ızgaraya taşır (küçük veri sürümü)",
-                               "Büyük veri için process_radar_pipeline_large.py kullanılıyor"),
     "process_radar_pipeline_large": ("ham", "Radar hizalama, büyük veri / çok süreçli sürüm (MongoDB meta)", None),
     "observation_loader": ("ham", "SYNOP + METAR gözlemlerini okuyup birleştirir", None),
     "awos_matcher": ("ham", "İstasyonları uydu ızgarasındaki en yakın piksele eşler", None),
-    "process_awos_pipeline": ("ham", "Gözlemleri uydu zamanları ve piksellerle hizalar (küçük veri sürümü)",
-                              "Büyük veri için process_awos_pipeline_large.py kullanılıyor"),
     "process_awos_pipeline_large": ("ham", "Gözlem hizalama, büyük veri / çok süreçli sürüm", None),
     "make_dem_npy": ("ham", "DEM GeoTIFF'i (Copernicus GLO-90) 800×1000 .npy ızgarasına çevirir", None),
-    "awos_scalar_loader": ("ham", "v1 geç füzyon için istasyon AWOS skalerlerini okur",
-                           "v1 skaler füzyon; v2'de raster aux kanallar kullanılıyor (K1)"),
     # 2 h5
     "create_patch_dataset": ("h5", "Hizalanmış uydu + radar + gözlemden 33×33 yamaları çıkarıp ana H5'i yazar", None),
     "update_h5_aux_channels": ("h5", "Ana H5'e 5 raster yardımcı kanal ekler: t2m, rh2m, elev, cos_sza, radar_cov", None),
@@ -81,12 +75,6 @@ MODULE_INFO = {
     "cv_weeks": ("analiz", "Bloklu CV havuzunda kat/ay/hafta bazında BalAcc → cv_weeks.csv (zayıf haftalar)", None),
     "make_sample_index": ("h5", "Satır dizini: FCI sahne zamanı, istasyon, ızgara konumu, küme (veri değeri yok; Zenodo v1.3)", None),
     "make_zenodo_package": ("h5", "Zenodo yükleme paketini toplar: satır dizini, bölmeler, sonuçlar, ağırlıklar, klimatoloji + MANIFEST/metadata", None),
-    "update_h5_labels": ("h5", "Etiketleri ilk politika ile yazar (v1)", "update_h5_labels_v2.py ile değiştirildi"),
-    "update_h5_scalars": ("h5", "H5'e v1 AWOS skalerlerini ekler", "v1 skaler füzyon (K1)"),
-    "compress_h5": ("h5", "Ana H5'in sıkıştırılmış kopyasını yazar (eski Colab depolama çözümü)",
-                    "Kompakt H5 (export_compact_h5.py) ile gereksizleşti"),
-    "update_compressed_labels_local": ("h5", "Sıkıştırılmış H5'teki etiketleri yerinde günceller",
-                                       "compress_h5.py ile birlikte eskidi"),
     # 3 bölme
     "make_splits": ("bolme", "Hafta-blok + istasyon ayrımlı tek bölme (train/val/test_time/test_station/test_both)", None),
     "make_cv_splits": ("bolme", "Bloklu 5-katlı çapraz doğrulama bölmeleri", None),
@@ -150,9 +138,7 @@ MODULE_INFO = {
     "verify_channel_order": ("arac", "Kompakt H5 kanal sırasını ham NetCDF ile eşleştirip doğrular (salt okuma; K23)", None),
     "make_code_map": ("arac", "Bu sayfayı üretir: kodu tarar, bağlantıları çıkarır, HTML yazar", None),
     "__init__": ("arac", "Paket işaretçisi (boş)", None),
-    "data_fusion": ("arac", "Boş dosya (yer tutucu)", "İçeriği yok"),
     "nb:clmcl": ("arac", "Colab defteri: Drive, H5 kopyası, depo klonu, run_all çağrısı", None),
-    "nb:check_data": ("arac", "Veri kontrol defteri (boş)", "İçeriği yok"),
 }
 
 # ----------------------------------------------------------------------------- veri düğümleri (sıra önemli)
