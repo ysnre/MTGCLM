@@ -63,3 +63,20 @@ başlamadan önce yazarların kendi kendine verdiği bir taahhüttür.
   satırlarında açıkların %91'ini bulutlu saydığı görüldükten sonra, model − CLM / NWC farkı bu satırlar çıkarılarak yeniden hesaplanacak
   (varyantlar: kış gündüzü > 1500 m hariç; tüm kış > 1500 m hariç). Sonuç görülerek tanımlandığı için **yorum kuralı yoktur**; ek tabloda
   "keşifsel" etiketiyle, ana sonuçlarla yan yana raporlanır ve ana tablo değişmez.
+- **27 Kas 2026, 14:30 (TSİ) — ikinci iç hakem turu (B1–B3), koşudan önce yazıldı.** Gerekçe: 26 Kas iç değerlendirmesi
+  (`docs/paper/hakem_degerlendirmesi_2026-11-26.md`). Üçü de **betimsel**; hiçbir model, eşik ya da etiket bu sonuçlara bakılarak
+  değiştirilmeyecek; ana tablo değişmez. Tümü verify bölmesi, kayıtlı tahminler, gün blokları (test_station'da istasyon blokları), B = 2000, tohum 0.
+  - **B1 kapsama yanlılığı** (`src/coverage_bias.py`): test kümelerinde (yalnız SYNOP ve tüm etiketler) CLM ve NWC SAF CT'nin kapsadığı ve
+    kapsamadığı satırlar; ay, UTC saati, aydınlanma, yükseklik bandına göre kapsama oranı; kapsanan/kapsanmayan satırların bulutlu oranı ve
+    B_full BalAcc'i. **Birincil:** test_time SYNOP, B_full BalAcc(NWC kapsanan) − BalAcc(kapsanmayan) farkı ve GA'sı. **Yorum:** fark GA'sı
+    sıfırı dışlar ve |fark| ≥ 0,01 ise Sınırlılıklar'a "NWC kıyası kapsanan satırlarla sınırlı ve bu satırlar daha kolay/zor" cümlesi;
+    aksi halde yalnız ek tablo.
+  - **B2 silinen METAR açıkları** (`src/removed_metar_profile.py`): verify politikasının çıkardığı doğrulanmamış METAR açık satırlarının
+    (bölme dışı) saat, ay, aydınlanma, istasyon dağılımı; aynı istasyon-saatte SYNOP varlığı; CLM r30 ve NWC r30'a göre bulutlu oranı
+    (eşikler train'den, analyze_preds ile aynı), tutulan açık satırlarla (aynı kümelerde, METAR ve SYNOP ayrı) karşılaştırma.
+    **Birincil:** silinen ile tutulan METAR açıklarında NWC r30 bulutlu oranı farkı (GA, istasyon blokları). **Yorum:** silinenlerde oran
+    belirgin yüksekse (fark ≥ 0,05 ve GA sıfırı dışlıyor) "verify politikası zor açık vakaları ayıklıyor olabilir; keep sonuçları (Tablo S3)
+    alt sınırdır" cümlesi Sınırlılıklar'a; benzer ya da düşükse betimsel kalır.
+  - **B3 yükseklik ve kıyı kırılımı** (`src/surface_breakdown.py`): istasyon yüksekliği (< 500, 500–1000, 1000–1500, > 1500 m) ve kıyıya
+    uzaklık (< 30 km / ≥ 30 km, `cloud_frequency.py` kıyı maskesi); B_full, D_unet_jit, CLM r30, NWC r30; n, BalAcc, POD, POFD, FAR;
+    n < 300 belirsiz. **Yorum:** yalnız betimsel (ek tablo + bir cümle).
