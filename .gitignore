@@ -49,10 +49,8 @@ archive_v1/
 # --- araç / editör yerel ayarları ---
 .agent/
 .claude/
-claude_rules/
 .vscode/
 .idea/
-src/_backup_20260916/
 
 # --- Python ---
 __pycache__/
