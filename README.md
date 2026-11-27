@@ -5,7 +5,7 @@ Türkiye üzerinde bulut varlığını tahmin eden derin öğrenme hattı. Etike
 istasyon ve 79 havaalanı (METAR) gözleminden; yardımcı meteorolojik alanlar 1982 otomatik
 gözlem istasyonundan (AWOS) enterpolasyonla üretilir.
 
-> Durum: v3 sonuçları tamamlandı (`artifacts_v3/`). Akış için `walkthrough_v2.md`, kararlar için `CLAUDE.md`.
+> Durum: v3 sonuçları tamamlandı (`artifacts_v3/`). Komutlar ve kararlar için `CLAUDE.md` (§3 Komutlar, §2 karar günlüğü).
 
 ## İçindekiler
 
@@ -56,7 +56,7 @@ attrs: means, stds, aux_channels, aux_means, aux_stds, label_policy, pre_shuffle
 
 ## Hattı yeniden üretme
 
-Ham veriden başlayarak (ayrıntılar ve parametreler için `walkthrough_v2.md`):
+Ham veriden başlayarak (ayrıntılar ve parametreler için `CLAUDE.md` §3.1):
 
 ```bash
 python src/process_radar_pipeline_large.py     # radar PNG → uydu grid'inde kompozit .npy
