@@ -4,7 +4,7 @@ Bu dosya, Claude Code / Cowork oturumlarının projeyi sıfırdan anlamadan kald
 devam edebilmesi için tutulur. **Yeni bir karar alındığında (model seçimi, veri bölme,
 etiket politikası, eğitim komutu) bu dosyaya birkaç satır ekleyin.**
 
-Son güncelleme: 2026-11-26
+Son güncelleme: 2026-11-27
 
 ---
 
@@ -700,7 +700,7 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   klimatoloji NetCDF → `zenodo_package/` + MANIFEST.csv (sha256) + metadata.json + README; (b) yalnız `--include_mgm`.
 - README: "v3 sonuçlarını yeniden üretme" (çıktı → komut tablosu) ve "Açık örneklemle hızlı deneme". **Sapma:** P17'deki
   "her şekil/tablo için tek komut" paper/ betiklerini GitHub'a taşırdı (kullanıcı istemiyor) → yalnız src/ çıktıları listelendi.
-  Etiket önerisi `v1.0-taac` yerine `v1.0` (aynı nedenle). Sürüm notu taslağı `docs/release_notes_v1.0.md`.
+  Etiket önerisi `v1.0-taac` yerine `v1.0` (aynı nedenle). Sürüm notu taslağı `docs/release_notes_v1.0.md` (27 Kas: → `docs/release_notes_v1.3.md`, K64).
 - .gitignore: `zenodo_package/`, `data/public/`, `artifacts_sample/`.
 - **Gerçek veride koşuldu (17 Kas):** `data/public/mtg_sample_core.h5` 2038 satır, 32 MB (+ `_mgm.h5` 9 MB), `--check` OK;
   `zenodo_package/` 126 dosya (a: 30 dosya 39 MB, türetilmiş: 95 dosya 69 MB), katman (b) pakette yok. satpy sürümü 0.48.0
@@ -1075,6 +1075,21 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
 - **v1.3 yayımlandı (26 Kas): DOI 10.5281/zenodo.24560405**; v1.2 kullanıcı tarafından silindi (30 gün içinde). Code availability,
   CITATION.cff ve README bu DOI'ye bağlandı.
 
+### K64 — 27 Kas 2026: depo temizliği — eskimiş/mükerrer dosyalar silindi, v1 artıkları arşive
+- **Silindi (git geçmişinde duruyor):** `task.md` (v1 checklist'i), `implementation_plan.md` (v1 geç-füzyon planı), `.agent/skills/` ve
+  `.agent/steps/` (Haziran ajan notları; .gitignore'daydı ama izleniyordu), boş `src/data_fusion.py` ve `notebooks/check_data.ipynb`;
+  kod haritasında "eski" işaretli betikler: `process_radar_pipeline.py`, `process_awos_pipeline.py` (yerlerine `*_large.py`),
+  `update_h5_labels.py` (→ `_v2`), `update_h5_scalars.py` + `awos_scalar_loader.py` (v1 skaler füzyon, K1), `compress_h5.py` +
+  `update_compressed_labels_local.py` (kompakt H5 ile gereksiz). Hiçbirini başka modül import etmiyordu. `dataset.py` (dataloader tembel
+  import) ve `plot_results.py` (train.py çağırıyor) eski olsa da kaldı.
+- **Arşive taşındı (`archive_v1/`, git dışı):** `src/_backup_20260916/` → `archive_v1/src_backup_20260916/` (v1 füzyon sınıfları, K13),
+  `src/artifacts/` → `archive_v1/src_artifacts_v1/` (v1 dry-run JSON'ları), kökteki 17 Eyl `best_model_*.pth` → `archive_v1/root_weights_20260917/`.
+- **Birebir kopyalar silindi:** `claude_rules/` (= `.claude/rules/`), `docs/revizyon.zip` (= `docs/paper/hakem_degerlendirmesi…`, `ret_riski…`).
+- **Güncellendi:** README'deki depoda olmayan `walkthrough_v2.md` atıfları → CLAUDE.md §3; `requirements.txt` + psutil, satpy, pyyaml;
+  `environment.yml` ve `requirements-lock.txt` UTF-16 → UTF-8, graphify/tree-sitter (geliştirme aracı) ve taşınamaz `packaging @ file:` satırı
+  çıkarıldı (kilit eğitim/analiz ortamını kapsar; ham veri hattı ekleri requirements.txt'te); `docs/release_notes_v1.0.md` →
+  `docs/release_notes_v1.3.md` (katman b vaadi kaldırıldı, dizin + 3 ağırlık, K63); `make_code_map.py` MODULE_INFO'dan silinen modüller çıktı, kod haritası yeniden üretildi.
+
 ---
 
 ## 3. Komutlar
@@ -1279,11 +1294,11 @@ python src\analyze_preds.py --dir artifacts_v3 --out artifacts_v3/analysis --ref
 | `paper/figures/make_*.py`, `figdata.py`, `make_all.py` | Makale şekilleri (Fig. 1, 4, 5, 6, 10) ve tabloları (Tab. 2–5, S1–S2); `make_all.py` hepsini üretip kontrol raporlarını özetler (K21) |
 | `README.md`, `LICENSE`, `CITATION.cff`, `.gitignore` | Depo iskeleti + veri bulunabilirliği beyanı |
 
-Arşiv: `archive_v1/` (v1 sonuçları + ağırlıkları — not: alt klasör adı yerelde `artifacts 06 2026`
-olarak değişmiş görünüyor, muhtemelen kazara; `archive_v1/sonuç1` ve `sonuç09` da var), `src/_backup_20260916/`
-(v1 skaler füzyon kodu). Akış dokümanı: `walkthrough_v2.md` (v1: `walkthrough.md`). Görev listesi:
-`task.md` (hâlâ v1 fazlarını gösteriyor, v2 için güncellenmedi). `implementation_plan.md` v1
-geç-füzyon planıdır — **arşiv**, güncel hattı temsil etmez. `notebooks/clmcl.ipynb` — keşif defteri.
+Arşiv (git dışı): `archive_v1/` — v1 sonuçları + ağırlıkları (alt klasör `artifacts 06 2026`, `sonuç1`, `sonuç09`),
+`src_backup_20260916/` (v1 skaler füzyon kodu, `model_v1_fusion_classes.py`), `src_artifacts_v1/` (v1 dry-run JSON'ları),
+`root_weights_20260917/` (17 Eyl ağırlıkları), `v1_fusion_weights/`. Eski akış notları (`walkthrough_v2.md`, v1 `walkthrough.md`) `_kisisel/` altında;
+güncel komutlar §3. `task.md` ve `implementation_plan.md` silindi (K64). `notebooks/clmcl.ipynb` — Colab koşu defteri.
+`docs/release_notes_v1.3.md` — GitHub/Zenodo v1.3 sürüm notu.
 
 ---
 
@@ -1322,11 +1337,11 @@ geç-füzyon planıdır — **arşiv**, güncel hattı temsil etmez. `notebooks/
 - [x] ~~Kanal permütasyon önemi / Integrated Gradients~~ — K26 (aydınlanma içi permütasyon).
 - [x] ~~Metrikleri gündüz/gece ve mevsim kırılımıyla raporla~~ — K18, K21 (Fig. 6).
 - [x] ~~Açık örneklemi üret ve Zenodo paketini hazırla~~ (K38).
-- [ ] `make_zenodo_package.py --include_mgm` ile yeniden paketle ve Zenodo'ya yükle (MGM sözlü onayı K42; **yazılı izin süreci 18 Kas'ta başlatıldı**).
-- [ ] Zenodo kaydını **yayımla** (DOI 10.5281/zenodo.24112650 yalnız rezerve, taslak kayıt — yayımlanana kadar çözümlenmez);
+- [x] ~~`make_zenodo_package.py --include_mgm` ile yeniden paketle ve Zenodo'ya yükle~~ — **geçersiz (K63):** katman (b) hiç yayımlanmayacak.
+- [x] ~~Zenodo kaydını yayımla~~ — v1.3 yayımlandı (K63, 10.5281/zenodo.24560405). _Eski metin:_ Zenodo kaydını **yayımla** (DOI 10.5281/zenodo.24112650 yalnız rezerve, taslak kayıt — yayımlanana kadar çözümlenmez);
       yayımlanınca oluşan **concept DOI**'yi makale, README, CITATION.cff, kapak mektupları ve release notlarına yaz (K44).
 - [ ] **Revizyon (K44):** `docs/paper/calisma_plani_revizyon_2026-11-18.md` takvimi; ön-kayıt `docs/revizyon_onkayit.md`.
-- [ ] `task.md`'yi v2 fazlarıyla güncelle (hâlâ v1 checklist'i gösteriyor).
+- [x] ~~`task.md`'yi v2 fazlarıyla güncelle~~ — dosya silindi; açık işler yalnız bu listede (K64).
 - [ ] Makale limitations: Tem–Kas verisi yok; kar–bulut karışıklığı; ~1,7×1,1 km piksel / ~3×3,5 km CLM pikseli vs yarımküre
       gözlem ölçek farkı; etiket eşiği duyarlılığı (0/≥5 vs 0/≥1); AWOS-aux'un belirsiz katkısı.
 
@@ -1339,12 +1354,11 @@ Cowork projesinde **özel proje talimatı (custom instructions) tanımlı değil
 
 - `claude/mtgclm_inceleme_2026-09-15.md` — akademik + teknik inceleme raporu
 - `claude/mtgclm_eylem_plani_2026-09-15.md` — 5 fazlı eylem planı (kararların kaynağı)
-- `claude/mtgclm_walkthrough_v2.md` — v2 akışı (yereldeki `walkthrough_v2.md` güncel sürümdür)
+- `claude/mtgclm_walkthrough_v2.md` — v2 akışı (yerel kopya `_kisisel/walkthrough_v2.md`; güncel komutlar §3)
 - `claude/mtgclm_madde_madde_degerlendirme_2026-11-18.md`, `claude/mtgclm_revizyon_calisma_plani_2026-11-18.md` — hakem raporu
   ve ret riski yol haritasının madde madde değerlendirmesi ve revizyon takvimi (K44). Yerel kopyaları `docs/paper/` altında (depo dışı).
 
-Yereldeki diğer notlar: `MTG Cloud Phase Web Service Development.md`,
-`Visualizing MTGConvNet Architecture2.md`.
+Yereldeki diğer notlar (`_kisisel/`, git dışı): `Visualizing MTGConvNet Architecture2.md`, `nc_anlama/`.
 
 ---
 
