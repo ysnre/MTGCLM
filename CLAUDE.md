@@ -1092,6 +1092,43 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
 
 ---
 
+### K65 — 27 Kas 2026: Doğu yaylalarında radar katkısı (boş bulgu)
+- `scratch/radar_east/radar_east.py` → `artifacts_v3/analysis/radar_region.csv` (Doğu = lon ≥ 38°, lat ≥ 37,9°; yüksek ≥ 1500 m).
+- CV B − Bnorad, Doğu ≥1500 m (8 ist.): BalAcc 0,913, Δ +0,0005 [−0,0027, +0,0036]; POFD 0,115 → 0,117. Yalnız eko varken keşifsel kazanç.
+- 05_discussion.tex §5.3'e tek cümle eklendi (eski sürüm `_prev/05_discussion_20261127.tex`). verify_numbers 394/0.
+
+### K66 — 27 Kas 2026: ikinci iç hakem turu — başlık, Öz/Sonuç, test maruziyeti, Fig. 9f, tohum varyansı, B1–B3, C1 planı
+- **Dayanak:** `docs/paper/hakem_degerlendirmesi_2026-11-26.md` + `MTGCLM_yapilacaklar_2026-11-26.md`. Liste K64 öneriyordu; K64/K65 dolu olduğu için K66.
+  Değerlendirmeye iki düzeltme: (i) "gözlemci tavanı" 0,956 tüm çiftlerden; test haftalarında aynı çiftlerde METAR 0,971, CNN 0,952
+  (−0,019 [−0,032, −0,005]) → model tavana çarpmadı; (ii) test turlarının çoğu betimsel, seçim etkili olanlar K14/K16 ve K25.
+- **Kullanıcı kararları:** K-A = S1 (TAAC başlığından "fusion" çıktı), K-B = 3 tohumla iç içe bootstrap (yeni eğitim yok), K-C = bu turda IMS kar testi.
+- **Başlık (TAAC):** "Deep learning-based station-scale cloud masking over Türkiye from Meteosat Third Generation FCI, trained on surface
+  observations" (frontmatter, supplementary, kapak mektubu). MAP başlığı değişmedi (radar CV'de BH sonrası anlamlı). Hocaların 24 Kas önerisinden
+  ayrılıyor → danışmana bildirilmeli.
+- **TAAC Öz (249 kelime):** CV aralığı önce (0,931–0,959), sonra 0,956 / 0,940; yeni cümle "radar ve yüzey alanları görülmemiş haftalarda
+  katkı vermiyor (−0,002, +0,001; BH sonrası anlamsız), CV'de en çok 0,003"; r = 0,96 (görülmemiş 30 istasyon; CLM 0,92) — eski 0,97 eğitim
+  istasyonlarının görülmemiş haftalarıydı; "reliable basis" ve U-Net 0,957 çıktı. **Sonuç:** CV önce; gözlemci tutarlılığı cümlesi;
+  ≥1 okta (CNN 0,844; CLM 0,806, NWC 0,810; farklar +0,039 / +0,014). Giriş TAAC ¶ "reliable basis" → "can serve cloud monitoring".
+- **A3:** `docs/paper/test_exposure.csv` (elle tutulan tur listesi, 16 satır) → `make_tables_revision.tabS15` → Tab. S5 (TAAC/MAP);
+  Yöntem §3.2 paragrafı yeniden yazıldı. Ek materyal numaraları yeniden hesaplandı (preamble + supplementary; S1–S16 TAAC).
+- **A4:** `make_fig09_cloud_frequency.py` f paneli (doğu yaylaları CLM − model, 6 eşik/kalibrasyon varyantı, tüm dönem / kış gündüzü;
+  `cloud_freq_sensitivity.csv`, 25 km); altyazı + fullmap.tex: harita farkı "exploratory", istasyon kanıtı ayrı paragraf; 5.5'te aynı ifade.
+  **Önizleme Liberation Sans ile `paper/figures/`'a kopyalandı → Windows'ta `make_all.py` (Arial) ile yeniden üretilmeli.**
+- **Tohum varyansı:** `src/seed_nested_boot.py` → `analysis/seed_nested_pairs.csv`: GA'lar medyan ×1,2 genişliyor; B_full − B_norad
+  (test_time) ×2,9 → [−0,0015, +0,0027]; sıfırı dışlayan 7 farktan 3'ü kalıyor (B_full − C_noawos test_station [+0,0001, +0,0062],
+  A_sat − A_norad ve RESNET_CIFAR − A_sat test_both). Yöntem §3.6'ya cümle, Tab. S2'ye 3 satır. CV kapsam dışı (kat başına tek tohum).
+- **B1–B3 (ön-kayıt 27 Kas 14:30, koşudan önce; commit sonra):** `src/ref_rows_cache.py` (tüm satırlar CLM/NWC, eşikler 0,45/0,50 aynı).
+  **B1** `coverage_bias.py`: NWC'nin eksik olduğu günler (test_time SYNOP %16) daha bulutlu (0,78 vs 0,56) ve CNN için kolay (0,984 vs
+  0,946; fark −0,037 [−0,052, −0,013]) → kural tetiklendi, Sınırlılıklar'a cümle. **B2** `removed_metar_profile.py`: silinen 65 842 METAR
+  açığının %36'sını CLM, %37'sini NWC bulutlu sayıyor (tutulan METAR açıklarında %13 / %12; fark +0,248 [+0,222, +0,272]); aynı saatte SYNOP
+  yok %90 → kural tetiklendi, Sınırlılıklar'a cümle (keep sonuçları muhafazakâr sınır). "(ek)" alt grubu ön-kayıtta yoktu.
+  **B3** `surface_breakdown.py`: CNN yükseklikte 0,937–0,965, CLM <500 m 0,928 → ≥1500 m 0,787 (fark 0,148 [0,067, 0,221]); breakdowns.tex'e cümle.
+  Ek tablo `tabS16_coverage_surface` (Tab. S14). Hepsi VM'de koşuldu → kullanıcının `mtgclm` ortamında bir kez yeniden koşulmalı (tekrarlanabilirlik kuralı).
+- **C1:** `docs/paper/C1_ims_fizibilite_2026-11-27.md` (IMS 4 km, kış gündüzü 109 gün, ön-kayıt taslağı); indirme bu oturumdan
+  mümkün değil → kullanıcı onayı ve indirmesi bekleniyor.
+- verify_numbers 423/0; final derleme TAAC 32 + 14, MAP 34 + 12 sayfa, 0 tanımsız, 0 taşan kutu; TAAC 84 882 karakter (hedef 80 000 aşıldı, sınır 100 000).
+  Yedekler `paper/_prev/*_20261127*.tex`, `docs/paper/cover_letter_taac.bak_20261127.md`.
+
 ## 3. Komutlar
 
 ### 3.1 Veri hazırlama (yerel, tek seferlik) — sıra: aux → labels → splits → export
@@ -1281,6 +1318,9 @@ python src\analyze_preds.py --dir artifacts_v3 --out artifacts_v3/analysis --ref
 | `src/cloud_freq_sensitivity.py` | Revizyon R10: doğu yaylaları sıklık farkının eşik/kalibrasyon/maske duyarlılığı — K51 |
 | `src/snow_vza_breakdown.py` | Revizyon R7: kar imzası / kış yüksek istasyon / VZA kırılımı, istasyon başına yanlış alarm — K54 |
 | `src/clm_snow_exclusion.py` | Keşifsel: kış > 1500 m satırları olmadan model − CLM/NWC farkı — K55 |
+| `src/seed_nested_boot.py` | Tohum × blok iç içe bootstrap (eşleştirilmiş farklarda eğitim varyansı) — K66 |
+| `src/ref_rows_cache.py` | Tüm satırlar için CLM/NWC r30 önbelleği (`data/processed/ref_rows_all.npz`) — K66 |
+| `src/coverage_bias.py`, `src/removed_metar_profile.py`, `src/surface_breakdown.py` | B1 kapsama yanlılığı, B2 silinen METAR açıkları, B3 yükseklik/kıyı — K66 |
 | `paper/tools/build_docx.py` | LaTeX → Word (.docx), Mendeley atıf alanlarıyla; TAAC/MAP ana metin + ESM (paper/ depoda değil) — K55 |
 | `src/test_center_jitter.py` | P20 jitter birim testleri + P20 öncesi kodla bit bit eşitlik (mini H5) — K46 |
 | `src/train.py`, `src/train_unet.py` | Eğitim; `--h5 --split --aux --aux_channels --seed --epochs --limit_batches --results --outdir --model` + K16: `--loader --mem_splits --cache_dir --threads --no_deterministic --no_last_preds` |
@@ -1304,6 +1344,8 @@ güncel komutlar §3. `task.md` ve `implementation_plan.md` silindi (K64). `note
 
 ## 5. Açık işler / sıradaki adımlar
 
+> Liste K65 ile senkronize edildi (27 Kas 2026).
+
 - [x] ~~v2 koşu matrisini Colab'da çalıştır~~ — **tamamlandı (5 Eki 2026)**, sonuçlar K12'de.
 - [x] ~~Gerçek Copernicus GLO-90 DEM'i indirip üret~~ — **tamamlandı**, `data/dem_800x1000.npy`.
 - [x] ~~**K12'deki AWOS-aux bulgusunu doğrula/açıkla**~~ — K18 (CV'de küçük pozitif). Kalan: IDW doğrulaması → revizyon R18.
@@ -1324,14 +1366,18 @@ güncel komutlar §3. `task.md` ve `implementation_plan.md` silindi (K64). `note
 - [x] ~~AWOS-t2m'nin CNN'deki etkisi~~ — CV'de küçük ama anlamlı pozitif (K18).
 - [x] ~~P11 şekil altyapısı + P12a (Fig. 1, 4, 5, 6, 10; Tab. 2–5, S1–S2)~~ — K21. **Kalan:** Arial'lı makinede `make_all.py` ile son üretim.
 - [x] ~~P13 LaTeX iskeleti~~ — K22.
-- [ ] **Ertelenen işler (unutma):** P1 sonrası Tab. 4'e radarsız satırlar + Fig. 4 yeniden; P4 sonrası Tab. 5'e sahne başına çıkarım süresi;
+- [x] ~~Ertelenen işler~~ — hepsi kapandı (27 Kas denetimi): Tab. 4'te radarsız blok var (K26), Tab. 5'te sahne sütunu (K27),
+      Tab. 2 dipnotu `\SFcalib` çapraz referansı (K41/K42), gönderim dosya adları `export_figures.py` (K41), Bechini2007/Liu2020 metinde
+      atıflanmıyor (bib'de duruyor, kaynakçaya girmez), Code availability K45/K63'te yeniden yazıldı, 4 ondalık kuralı make_tables'ta (K21).
+  _Eski metin:_ P1 sonrası Tab. 4'e radarsız satırlar + Fig. 4 yeniden; P4 sonrası Tab. 5'e sahne başına çıkarım süresi;
       Tab. 2 dipnotundaki kalibrasyon şekli atfı çapraz referansa; gönderimde FigXX dosyalarını dergiye göre yeniden adlandır;
       `Bechini2007`/`Liu2020` (P16); Code availability metnini depo dışı makale klasörlerine göre uyarla; eşleştirilmiş farklar 4 ondalık (K21 istisnası).
 - [x] ~~P14 Bölüm 2–4 taslakları~~ — K23.
 - [x] ~~Kanal sırasını doğrula~~ — K24 (IR kesin; güneş kanalları için güncellenmiş betikle bir kez daha koş, `TAMAM` beklenir).
 - [x] ~~Bölüm 2.2: "5–30 km komşuluk" ifadesi~~ — K34'te "merkez ve 30 km" olarak düzeltildi.
 - [x] ~~Analiz raporunu makale bulgularına dönüştür; gece hataları~~ — K33, K35.
-- [ ] **P20 (revizyon R14):** kod + testler hazır (K46); kalan: 3 tohum eğitimi (`--stage unetjit`) ve değerlendirme. U-Net hedef-piksel jitter — **33×33 içinde 25×25 rastgele kırpma**, kayıp gerçek konumda; H5 yeniden
+- [x] ~~P20 (revizyon R14)~~ — eğitim, ölçüt (i)/(ii) ve Fig. 8/9 yeniden üretimi tamamlandı (K47, K48, K49); ürün modeli D_unet_jit (tek geçiş).
+  _Eski metin:_ kod + testler hazır (K46); kalan: 3 tohum eğitimi (`--stage unetjit`) ve değerlendirme. U-Net hedef-piksel jitter — **33×33 içinde 25×25 rastgele kırpma**, kayıp gerçek konumda; H5 yeniden
       çıkarılmaz (eski "49×49 çıkar" maddesi K20/K44 ile değişti). Fig. 9'un yeniden üretim kuralı `docs/revizyon_onkayit.md`'de.
 - [x] ~~`infer_scene.py`~~ — yazıldı ve gerçek sahnelerde doğrulandı (K27).
 - [x] ~~Kanal permütasyon önemi / Integrated Gradients~~ — K26 (aydınlanma içi permütasyon).
@@ -1340,9 +1386,14 @@ güncel komutlar §3. `task.md` ve `implementation_plan.md` silindi (K64). `note
 - [x] ~~`make_zenodo_package.py --include_mgm` ile yeniden paketle ve Zenodo'ya yükle~~ — **geçersiz (K63):** katman (b) hiç yayımlanmayacak.
 - [x] ~~Zenodo kaydını yayımla~~ — v1.3 yayımlandı (K63, 10.5281/zenodo.24560405). _Eski metin:_ Zenodo kaydını **yayımla** (DOI 10.5281/zenodo.24112650 yalnız rezerve, taslak kayıt — yayımlanana kadar çözümlenmez);
       yayımlanınca oluşan **concept DOI**'yi makale, README, CITATION.cff, kapak mektupları ve release notlarına yaz (K44).
-- [ ] **Revizyon (K44):** `docs/paper/calisma_plani_revizyon_2026-11-18.md` takvimi; ön-kayıt `docs/revizyon_onkayit.md`.
+- [x] ~~Revizyon (K44)~~ — R1–R20 ve P20 K45–K60'ta tamamlandı; ön-kayıt `docs/revizyon_onkayit.md`.
+- [x] ~~İkinci iç hakem turu: A1–A4, B1–B4', D1~~ — K66.
+- [ ] **C1 IMS kar testi:** fizibilite notu `docs/paper/C1_ims_fizibilite_2026-11-27.md`; kullanıcı onayı → ön-kayıt → indirme → `src/ims_snow_test.py`.
+- [ ] **Windows'ta:** `make_all.py` (Fig. 9 Arial), VM'de koşulan K66 analizlerini `mtgclm` ortamında yeniden koş, `build_docx.py --journal both`.
+- [ ] **Kullanıcının işleri (D2–D9):** refs.bib `verified` denetimi, YZ beyanı (sürüm + tarih), sahiplenme turu, YZ'siz özet, 15 soru, benzerlik taraması, bağımsız sayı doğrulaması, prova.
 - [x] ~~`task.md`'yi v2 fazlarıyla güncelle~~ — dosya silindi; açık işler yalnız bu listede (K64).
-- [ ] Makale limitations: Tem–Kas verisi yok; kar–bulut karışıklığı; ~1,7×1,1 km piksel / ~3×3,5 km CLM pikseli vs yarımküre
+- [x] ~~Makale limitations~~ — 05_discussion Sınırlılıklar alt bölümünde yazıldı (K35, K57).
+  _Eski metin:_ Tem–Kas verisi yok; kar–bulut karışıklığı; ~1,7×1,1 km piksel / ~3×3,5 km CLM pikseli vs yarımküre
       gözlem ölçek farkı; etiket eşiği duyarlılığı (0/≥5 vs 0/≥1); AWOS-aux'un belirsiz katkısı.
 
 ---
