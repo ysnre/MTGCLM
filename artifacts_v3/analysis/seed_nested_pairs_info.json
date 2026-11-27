@@ -1,0 +1,10 @@
+{
+ "boot": 2000,
+ "seed": 0,
+ "pairs": "B_full-A_sat,C_noawos-A_sat,B_full-C_noawos,C_t2m-C_noawos,A_sat-A_norad,B_full-B_norad,B_full-B_full_shuf,D_unet-A_sat,RESNET-A_sat,RESNET_CIFAR-A_sat,D_unet_jit-D_unet",
+ "not": "tohumlar her deney için bağımsız, yerine koyarak; CV kapsam dışı (kat başına tek tohum)",
+ "medyan_genişleme_tümü": 1.1986853171528769,
+ "sıfırı_dışlayan_sabit_tümü": 7,
+ "sıfırı_dışlayan_içiçe_tümü": 3,
+ "n_çift_tümü": 33
+}
