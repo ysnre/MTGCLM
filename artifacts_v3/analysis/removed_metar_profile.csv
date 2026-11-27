@@ -1,0 +1,7 @@
+grup,n,istasyon,gece_payı,gündüz_payı,SYNOP_aynı_saatte,CLM_kapsam,CLM_r30_bulutlu,NWC_kapsam,NWC_r30_bulutlu,fark_tutulan_METAR,GA_alt,GA_üst
+silinen METAR açık,65842,42,0.530133,0.393381,0.095881,0.982762,0.362820,0.936910,0.365371,,,
+tutulan METAR açık,16808,42,0.581628,0.349417,0.911411,0.972989,0.129632,0.917837,0.117781,,,
+tutulan SYNOP açık,49923,132,0.479859,0.456303,1.000000,0.980109,0.139996,0.919977,0.115877,,,
+"silinen METAR açık, aynı saatte SYNOP yok (ek)",59529,42,0.535588,0.385812,0.000000,0.981774,0.336065,0.934721,0.337257,,,
+"silinen − tutulan METAR, NWC r30 bulutlu",65842,42,,,,,,,,0.247590,0.222402,0.272058
+"silinen − tutulan METAR, CLM r30 bulutlu",65842,42,,,,,,,,0.233188,0.207359,0.257478
