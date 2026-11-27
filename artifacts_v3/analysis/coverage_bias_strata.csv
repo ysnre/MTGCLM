@@ -1,0 +1,449 @@
+küme,etiket,ürün,etken,düzey,n,kapsama,bulutlu
+test_time,tümü,CLM,month,2025-12,7604,0.996844,0.790768
+test_time,tümü,CLM,month,2026-01,2712,1.000000,0.555678
+test_time,tümü,CLM,month,2026-03,7486,0.885920,0.374165
+test_time,tümü,CLM,month,2026-05,19686,0.999238,0.802753
+test_time,tümü,CLM,month,2026-06,3380,1.000000,0.570710
+test_time,tümü,CLM,hour,00,1096,0.968066,0.651460
+test_time,tümü,CLM,hour,01,870,0.988506,0.812644
+test_time,tümü,CLM,hour,02,2501,0.964014,0.553379
+test_time,tümü,CLM,hour,03,1085,0.975115,0.665438
+test_time,tümü,CLM,hour,04,845,0.988166,0.829586
+test_time,tümü,CLM,hour,05,3101,0.967107,0.599162
+test_time,tümü,CLM,hour,06,1465,0.973379,0.662116
+test_time,tümü,CLM,hour,07,1274,0.978807,0.764521
+test_time,tümü,CLM,hour,08,2924,0.963064,0.686731
+test_time,tümü,CLM,hour,09,1437,0.988170,0.760612
+test_time,tümü,CLM,hour,10,1342,1.000000,0.840537
+test_time,tümü,CLM,hour,11,2798,1.000000,0.781987
+test_time,tümü,CLM,hour,12,1470,1.000000,0.804762
+test_time,tümü,CLM,hour,13,1363,0.989729,0.851798
+test_time,tümü,CLM,hour,14,2740,1.000000,0.751095
+test_time,tümü,CLM,hour,15,1481,0.990547,0.765699
+test_time,tümü,CLM,hour,16,1312,0.977896,0.793445
+test_time,tümü,CLM,hour,17,3055,0.961702,0.602291
+test_time,tümü,CLM,hour,18,1024,0.976562,0.682617
+test_time,tümü,CLM,hour,19,846,0.989362,0.808511
+test_time,tümü,CLM,hour,20,2481,0.960500,0.527610
+test_time,tümü,CLM,hour,21,1048,0.976145,0.617366
+test_time,tümü,CLM,hour,22,806,0.987593,0.779156
+test_time,tümü,CLM,hour,23,2504,0.964856,0.488019
+test_time,tümü,CLM,illum,alacakaranlık,3049,0.996064,0.693670
+test_time,tümü,CLM,illum,gece,16759,0.966287,0.618832
+test_time,tümü,CLM,illum,gündüz,21060,0.984995,0.739174
+test_time,tümü,CLM,elev_bin,250–750 m,4808,0.978785,0.693636
+test_time,tümü,CLM,elev_bin,750–1250 m,12690,0.973995,0.716470
+test_time,tümü,CLM,elev_bin,<250 m,20301,0.980346,0.653465
+test_time,tümü,CLM,elev_bin,≥1250 m,3069,0.979798,0.768980
+test_time,tümü,NWC,month,2025-12,7604,0.876118,0.790768
+test_time,tümü,NWC,month,2026-01,2712,1.000000,0.555678
+test_time,tümü,NWC,month,2026-03,7486,0.817259,0.374165
+test_time,tümü,NWC,month,2026-05,19686,0.734278,0.802753
+test_time,tümü,NWC,month,2026-06,3380,0.968639,0.570710
+test_time,tümü,NWC,hour,00,1096,0.760036,0.651460
+test_time,tümü,NWC,hour,01,870,0.706897,0.812644
+test_time,tümü,NWC,hour,02,2501,0.787685,0.553379
+test_time,tümü,NWC,hour,03,1085,0.750230,0.665438
+test_time,tümü,NWC,hour,04,845,0.713609,0.829586
+test_time,tümü,NWC,hour,05,3101,0.805547,0.599162
+test_time,tümü,NWC,hour,06,1465,0.821160,0.662116
+test_time,tümü,NWC,hour,07,1274,0.844584,0.764521
+test_time,tümü,NWC,hour,08,2924,0.900821,0.686731
+test_time,tümü,NWC,hour,09,1437,0.885873,0.760612
+test_time,tümü,NWC,hour,10,1342,0.812966,0.840537
+test_time,tümü,NWC,hour,11,2798,0.783417,0.781987
+test_time,tümü,NWC,hour,12,1470,0.816327,0.804762
+test_time,tümü,NWC,hour,13,1363,0.879677,0.851798
+test_time,tümü,NWC,hour,14,2740,0.866788,0.751095
+test_time,tümü,NWC,hour,15,1481,0.866307,0.765699
+test_time,tümü,NWC,hour,16,1312,0.826982,0.793445
+test_time,tümü,NWC,hour,17,3055,0.806547,0.602291
+test_time,tümü,NWC,hour,18,1024,0.832031,0.682617
+test_time,tümü,NWC,hour,19,846,0.764775,0.808511
+test_time,tümü,NWC,hour,20,2481,0.797259,0.527610
+test_time,tümü,NWC,hour,21,1048,0.781489,0.617366
+test_time,tümü,NWC,hour,22,806,0.744417,0.779156
+test_time,tümü,NWC,hour,23,2504,0.765575,0.488019
+test_time,tümü,NWC,illum,alacakaranlık,3049,0.809118,0.693670
+test_time,tümü,NWC,illum,gece,16759,0.794498,0.618832
+test_time,tümü,NWC,illum,gündüz,21060,0.828063,0.739174
+test_time,tümü,NWC,elev_bin,250–750 m,4808,0.824251,0.693636
+test_time,tümü,NWC,elev_bin,750–1250 m,12690,0.813318,0.716470
+test_time,tümü,NWC,elev_bin,<250 m,20301,0.805478,0.653465
+test_time,tümü,NWC,elev_bin,≥1250 m,3069,0.842294,0.768980
+test_time,SYNOP,CLM,month,2025-12,3998,1.000000,0.714357
+test_time,SYNOP,CLM,month,2026-01,1612,1.000000,0.449132
+test_time,SYNOP,CLM,month,2026-03,4705,0.875452,0.273326
+test_time,SYNOP,CLM,month,2026-05,10747,0.999256,0.736019
+test_time,SYNOP,CLM,month,2026-06,2038,1.000000,0.500981
+test_time,SYNOP,CLM,hour,00,310,0.935484,0.458065
+test_time,SYNOP,CLM,hour,01,302,0.970199,0.460265
+test_time,SYNOP,CLM,hour,02,1579,0.962001,0.512350
+test_time,SYNOP,CLM,hour,03,302,0.966887,0.476821
+test_time,SYNOP,CLM,hour,04,281,0.971530,0.487544
+test_time,SYNOP,CLM,hour,05,2239,0.965610,0.572577
+test_time,SYNOP,CLM,hour,06,707,0.966054,0.538897
+test_time,SYNOP,CLM,hour,07,686,0.963557,0.564140
+test_time,SYNOP,CLM,hour,08,2073,0.960444,0.660396
+test_time,SYNOP,CLM,hour,09,674,1.000000,0.652819
+test_time,SYNOP,CLM,hour,10,667,1.000000,0.679160
+test_time,SYNOP,CLM,hour,11,1950,1.000000,0.763590
+test_time,SYNOP,CLM,hour,12,663,1.000000,0.695324
+test_time,SYNOP,CLM,hour,13,670,0.989552,0.698507
+test_time,SYNOP,CLM,hour,14,1907,1.000000,0.731515
+test_time,SYNOP,CLM,hour,15,748,1.000000,0.672460
+test_time,SYNOP,CLM,hour,16,713,0.959327,0.619916
+test_time,SYNOP,CLM,hour,17,2202,0.960490,0.580381
+test_time,SYNOP,CLM,hour,18,295,0.972881,0.515254
+test_time,SYNOP,CLM,hour,19,310,0.970968,0.477419
+test_time,SYNOP,CLM,hour,20,1586,0.962799,0.493695
+test_time,SYNOP,CLM,hour,21,325,0.969231,0.440000
+test_time,SYNOP,CLM,hour,22,310,0.967742,0.429032
+test_time,SYNOP,CLM,hour,23,1601,0.962523,0.449094
+test_time,SYNOP,CLM,illum,alacakaranlık,1676,0.995823,0.602029
+test_time,SYNOP,CLM,illum,gece,8944,0.959414,0.508833
+test_time,SYNOP,CLM,illum,gündüz,12480,0.982051,0.660016
+test_time,SYNOP,CLM,elev_bin,250–750 m,2997,0.976643,0.627961
+test_time,SYNOP,CLM,elev_bin,750–1250 m,7426,0.968624,0.630891
+test_time,SYNOP,CLM,elev_bin,<250 m,10521,0.977379,0.543009
+test_time,SYNOP,CLM,elev_bin,≥1250 m,2156,0.975417,0.703618
+test_time,SYNOP,NWC,month,2025-12,3998,0.901451,0.714357
+test_time,SYNOP,NWC,month,2026-01,1612,1.000000,0.449132
+test_time,SYNOP,NWC,month,2026-03,4705,0.817641,0.273326
+test_time,SYNOP,NWC,month,2026-05,10747,0.769889,0.736019
+test_time,SYNOP,NWC,month,2026-06,2038,0.965162,0.500981
+test_time,SYNOP,NWC,hour,00,310,0.822581,0.458065
+test_time,SYNOP,NWC,hour,01,302,0.811258,0.460265
+test_time,SYNOP,NWC,hour,02,1579,0.802407,0.512350
+test_time,SYNOP,NWC,hour,03,302,0.821192,0.476821
+test_time,SYNOP,NWC,hour,04,281,0.811388,0.487544
+test_time,SYNOP,NWC,hour,05,2239,0.815096,0.572577
+test_time,SYNOP,NWC,hour,06,707,0.868458,0.538897
+test_time,SYNOP,NWC,hour,07,686,0.874636,0.564140
+test_time,SYNOP,NWC,hour,08,2073,0.907381,0.660396
+test_time,SYNOP,NWC,hour,09,674,0.902077,0.652819
+test_time,SYNOP,NWC,hour,10,667,0.830585,0.679160
+test_time,SYNOP,NWC,hour,11,1950,0.793846,0.763590
+test_time,SYNOP,NWC,hour,12,663,0.859729,0.695324
+test_time,SYNOP,NWC,hour,13,670,0.904478,0.698507
+test_time,SYNOP,NWC,hour,14,1907,0.868904,0.731515
+test_time,SYNOP,NWC,hour,15,748,0.885027,0.672460
+test_time,SYNOP,NWC,hour,16,713,0.837307,0.619916
+test_time,SYNOP,NWC,hour,17,2202,0.811535,0.580381
+test_time,SYNOP,NWC,hour,18,295,0.854237,0.515254
+test_time,SYNOP,NWC,hour,19,310,0.829032,0.477419
+test_time,SYNOP,NWC,hour,20,1586,0.807062,0.493695
+test_time,SYNOP,NWC,hour,21,325,0.824615,0.440000
+test_time,SYNOP,NWC,hour,22,310,0.819355,0.429032
+test_time,SYNOP,NWC,hour,23,1601,0.775141,0.449094
+test_time,SYNOP,NWC,illum,alacakaranlık,1676,0.827566,0.602029
+test_time,SYNOP,NWC,illum,gece,8944,0.819656,0.508833
+test_time,SYNOP,NWC,illum,gündüz,12480,0.848237,0.660016
+test_time,SYNOP,NWC,elev_bin,250–750 m,2997,0.839173,0.627961
+test_time,SYNOP,NWC,elev_bin,750–1250 m,7426,0.829383,0.630891
+test_time,SYNOP,NWC,elev_bin,<250 m,10521,0.837183,0.543009
+test_time,SYNOP,NWC,elev_bin,≥1250 m,2156,0.845083,0.703618
+test_station,tümü,CLM,month,2025-03,8911,0.980922,0.710582
+test_station,tümü,CLM,month,2025-04,1606,0.955168,0.932752
+test_station,tümü,CLM,month,2025-12,1107,1.000000,0.935863
+test_station,tümü,CLM,month,2026-01,9347,0.997753,0.916765
+test_station,tümü,CLM,month,2026-02,6641,0.995633,0.928023
+test_station,tümü,CLM,month,2026-03,7243,0.997653,0.844540
+test_station,tümü,CLM,month,2026-04,5407,0.999815,0.724616
+test_station,tümü,CLM,month,2026-05,934,0.997859,0.556745
+test_station,tümü,CLM,month,2026-06,2669,0.999625,0.325215
+test_station,tümü,CLM,hour,00,1040,0.990385,0.742308
+test_station,tümü,CLM,hour,01,911,1.000000,0.837541
+test_station,tümü,CLM,hour,02,2338,0.994012,0.682207
+test_station,tümü,CLM,hour,03,1086,1.000000,0.761510
+test_station,tümü,CLM,hour,04,989,1.000000,0.874621
+test_station,tümü,CLM,hour,05,3385,0.992024,0.773117
+test_station,tümü,CLM,hour,06,1703,0.998238,0.772754
+test_station,tümü,CLM,hour,07,1473,0.996606,0.858792
+test_station,tümü,CLM,hour,08,3242,0.990746,0.806909
+test_station,tümü,CLM,hour,09,1525,0.998689,0.846557
+test_station,tümü,CLM,hour,10,1409,0.989354,0.880767
+test_station,tümü,CLM,hour,11,3217,0.983214,0.842089
+test_station,tümü,CLM,hour,12,1663,0.989778,0.876729
+test_station,tümü,CLM,hour,13,1525,1.000000,0.894426
+test_station,tümü,CLM,hour,14,3404,0.978555,0.835194
+test_station,tümü,CLM,hour,15,1625,0.999385,0.838769
+test_station,tümü,CLM,hour,16,1482,0.989204,0.860999
+test_station,tümü,CLM,hour,17,3315,0.990045,0.742986
+test_station,tümü,CLM,hour,18,1093,0.995425,0.796889
+test_station,tümü,CLM,hour,19,952,1.000000,0.869748
+test_station,tümü,CLM,hour,20,2307,1.000000,0.685306
+test_station,tümü,CLM,hour,21,1065,0.994366,0.780282
+test_station,tümü,CLM,hour,22,927,0.997843,0.845739
+test_station,tümü,CLM,hour,23,2189,1.000000,0.677021
+test_station,tümü,CLM,illum,alacakaranlık,3252,0.998155,0.825646
+test_station,tümü,CLM,illum,gece,18375,0.995374,0.773932
+test_station,tümü,CLM,illum,gündüz,22238,0.990017,0.814597
+test_station,tümü,CLM,elev_bin,250–750 m,6804,0.994268,0.806878
+test_station,tümü,CLM,elev_bin,750–1250 m,12769,0.992795,0.837654
+test_station,tümü,CLM,elev_bin,<250 m,17304,0.992603,0.721278
+test_station,tümü,CLM,elev_bin,≥1250 m,6988,0.992272,0.909273
+test_station,tümü,NWC,month,2025-03,8911,1.000000,0.710582
+test_station,tümü,NWC,month,2025-04,1606,0.998755,0.932752
+test_station,tümü,NWC,month,2025-12,1107,1.000000,0.935863
+test_station,tümü,NWC,month,2026-01,9347,0.976035,0.916765
+test_station,tümü,NWC,month,2026-02,6641,0.988104,0.928023
+test_station,tümü,NWC,month,2026-03,7243,0.993373,0.844540
+test_station,tümü,NWC,month,2026-04,5407,0.756612,0.724616
+test_station,tümü,NWC,month,2026-05,934,0.574946,0.556745
+test_station,tümü,NWC,month,2026-06,2669,0.977520,0.325215
+test_station,tümü,NWC,hour,00,1040,0.947115,0.742308
+test_station,tümü,NWC,hour,01,911,0.958288,0.837541
+test_station,tümü,NWC,hour,02,2338,0.952524,0.682207
+test_station,tümü,NWC,hour,03,1086,0.965930,0.761510
+test_station,tümü,NWC,hour,04,989,0.963600,0.874621
+test_station,tümü,NWC,hour,05,3385,0.956869,0.773117
+test_station,tümü,NWC,hour,06,1703,0.969466,0.772754
+test_station,tümü,NWC,hour,07,1473,0.967413,0.858792
+test_station,tümü,NWC,hour,08,3242,0.952190,0.806909
+test_station,tümü,NWC,hour,09,1525,0.961967,0.846557
+test_station,tümü,NWC,hour,10,1409,0.953868,0.880767
+test_station,tümü,NWC,hour,11,3217,0.954305,0.842089
+test_station,tümü,NWC,hour,12,1663,0.969934,0.876729
+test_station,tümü,NWC,hour,13,1525,0.961967,0.894426
+test_station,tümü,NWC,hour,14,3404,0.947415,0.835194
+test_station,tümü,NWC,hour,15,1625,0.945846,0.838769
+test_station,tümü,NWC,hour,16,1482,0.932524,0.860999
+test_station,tümü,NWC,hour,17,3315,0.942081,0.742986
+test_station,tümü,NWC,hour,18,1093,0.918573,0.796889
+test_station,tümü,NWC,hour,19,952,0.927521,0.869748
+test_station,tümü,NWC,hour,20,2307,0.945817,0.685306
+test_station,tümü,NWC,hour,21,1065,0.942723,0.780282
+test_station,tümü,NWC,hour,22,927,0.948220,0.845739
+test_station,tümü,NWC,hour,23,2189,0.945637,0.677021
+test_station,tümü,NWC,illum,alacakaranlık,3252,0.948339,0.825646
+test_station,tümü,NWC,illum,gece,18375,0.951347,0.773932
+test_station,tümü,NWC,illum,gündüz,22238,0.952154,0.814597
+test_station,tümü,NWC,elev_bin,250–750 m,6804,0.949882,0.806878
+test_station,tümü,NWC,elev_bin,750–1250 m,12769,0.958102,0.837654
+test_station,tümü,NWC,elev_bin,<250 m,17304,0.948047,0.721278
+test_station,tümü,NWC,elev_bin,≥1250 m,6988,0.949771,0.909273
+test_station,SYNOP,CLM,month,2025-03,5999,0.979163,0.661610
+test_station,SYNOP,CLM,month,2025-04,921,0.945711,0.903366
+test_station,SYNOP,CLM,month,2025-12,685,1.000000,0.913869
+test_station,SYNOP,CLM,month,2026-01,5945,0.998318,0.894870
+test_station,SYNOP,CLM,month,2026-02,4035,0.997770,0.903098
+test_station,SYNOP,CLM,month,2026-03,4491,0.999332,0.787798
+test_station,SYNOP,CLM,month,2026-04,3537,1.000000,0.631043
+test_station,SYNOP,CLM,month,2026-05,690,1.000000,0.513043
+test_station,SYNOP,CLM,month,2026-06,1935,1.000000,0.251680
+test_station,SYNOP,CLM,hour,00,451,0.993348,0.549889
+test_station,SYNOP,CLM,hour,01,388,1.000000,0.618557
+test_station,SYNOP,CLM,hour,02,1577,1.000000,0.674065
+test_station,SYNOP,CLM,hour,03,477,1.000000,0.582809
+test_station,SYNOP,CLM,hour,04,412,1.000000,0.699029
+test_station,SYNOP,CLM,hour,05,2632,0.992021,0.768617
+test_station,SYNOP,CLM,hour,06,1063,1.000000,0.675447
+test_station,SYNOP,CLM,hour,07,871,1.000000,0.761194
+test_station,SYNOP,CLM,hour,08,2551,0.991376,0.796942
+test_station,SYNOP,CLM,hour,09,907,1.000000,0.769570
+test_station,SYNOP,CLM,hour,10,805,0.982609,0.791304
+test_station,SYNOP,CLM,hour,11,2519,0.982533,0.828503
+test_station,SYNOP,CLM,hour,12,979,0.998979,0.815117
+test_station,SYNOP,CLM,hour,13,862,1.000000,0.813225
+test_station,SYNOP,CLM,hour,14,2676,0.976831,0.824738
+test_station,SYNOP,CLM,hour,15,951,1.000000,0.751840
+test_station,SYNOP,CLM,hour,16,858,0.989510,0.759907
+test_station,SYNOP,CLM,hour,17,2563,0.991806,0.728443
+test_station,SYNOP,CLM,hour,18,478,1.000000,0.617155
+test_station,SYNOP,CLM,hour,19,391,1.000000,0.682864
+test_station,SYNOP,CLM,hour,20,1549,1.000000,0.670110
+test_station,SYNOP,CLM,hour,21,455,1.000000,0.610989
+test_station,SYNOP,CLM,hour,22,394,1.000000,0.642132
+test_station,SYNOP,CLM,hour,23,1429,1.000000,0.668300
+test_station,SYNOP,CLM,illum,alacakaranlık,2059,0.998543,0.776591
+test_station,SYNOP,CLM,illum,gece,10842,0.996956,0.703099
+test_station,SYNOP,CLM,illum,gündüz,15337,0.989503,0.768077
+test_station,SYNOP,CLM,elev_bin,250–750 m,5235,0.994460,0.788348
+test_station,SYNOP,CLM,elev_bin,750–1250 m,5976,0.992135,0.767068
+test_station,SYNOP,CLM,elev_bin,<250 m,15263,0.993121,0.708445
+test_station,SYNOP,CLM,elev_bin,≥1250 m,1764,0.990930,0.837868
+test_station,SYNOP,NWC,month,2025-03,5999,1.000000,0.661610
+test_station,SYNOP,NWC,month,2025-04,921,1.000000,0.903366
+test_station,SYNOP,NWC,month,2025-12,685,1.000000,0.913869
+test_station,SYNOP,NWC,month,2026-01,5945,0.978469,0.894870
+test_station,SYNOP,NWC,month,2026-02,4035,0.983891,0.903098
+test_station,SYNOP,NWC,month,2026-03,4491,0.993320,0.787798
+test_station,SYNOP,NWC,month,2026-04,3537,0.739327,0.631043
+test_station,SYNOP,NWC,month,2026-05,690,0.630435,0.513043
+test_station,SYNOP,NWC,month,2026-06,1935,0.982946,0.251680
+test_station,SYNOP,NWC,hour,00,451,0.920177,0.549889
+test_station,SYNOP,NWC,hour,01,388,0.932990,0.618557
+test_station,SYNOP,NWC,hour,02,1577,0.954344,0.674065
+test_station,SYNOP,NWC,hour,03,477,0.945493,0.582809
+test_station,SYNOP,NWC,hour,04,412,0.939320,0.699029
+test_station,SYNOP,NWC,hour,05,2632,0.955167,0.768617
+test_station,SYNOP,NWC,hour,06,1063,0.968956,0.675447
+test_station,SYNOP,NWC,hour,07,871,0.964409,0.761194
+test_station,SYNOP,NWC,hour,08,2551,0.949040,0.796942
+test_station,SYNOP,NWC,hour,09,907,0.966924,0.769570
+test_station,SYNOP,NWC,hour,10,805,0.954037,0.791304
+test_station,SYNOP,NWC,hour,11,2519,0.952759,0.828503
+test_station,SYNOP,NWC,hour,12,979,0.971399,0.815117
+test_station,SYNOP,NWC,hour,13,862,0.961717,0.813225
+test_station,SYNOP,NWC,hour,14,2676,0.948430,0.824738
+test_station,SYNOP,NWC,hour,15,951,0.951630,0.751840
+test_station,SYNOP,NWC,hour,16,858,0.935897,0.759907
+test_station,SYNOP,NWC,hour,17,2563,0.941865,0.728443
+test_station,SYNOP,NWC,hour,18,478,0.922594,0.617155
+test_station,SYNOP,NWC,hour,19,391,0.913043,0.682864
+test_station,SYNOP,NWC,hour,20,1549,0.943835,0.670110
+test_station,SYNOP,NWC,hour,21,455,0.916484,0.610989
+test_station,SYNOP,NWC,hour,22,394,0.926396,0.642132
+test_station,SYNOP,NWC,hour,23,1429,0.946816,0.668300
+test_station,SYNOP,NWC,illum,alacakaranlık,2059,0.946576,0.776591
+test_station,SYNOP,NWC,illum,gece,10842,0.948533,0.703099
+test_station,SYNOP,NWC,illum,gündüz,15337,0.950121,0.768077
+test_station,SYNOP,NWC,elev_bin,250–750 m,5235,0.947278,0.788348
+test_station,SYNOP,NWC,elev_bin,750–1250 m,5976,0.955991,0.767068
+test_station,SYNOP,NWC,elev_bin,<250 m,15263,0.947193,0.708445
+test_station,SYNOP,NWC,elev_bin,≥1250 m,1764,0.950113,0.837868
+test_both,tümü,CLM,month,2025-12,1973,0.997466,0.803345
+test_both,tümü,CLM,month,2026-01,708,1.000000,0.518362
+test_both,tümü,CLM,month,2026-03,1686,0.877224,0.320878
+test_both,tümü,CLM,month,2026-05,4873,0.999384,0.786374
+test_both,tümü,CLM,month,2026-06,975,1.000000,0.492308
+test_both,tümü,CLM,hour,00,245,0.963265,0.685714
+test_both,tümü,CLM,hour,01,229,0.986900,0.755459
+test_both,tümü,CLM,hour,02,582,0.965636,0.568729
+test_both,tümü,CLM,hour,03,251,0.980080,0.709163
+test_both,tümü,CLM,hour,04,221,0.986425,0.791855
+test_both,tümü,CLM,hour,05,856,0.966121,0.588785
+test_both,tümü,CLM,hour,06,323,0.978328,0.678019
+test_both,tümü,CLM,hour,07,295,0.979661,0.735593
+test_both,tümü,CLM,hour,08,778,0.964010,0.647815
+test_both,tümü,CLM,hour,09,322,0.996894,0.760870
+test_both,tümü,CLM,hour,10,328,1.000000,0.795732
+test_both,tümü,CLM,hour,11,776,1.000000,0.731959
+test_both,tümü,CLM,hour,12,335,1.000000,0.800000
+test_both,tümü,CLM,hour,13,337,0.991098,0.810089
+test_both,tümü,CLM,hour,14,747,1.000000,0.728246
+test_both,tümü,CLM,hour,15,347,0.994236,0.772334
+test_both,tümü,CLM,hour,16,330,0.978788,0.754545
+test_both,tümü,CLM,hour,17,820,0.959756,0.567073
+test_both,tümü,CLM,hour,18,235,0.978723,0.685106
+test_both,tümü,CLM,hour,19,214,0.985981,0.696262
+test_both,tümü,CLM,hour,20,597,0.961474,0.494137
+test_both,tümü,CLM,hour,21,238,0.978992,0.642857
+test_both,tümü,CLM,hour,22,219,0.986301,0.684932
+test_both,tümü,CLM,hour,23,590,0.966102,0.486441
+test_both,tümü,CLM,illum,alacakaranlık,758,0.997361,0.696570
+test_both,tümü,CLM,illum,gece,4069,0.966577,0.603342
+test_both,tümü,CLM,illum,gündüz,5388,0.985709,0.709354
+test_both,tümü,CLM,elev_bin,250–750 m,1728,0.969907,0.630208
+test_both,tümü,CLM,elev_bin,750–1250 m,3025,0.978512,0.730909
+test_both,tümü,CLM,elev_bin,<250 m,3802,0.978958,0.529984
+test_both,tümü,CLM,elev_bin,≥1250 m,1660,0.989157,0.897590
+test_both,tümü,NWC,month,2025-12,1973,0.903193,0.803345
+test_both,tümü,NWC,month,2026-01,708,1.000000,0.518362
+test_both,tümü,NWC,month,2026-03,1686,0.818505,0.320878
+test_both,tümü,NWC,month,2026-05,4873,0.739996,0.786374
+test_both,tümü,NWC,month,2026-06,975,0.971282,0.492308
+test_both,tümü,NWC,hour,00,245,0.751020,0.685714
+test_both,tümü,NWC,hour,01,229,0.742358,0.755459
+test_both,tümü,NWC,hour,02,582,0.819588,0.568729
+test_both,tümü,NWC,hour,03,251,0.756972,0.709163
+test_both,tümü,NWC,hour,04,221,0.751131,0.791855
+test_both,tümü,NWC,hour,05,856,0.811916,0.588785
+test_both,tümü,NWC,hour,06,323,0.829721,0.678019
+test_both,tümü,NWC,hour,07,295,0.854237,0.735593
+test_both,tümü,NWC,hour,08,778,0.901028,0.647815
+test_both,tümü,NWC,hour,09,322,0.888199,0.760870
+test_both,tümü,NWC,hour,10,328,0.835366,0.795732
+test_both,tümü,NWC,hour,11,776,0.793814,0.731959
+test_both,tümü,NWC,hour,12,335,0.841791,0.800000
+test_both,tümü,NWC,hour,13,337,0.896142,0.810089
+test_both,tümü,NWC,hour,14,747,0.866131,0.728246
+test_both,tümü,NWC,hour,15,347,0.873199,0.772334
+test_both,tümü,NWC,hour,16,330,0.845455,0.754545
+test_both,tümü,NWC,hour,17,820,0.807317,0.567073
+test_both,tümü,NWC,hour,18,235,0.825532,0.685106
+test_both,tümü,NWC,hour,19,214,0.780374,0.696262
+test_both,tümü,NWC,hour,20,597,0.819095,0.494137
+test_both,tümü,NWC,hour,21,238,0.798319,0.642857
+test_both,tümü,NWC,hour,22,219,0.771689,0.684932
+test_both,tümü,NWC,hour,23,590,0.779661,0.486441
+test_both,tümü,NWC,illum,alacakaranlık,758,0.819261,0.696570
+test_both,tümü,NWC,illum,gece,4069,0.810027,0.603342
+test_both,tümü,NWC,illum,gündüz,5388,0.836303,0.709354
+test_both,tümü,NWC,elev_bin,250–750 m,1728,0.813079,0.630208
+test_both,tümü,NWC,elev_bin,750–1250 m,3025,0.813223,0.730909
+test_both,tümü,NWC,elev_bin,<250 m,3802,0.828511,0.529984
+test_both,tümü,NWC,elev_bin,≥1250 m,1660,0.848193,0.897590
+test_both,SYNOP,CLM,month,2025-12,1247,1.000000,0.736167
+test_both,SYNOP,CLM,month,2026-01,472,1.000000,0.404661
+test_both,SYNOP,CLM,month,2026-03,1236,0.868123,0.254854
+test_both,SYNOP,CLM,month,2026-05,2989,0.999331,0.708264
+test_both,SYNOP,CLM,month,2026-06,684,1.000000,0.372807
+test_both,SYNOP,CLM,hour,00,109,0.935780,0.458716
+test_both,SYNOP,CLM,hour,01,107,0.971963,0.476636
+test_both,SYNOP,CLM,hour,02,385,0.963636,0.542857
+test_both,SYNOP,CLM,hour,03,107,0.971963,0.504673
+test_both,SYNOP,CLM,hour,04,99,0.969697,0.535354
+test_both,SYNOP,CLM,hour,05,674,0.964392,0.568249
+test_both,SYNOP,CLM,hour,06,193,0.968912,0.528497
+test_both,SYNOP,CLM,hour,07,180,0.966667,0.566667
+test_both,SYNOP,CLM,hour,08,607,0.962109,0.622735
+test_both,SYNOP,CLM,hour,09,182,1.000000,0.626374
+test_both,SYNOP,CLM,hour,10,189,1.000000,0.645503
+test_both,SYNOP,CLM,hour,11,598,1.000000,0.698997
+test_both,SYNOP,CLM,hour,12,179,1.000000,0.664804
+test_both,SYNOP,CLM,hour,13,186,0.989247,0.655914
+test_both,SYNOP,CLM,hour,14,571,1.000000,0.698774
+test_both,SYNOP,CLM,hour,15,204,1.000000,0.647059
+test_both,SYNOP,CLM,hour,16,193,0.963731,0.580311
+test_both,SYNOP,CLM,hour,17,627,0.956938,0.537480
+test_both,SYNOP,CLM,hour,18,106,0.971698,0.405660
+test_both,SYNOP,CLM,hour,19,105,0.971429,0.380952
+test_both,SYNOP,CLM,hour,20,404,0.965347,0.462871
+test_both,SYNOP,CLM,hour,21,114,0.973684,0.403509
+test_both,SYNOP,CLM,hour,22,111,0.972973,0.378378
+test_both,SYNOP,CLM,hour,23,398,0.964824,0.454774
+test_both,SYNOP,CLM,illum,alacakaranlık,470,0.997872,0.606383
+test_both,SYNOP,CLM,illum,gece,2505,0.960080,0.489022
+test_both,SYNOP,CLM,illum,gündüz,3653,0.982480,0.625787
+test_both,SYNOP,CLM,elev_bin,250–750 m,1391,0.966930,0.603163
+test_both,SYNOP,CLM,elev_bin,750–1250 m,1496,0.974599,0.633021
+test_both,SYNOP,CLM,elev_bin,<250 m,3328,0.977764,0.503606
+test_both,SYNOP,CLM,elev_bin,≥1250 m,413,0.983051,0.808717
+test_both,SYNOP,NWC,month,2025-12,1247,0.909383,0.736167
+test_both,SYNOP,NWC,month,2026-01,472,1.000000,0.404661
+test_both,SYNOP,NWC,month,2026-03,1236,0.803398,0.254854
+test_both,SYNOP,NWC,month,2026-05,2989,0.755102,0.708264
+test_both,SYNOP,NWC,month,2026-06,684,0.969298,0.372807
+test_both,SYNOP,NWC,hour,00,109,0.770642,0.458716
+test_both,SYNOP,NWC,hour,01,107,0.766355,0.476636
+test_both,SYNOP,NWC,hour,02,385,0.818182,0.542857
+test_both,SYNOP,NWC,hour,03,107,0.775701,0.504673
+test_both,SYNOP,NWC,hour,04,99,0.767677,0.535354
+test_both,SYNOP,NWC,hour,05,674,0.814540,0.568249
+test_both,SYNOP,NWC,hour,06,193,0.865285,0.528497
+test_both,SYNOP,NWC,hour,07,180,0.872222,0.566667
+test_both,SYNOP,NWC,hour,08,607,0.904448,0.622735
+test_both,SYNOP,NWC,hour,09,182,0.901099,0.626374
+test_both,SYNOP,NWC,hour,10,189,0.846561,0.645503
+test_both,SYNOP,NWC,hour,11,598,0.792642,0.698997
+test_both,SYNOP,NWC,hour,12,179,0.871508,0.664804
+test_both,SYNOP,NWC,hour,13,186,0.908602,0.655914
+test_both,SYNOP,NWC,hour,14,571,0.865149,0.698774
+test_both,SYNOP,NWC,hour,15,204,0.887255,0.647059
+test_both,SYNOP,NWC,hour,16,193,0.849741,0.580311
+test_both,SYNOP,NWC,hour,17,627,0.803828,0.537480
+test_both,SYNOP,NWC,hour,18,106,0.830189,0.405660
+test_both,SYNOP,NWC,hour,19,105,0.780952,0.380952
+test_both,SYNOP,NWC,hour,20,404,0.816832,0.462871
+test_both,SYNOP,NWC,hour,21,114,0.815789,0.403509
+test_both,SYNOP,NWC,hour,22,111,0.792793,0.378378
+test_both,SYNOP,NWC,hour,23,398,0.778894,0.454774
+test_both,SYNOP,NWC,illum,alacakaranlık,470,0.825532,0.606383
+test_both,SYNOP,NWC,illum,gece,2505,0.814770,0.489022
+test_both,SYNOP,NWC,illum,gündüz,3653,0.845880,0.625787
+test_both,SYNOP,NWC,elev_bin,250–750 m,1391,0.820273,0.603163
+test_both,SYNOP,NWC,elev_bin,750–1250 m,1496,0.826872,0.633021
+test_both,SYNOP,NWC,elev_bin,<250 m,3328,0.839543,0.503606
+test_both,SYNOP,NWC,elev_bin,≥1250 m,413,0.840194,0.808717
