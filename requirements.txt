@@ -13,3 +13,6 @@ pyresample>=1.28
 pillow>=10.0
 rasterio>=1.3        # yalnızca make_dem_npy.py için
 pymongo>=4.6         # yalnızca radar meta verisi MongoDB'den okunuyorsa
+psutil>=5.9          # fast_loader / infer_scene bellek denetimi
+satpy>=0.48          # yalnızca coknc.py ve extract_fci_clm.py (FCI L1c / CLM okuma)
+pyyaml>=6.0          # isteğe bağlı: make_zenodo_package.py
