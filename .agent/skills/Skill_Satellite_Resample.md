@@ -1,1 +1,0 @@
-Satpy kullanarak ham MTG kanallarını okuma ve hedef coğrafi projeksiyona indirgeme yeteneği
