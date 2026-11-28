@@ -9,7 +9,7 @@ farklarının aralığı verilir. Yalnız tek bölme; CV katlarında tek tohum v
 Not: 3 tohumla tohum dağılımı kaba temsil edilir (yeniden örneklemede yalnız 10 farklı çoklu küme); GA'lar eğitim varyansının
 alt sınırı gibi okunmalı. Yeni eğitim yok; kayıtlı tahminler (preds/*.npz) kullanılır.
 
-Çıktı: <out>/seed_nested_pairs.csv (+ _info.json)
+Çıktı: <out>/seed_nested_pairs[_<tag>].csv (+ _info.json). B4-S3 (28 Kas): --extra_dirs artifacts_v3_seeds --tag 7
     python src/seed_nested_boot.py --dir artifacts_v3 --out artifacts_v3/analysis
 """
 import argparse
@@ -33,6 +33,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--dir", default="artifacts_v3")
     ap.add_argument("--out", default=None)
+    ap.add_argument("--extra_dirs", default="", help="Ek tohum koşularının klasörleri (virgülle), ör. artifacts_v3_seeds (B4-S3)")
+    ap.add_argument("--tag", default="", help="Çıktı adı eki, ör. 7 → seed_nested_pairs_7.csv")
     ap.add_argument("--meta", default="data/processed/h5meta_train_v2.npz")
     ap.add_argument("--h5", default=None)
     ap.add_argument("--stations", default="data/raw_observation/station_list.csv")
@@ -44,7 +46,11 @@ def main():
     os.makedirs(out, exist_ok=True)
     t0 = time.time()
     meta = load_meta(a.meta, a.h5, a.stations)
-    E = {e: v for e, v in by_exp(load_runs(a.dir)).items() if not e.startswith("CV_")}
+    runs = load_runs(a.dir)
+    for d in [x.strip() for x in a.extra_dirs.split(",") if x.strip()]:
+        runs += load_runs(d)
+    E = {e: v for e, v in by_exp(runs).items() if not e.startswith("CV_")}
+    print("tohum sayıları:", {e: len(v) for e, v in E.items()})
     pairs = [p.strip().split("-", 1) for p in a.pairs.split(",") if p.strip()]
     need = sorted({x for p in pairs for x in p})
     miss = [e for e in need if e not in E]
@@ -98,14 +104,14 @@ def main():
                     "blok": BLOCK[s], "blok_sayısı": len(uni)})
         print(f"  {s}: {time.time() - t0:.0f} s")
     D = pd.DataFrame(rows_out)
-    D.to_csv(os.path.join(out, "seed_nested_pairs.csv"), index=False, encoding="utf-8", float_format="%.6f")
+    D.to_csv(os.path.join(out, f"seed_nested_pairs{'_' + a.tag if a.tag else ''}.csv"), index=False, encoding="utf-8", float_format="%.6f")
     info = {"boot": a.boot, "seed": a.seed, "pairs": a.pairs, "not": "tohumlar her deney için bağımsız, yerine koyarak; "
             "CV kapsam dışı (kat başına tek tohum)",
             "medyan_genişleme_tümü": float(D[D["etiket"] == "tümü"]["genişleme_oranı"].median()),
             "sıfırı_dışlayan_sabit_tümü": int(D[D["etiket"] == "tümü"]["sıfırı_dışlıyor_sabit"].sum()),
             "sıfırı_dışlayan_içiçe_tümü": int(D[D["etiket"] == "tümü"]["sıfırı_dışlıyor_içiçe"].sum()),
             "n_çift_tümü": int((D["etiket"] == "tümü").sum())}
-    json.dump(info, open(os.path.join(out, "seed_nested_pairs_info.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    json.dump(info, open(os.path.join(out, f"seed_nested_pairs{'_' + a.tag if a.tag else ''}_info.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(json.dumps(info, ensure_ascii=False, indent=1), f"\n{time.time() - t0:.0f} s")
 
 
