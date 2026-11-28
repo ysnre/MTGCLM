@@ -135,6 +135,7 @@ MODULE_INFO = {
     "coverage_bias": ("analiz", "B1: ürün kapsamının bulutluluk ve model skoruyla ilişkisi (K66)", None),
     "removed_metar_profile": ("analiz", "B2: verify politikasının çıkardığı METAR açıklarının profili (K66)", None),
     "surface_breakdown": ("analiz", "B3: istasyon yüksekliği ve kıyı kırılımı, model ve ürünler (K66)", None),
+    "ims_snow_test": ("analiz", "C1: IMS 1 km kar analizinde karlı/karsız piksellerde kış gündüzü CLM − model (K68)", None),
     "parallax_shift": ("analiz", "P10: paralaks kaydırmasının büyüklüğü (analitik, istasyonlar ve ızgara)", None),
     "summarize_scenes": ("analiz", "P4: sahne JSON'larından tutarlılık/faz/süre özeti (scenes_summary.csv)", None),
     "infer_scene": ("analiz", "P4: tek sahne tam harita çıkarımı (U-Net faz-hizalı / CNN kayan pencere), NetCDF+GeoTIFF+PNG, H5/preds tutarlılık testi", None),
