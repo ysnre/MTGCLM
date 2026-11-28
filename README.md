@@ -152,10 +152,11 @@ yollar depo köküne göredir):
 | Kar ve görüş açısı (VZA) kırılımı (R7) | `python src/snow_vza_breakdown.py` | `analysis/snow_vza*.csv` |
 | Keşifsel: kış > 1500 m satırları olmadan model − CLM/NWC farkı | `python src/clm_snow_exclusion.py` | `analysis/clm_snow_exclusion.csv` |
 | Tohumları da yeniden örnekleyen iç içe bootstrap (ikinci iç tur) | `python src/seed_nested_boot.py --dir artifacts_v3` | `analysis/seed_nested_pairs.csv` |
+| Ek tohumlar 4–7 (B4-S3; ana tablo 3 tohumla kalır) | `python src/run_all.py --h5 <h5> --outdir artifacts_v3_seeds --stage modality --modalities A_sat,A_norad,B_full,B_norad,C_noawos --seeds 4,5,6,7` ardından `python src/seed_nested_boot.py --dir artifacts_v3 --extra_dirs artifacts_v3_seeds --tag 7` | `artifacts_v3_seeds/*.json`, `analysis/seed_nested_pairs_7.csv` |
 | Tüm satırlar için CLM / NWC SAF önbelleği (aşağıdaki üç analiz okur) | `python src/ref_rows_cache.py` | `data/processed/ref_rows_all.npz` |
 | Ürün kapsamı yanlılığı (B1) | `python src/coverage_bias.py` | `analysis/coverage_bias.csv`, `coverage_bias_strata.csv` |
 | Doğrulanmamış METAR açıklarının profili (B2) | `python src/removed_metar_profile.py` | `analysis/removed_metar_profile.csv`, `_strata.csv` |
-| Yükseklik ve kıyı kırılımı (B3) | `python src/surface_breakdown.py --dir artifacts_v3` | `analysis/surface_breakdown.csv` |
+| Yükseklik, kıyı, eğim ve arazi örtüsü kırılımı (B3, B3b, B3c; WorldCover GeoTIFF GEE'den, bkz. CLAUDE.md K69) | `python src/surface_breakdown.py --dir artifacts_v3 --slope --landcover data/landcover/mtgclm_worldcover2021_mode.tif` | `analysis/surface_breakdown.csv` |
 | IMS 1 km kar analiziyle kış gündüzü CLM − model (C1; IMS G02156 dosyaları ayrıca indirilir) | `python src/ims_snow_test.py --ims_dir <ims klasörü>` | `analysis/ims_snow_test.csv`, `_months.csv` |
 | Bulut sıklığı duyarlılığı (R10) | `python src/cloud_freq_sensitivity.py` | `climatology/cloud_freq_sensitivity.csv` |
 
