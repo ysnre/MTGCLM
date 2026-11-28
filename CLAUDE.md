@@ -1152,6 +1152,20 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
   tüm dönem harita farkı yine keşifsel). Ek tablo `tabS18_ims` (TAAC Tab. S17); refs.bib `USNIC_IMS` (yedek `refs.bib.bak_20261128`);
   test_exposure.csv'ye satır. verify_numbers 430/0; TAAC 33 + 15, MAP 34 + 13 sayfa. VM'de koşuldu → `mtgclm` ortamında bir kez yeniden koşulmalı.
 
+### K69 — 28 Kas 2026: B3 ve B4 kapanışı (ön-kayıt 10:50)
+- **B3b eğim:** `surface_breakdown.py --slope` (istasyon pikseli DEM eğimi, 3 × 3 merkezî fark; tertiller <0,6° / 0,6–1,5° / ≥1,5°, 34/34/33
+  istasyon; `analysis/station_slope.csv`). CNN 0,952–0,954 (etki yok); CLM 0,915 → 0,902, NWC 0,925–0,928. Tab. S15(c) satırları, breakdowns.tex cümlesi.
+  Eğimler küçük: 1,7 × 1,1 km'lik ızgarada yerel dik yamaçlar yumuşuyor.
+- **B3c arazi örtüsü:** ESA WorldCover 2021 v200, GEE'de bu ızgaraya baskın sınıf (`reduceResolution(mode)`, crsTransform [0.02,0,25,0,−0.01,43],
+  1000 × 800) → `data/landcover/mtgclm_worldcover2021_mode.tif` (kullanıcı, F:\\arazi; .gitignore'da). Hizalama: kara/deniz–DEM uyumu %98,3, ±1 piksel kaydırmada düşüyor.
+  `surface_breakdown.py --landcover` → `analysis/station_landcover.csv`: istasyon pikseli 71/132 yerleşim, 12 su, 23 çayır, 16 tarım, 10 ağaç →
+  kırılım istasyonun kurulduğu yeri yansıtıyor (tablo notunda yazıldı). CNN 0,948–0,961; CLM en zayıf çayırda 0,892. refs.bib `ESA_WorldCover`.
+  GEE betiği: `ee.ImageCollection('ESA/WorldCover/v200').first().select('Map')` → mode → `Export.image.toDrive`.
+- **B4-S3:** A_sat, A_norad, B_full, B_norad, C_noawos × tohum 4–7 ayrı klasörde `artifacts_v3_seeds/` (ana tablo 3 tohumla değişmez).
+  `seed_nested_boot.py` artık `--extra_dirs`, `--tag` alıyor (argümansız çıktı eskiyle birebir). Koşu (~20 × 26 dk ≈ 9 sa, kaldığı yerden sürer):
+  `python src\run_all.py --h5 C:/mtg/mtg_train_v2.h5 --outdir artifacts_v3_seeds --stage modality --modalities A_sat,A_norad,B_full,B_norad,C_noawos --seeds 4,5,6,7 --loader auto --threads 12`;
+  sonra `python src\seed_nested_boot.py --dir artifacts_v3 --extra_dirs artifacts_v3_seeds --tag 7`. Yorum kuralı ön-kayıtta.
+
 ## 3. Komutlar
 
 ### 3.1 Veri hazırlama (yerel, tek seferlik) — sıra: aux → labels → splits → export
@@ -1413,6 +1427,7 @@ güncel komutlar §3. `task.md` ve `implementation_plan.md` silindi (K64). `note
 - [x] ~~Revizyon (K44)~~ — R1–R20 ve P20 K45–K60'ta tamamlandı; ön-kayıt `docs/revizyon_onkayit.md`.
 - [x] ~~İkinci iç hakem turu: A1–A4, B1–B4', D1~~ — K66.
 - [x] ~~C1 IMS kar testi~~ — K68 (kural sağlandı). Kalan: `mtgclm` ortamında yeniden koşu (`python src/ims_snow_test.py --ims_dir F:/ims`).
+- [ ] **B4-S3 ek tohum koşusu** (K69; ~9 sa) → `seed_nested_boot --tag 7` → metin ön-kayıt kuralına göre.
 - [ ] **Windows'ta:** `make_all.py` (Fig. 9 Arial), VM'de koşulan K66 analizlerini `mtgclm` ortamında yeniden koş, `build_docx.py --journal both`.
 - [ ] **Kullanıcının işleri (D2–D9):** refs.bib `verified` denetimi, YZ beyanı (sürüm + tarih), sahiplenme turu, YZ'siz özet, 15 soru, benzerlik taraması, bağımsız sayı doğrulaması, prova.
 - [x] ~~`task.md`'yi v2 fazlarıyla güncelle~~ — dosya silindi; açık işler yalnız bu listede (K64).
