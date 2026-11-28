@@ -90,3 +90,13 @@ başlamadan önce yazarların kendi kendine verdiği bir taahhüttür.
   frekans-eşleyen eşikle (val, 0,176) de sağlanırsa metinde "kış gündüzü CLM fazlası bağımsız bir kar analizinde karlı görünen piksellerde
   toplanıyor" yazılır (tüm dönem harita farkı keşifsel kalır); aksi halde bulgu keşifsel kalır, sonuç ek tabloda raporlanır.
   **İkincil (betimsel):** karsız piksellerde CLM − model; ertesi günün haritası; aylara göre; tüm Türkiye maskesi.
+- **28 Kas 2026, 10:50 (TSİ) — B3 genişletmesi ve B4 ek tohumları, koşudan önce.** Gerekçe: iç tur listesinde B3 eğim/arazi örtüsü ve B4
+  S3 (ek tohum) açık kalmıştı.
+  - **B3b eğim** (`src/surface_breakdown.py --slope`): istasyon pikselinde DEM eğimi (3 × 3 merkezî fark, piksel boyutu 1,73 × 1,11 km),
+    istasyonlar eğime göre **tertillere** ayrılır (sınırlar istasyonlardan, sonuçlara bakılmadan). Metrikler ve yorum B3 ile aynı: yalnız betimsel.
+  - **B3c arazi örtüsü** (veri gelirse): istasyon çevresi (merkez piksel) baskın sınıf; sınıf başına n < 300 belirsiz. Yalnız betimsel.
+  - **B4-S3 ek tohumlar:** A_sat, A_norad, B_full, B_norad, C_noawos için tohum 4–7 (toplam 7), ayrı klasör `artifacts_v3_seeds/`
+    (ana tablo 3 tohumla değişmez, ön-kayıt madde 2'ye dokunulmaz). **Birincil:** `seed_nested_boot.py` iç içe GA'ları 7 tohumla,
+    çiftler B_full − A_sat, B_full − B_norad, B_full − C_noawos, A_sat − A_norad; test_time ve test_station. **Yorum kuralı:** metindeki
+    her girdi katkısı ifadesi 7 tohumlu iç içe GA'ya göre yazılır — GA sıfırı dışlıyorsa "tohumlardan bağımsız", içeriyorsa "eğitim
+    varyansı içinde"; 3 tohumlu sonuçla çelişirse 7 tohumlu sonuç geçerli olur ve fark Yöntem'de belirtilir.
