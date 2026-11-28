@@ -1129,6 +1129,17 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
 - verify_numbers 423/0; final derleme TAAC 32 + 14, MAP 34 + 12 sayfa, 0 tanımsız, 0 taşan kutu; TAAC 84 882 karakter (hedef 80 000 aşıldı, sınır 100 000).
   Yedekler `paper/_prev/*_20261127*.tex`, `docs/paper/cover_letter_taac.bak_20261127.md`.
 
+### K67 — 27 Kas 2026 akşam: iç turun kalan küçük maddeleri, D2, C1 ön-kaydı, durum notları
+- **Metin (hakem dosyasında olup listede olmayanlar):** Yöntem §3.4 "hiperparametre araması yok"; Sınırlılıklar'a 0,5 eşiği + ECE (CNN 0,047 /
+  HGB 0,024) + Fig. 9f cümlesi; Tartışma §5.1 paralaks asimetrisi (yama ~28 km D–B, ~18 km K–G; ürün 30 km dairesel; nicelenmedi);
+  Sonuç ilk cümle "station-scale". Yeni ek tablo `tabS17_matchup` (eşleştirme kuralları ve dışlamalar; TAAC/MAP Tab. S2; Veri §2.4'ten atıf).
+  Ek materyal numaraları yeniden (TAAC S1–S17). verify_numbers 425/0; TAAC 32 + 15, MAP 34 + 13 sayfa; 85 756 karakter.
+- **D2:** `docs/paper/refs_dogrulama_2026-11-27.md` — atıflanan 49 kaynaktan `verified ≠ yes` olan 6'sı yöntem kaynağı; bulgu kaynağı sorunu yok.
+- **C1:** kullanıcı IMS **1 km ASCII**'yi seçti ve indiriyor (`F:\ims`). `ims2025060` denetlendi: dosya adı = geçerlilik günü 00 UTC, ilk veri
+  satırı haritanın ALTI, Türkiye ızgarasında kara/deniz–DEM uyumu %98. Ön-kayıt `docs/revizyon_onkayit.md` §3 (18:50), analizden önce.
+- `docs/paper/hakem_degerlendirmesi_2026-11-26.md` ve `MTGCLM_yapilacaklar_2026-11-26.md`'ye 🔷 durum notları ve "27 Kas durumu" sütunları
+  eklendi (yedekler `*.bak_20261127.md`).
+
 ## 3. Komutlar
 
 ### 3.1 Veri hazırlama (yerel, tek seferlik) — sıra: aux → labels → splits → export
@@ -1388,7 +1399,7 @@ güncel komutlar §3. `task.md` ve `implementation_plan.md` silindi (K64). `note
       yayımlanınca oluşan **concept DOI**'yi makale, README, CITATION.cff, kapak mektupları ve release notlarına yaz (K44).
 - [x] ~~Revizyon (K44)~~ — R1–R20 ve P20 K45–K60'ta tamamlandı; ön-kayıt `docs/revizyon_onkayit.md`.
 - [x] ~~İkinci iç hakem turu: A1–A4, B1–B4', D1~~ — K66.
-- [ ] **C1 IMS kar testi:** fizibilite notu `docs/paper/C1_ims_fizibilite_2026-11-27.md`; kullanıcı onayı → ön-kayıt → indirme → `src/ims_snow_test.py`.
+- [ ] **C1 IMS kar testi:** onay ve ön-kayıt tamam (K67); indirme sürüyor (`F:\ims`, 1 km ASCII) → `src/ims_snow_test.py` yazılıp koşulacak.
 - [ ] **Windows'ta:** `make_all.py` (Fig. 9 Arial), VM'de koşulan K66 analizlerini `mtgclm` ortamında yeniden koş, `build_docx.py --journal both`.
 - [ ] **Kullanıcının işleri (D2–D9):** refs.bib `verified` denetimi, YZ beyanı (sürüm + tarih), sahiplenme turu, YZ'siz özet, 15 soru, benzerlik taraması, bağımsız sayı doğrulaması, prova.
 - [x] ~~`task.md`'yi v2 fazlarıyla güncelle~~ — dosya silindi; açık işler yalnız bu listede (K64).
