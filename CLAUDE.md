@@ -4,7 +4,7 @@ Bu dosya, Claude Code / Cowork oturumlarının projeyi sıfırdan anlamadan kald
 devam edebilmesi için tutulur. **Yeni bir karar alındığında (model seçimi, veri bölme,
 etiket politikası, eğitim komutu) bu dosyaya birkaç satır ekleyin.**
 
-Son güncelleme: 2026-11-27
+Son güncelleme: 2026-11-28
 
 ---
 
@@ -1140,6 +1140,18 @@ bulut yoğunluğunu da tutarlı sıraladığının dolaylı kanıtı.
 - `docs/paper/hakem_degerlendirmesi_2026-11-26.md` ve `MTGCLM_yapilacaklar_2026-11-26.md`'ye 🔷 durum notları ve "27 Kas durumu" sütunları
   eklendi (yedekler `*.bak_20261127.md`).
 
+### K68 — 28 Kas 2026: C1 IMS kar testi (ön-kayıtlı) — kural sağlandı
+- Veri `F:\ims` (IMS 1 km ASCII, 199 dosya; birincil 183 günün hepsi var; ertesi gün duyarlılığı için 4 dosya eksik: 2025-04-12,
+  2026-02-17, 2026-03-28, 2026-06-16). `src/ims_snow_test.py`: ızgara indeksi `data/processed/ims_index_800x1000.npz`, gün kesitleri
+  `data/processed/ims_1km/` (111 dosya). Kış gündüzü 317 sahne (311'inde CLM), 108 gün.
+- **Birincil (doğu yaylaları, eşik 0,5, aynı gün):** CLM − model karlı +0,237, karsız +0,025, Δ +0,212 [+0,155, +0,271]; frekans-eşleyen eşik
+  Δ +0,209 [+0,159, +0,261]; ertesi gün ve tüm Türkiye maskesinde de +0,19…+0,22 → **ön-kayıt kuralı sağlandı**. Not: doğu yaylalarında kış
+  gündüzü karsız piksel az (1,7 M sahne-piksel, karlı 19,4 M). IMS, CLM'nin fazla mı modelin eksik mi bulut verdiğini ayıramaz (istasyon
+  kanıtı CLM'yi gösteriyor; metinde yazıldı). Mar 2025 (CLM commissioning) en büyük ay farkı (+0,324).
+- Metin: fullmap.tex (yeni paragraf), Tartışma §5.5, Sonuç TAAC ¶ ("remains to be tested" → bağımsız kar analizi karlı piksellere yerleştiriyor;
+  tüm dönem harita farkı yine keşifsel). Ek tablo `tabS18_ims` (TAAC Tab. S17); refs.bib `USNIC_IMS` (yedek `refs.bib.bak_20261128`);
+  test_exposure.csv'ye satır. verify_numbers 430/0; TAAC 33 + 15, MAP 34 + 13 sayfa. VM'de koşuldu → `mtgclm` ortamında bir kez yeniden koşulmalı.
+
 ## 3. Komutlar
 
 ### 3.1 Veri hazırlama (yerel, tek seferlik) — sıra: aux → labels → splits → export
@@ -1332,6 +1344,7 @@ python src\analyze_preds.py --dir artifacts_v3 --out artifacts_v3/analysis --ref
 | `src/seed_nested_boot.py` | Tohum × blok iç içe bootstrap (eşleştirilmiş farklarda eğitim varyansı) — K66 |
 | `src/ref_rows_cache.py` | Tüm satırlar için CLM/NWC r30 önbelleği (`data/processed/ref_rows_all.npz`) — K66 |
 | `src/coverage_bias.py`, `src/removed_metar_profile.py`, `src/surface_breakdown.py` | B1 kapsama yanlılığı, B2 silinen METAR açıkları, B3 yükseklik/kıyı — K66 |
+| `src/ims_snow_test.py` | C1: IMS 1 km kar analizinde karlı/karsız piksellerde kış gündüzü CLM − model — K68 |
 | `paper/tools/build_docx.py` | LaTeX → Word (.docx), Mendeley atıf alanlarıyla; TAAC/MAP ana metin + ESM (paper/ depoda değil) — K55 |
 | `src/test_center_jitter.py` | P20 jitter birim testleri + P20 öncesi kodla bit bit eşitlik (mini H5) — K46 |
 | `src/train.py`, `src/train_unet.py` | Eğitim; `--h5 --split --aux --aux_channels --seed --epochs --limit_batches --results --outdir --model` + K16: `--loader --mem_splits --cache_dir --threads --no_deterministic --no_last_preds` |
@@ -1399,7 +1412,7 @@ güncel komutlar §3. `task.md` ve `implementation_plan.md` silindi (K64). `note
       yayımlanınca oluşan **concept DOI**'yi makale, README, CITATION.cff, kapak mektupları ve release notlarına yaz (K44).
 - [x] ~~Revizyon (K44)~~ — R1–R20 ve P20 K45–K60'ta tamamlandı; ön-kayıt `docs/revizyon_onkayit.md`.
 - [x] ~~İkinci iç hakem turu: A1–A4, B1–B4', D1~~ — K66.
-- [ ] **C1 IMS kar testi:** onay ve ön-kayıt tamam (K67); indirme sürüyor (`F:\ims`, 1 km ASCII) → `src/ims_snow_test.py` yazılıp koşulacak.
+- [x] ~~C1 IMS kar testi~~ — K68 (kural sağlandı). Kalan: `mtgclm` ortamında yeniden koşu (`python src/ims_snow_test.py --ims_dir F:/ims`).
 - [ ] **Windows'ta:** `make_all.py` (Fig. 9 Arial), VM'de koşulan K66 analizlerini `mtgclm` ortamında yeniden koş, `build_docx.py --journal both`.
 - [ ] **Kullanıcının işleri (D2–D9):** refs.bib `verified` denetimi, YZ beyanı (sürüm + tarih), sahiplenme turu, YZ'siz özet, 15 soru, benzerlik taraması, bağımsız sayı doğrulaması, prova.
 - [x] ~~`task.md`'yi v2 fazlarıyla güncelle~~ — dosya silindi; açık işler yalnız bu listede (K64).
