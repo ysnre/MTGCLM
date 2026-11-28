@@ -156,6 +156,7 @@ yollar depo köküne göredir):
 | Ürün kapsamı yanlılığı (B1) | `python src/coverage_bias.py` | `analysis/coverage_bias.csv`, `coverage_bias_strata.csv` |
 | Doğrulanmamış METAR açıklarının profili (B2) | `python src/removed_metar_profile.py` | `analysis/removed_metar_profile.csv`, `_strata.csv` |
 | Yükseklik ve kıyı kırılımı (B3) | `python src/surface_breakdown.py --dir artifacts_v3` | `analysis/surface_breakdown.csv` |
+| IMS 1 km kar analiziyle kış gündüzü CLM − model (C1; IMS G02156 dosyaları ayrıca indirilir) | `python src/ims_snow_test.py --ims_dir <ims klasörü>` | `analysis/ims_snow_test.csv`, `_months.csv` |
 | Bulut sıklığı duyarlılığı (R10) | `python src/cloud_freq_sensitivity.py` | `climatology/cloud_freq_sensitivity.csv` |
 
 R9 ve R18 ham AWOS dosyasını (`data/raw_awos_observation/`) okur; ilk koşu istasyon kayıt sayılarını
