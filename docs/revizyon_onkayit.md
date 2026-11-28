@@ -80,3 +80,13 @@ başlamadan önce yazarların kendi kendine verdiği bir taahhüttür.
   - **B3 yükseklik ve kıyı kırılımı** (`src/surface_breakdown.py`): istasyon yüksekliği (< 500, 500–1000, 1000–1500, > 1500 m) ve kıyıya
     uzaklık (< 30 km / ≥ 30 km, `cloud_frequency.py` kıyı maskesi); B_full, D_unet_jit, CLM r30, NWC r30; n, BalAcc, POD, POFD, FAR;
     n < 300 belirsiz. **Yorum:** yalnız betimsel (ek tablo + bir cümle).
+- **27 Kas 2026, 18:50 (TSİ) — C1 IMS kar testi, analizden ve betik yazılmadan önce (kullanıcı onayı).** Ayrıntı:
+  `docs/paper/C1_ims_fizibilite_2026-11-27.md`. Veri: NOAA/USNIC IMS 1 km ASCII (NSIDC G02156, v1.3), dosya adındaki günün 00 UTC
+  haritası (ilk veri satırı haritanın altı; 800 × 1000 ızgaraya en yakın komşu). Yalnız biçim/yön denetimi için bir dosyaya bakıldı
+  (2025-03-01); hiçbir bulut sıklığı ile eşleştirme yapılmadı. Alan: doğu yaylaları maskesi (`regions.npz`); ikincil tüm Türkiye maskesi.
+  Sahneler: kış gündüzü (Ara–Mar, 06–12 UTC), `data/processed/cloud_freq_jit/scenes`. Her sahne-pikselde CLM ve model (D_unet_jit) ikisi de
+  geçerliyse IMS sınıfına göre **karlı (4)** ve **karsız kara (2)** olarak ayrılır. **Birincil:** Δ = (CLM − model)_karlı − (CLM − model)_karsız,
+  model eşiği 0,5, gün blokları bootstrap (B = 2000, tohum 0). **Yorum kuralı:** Δ'nın GA'sı sıfırı dışlar, Δ ≥ 0,05 **ve** aynı sonuç
+  frekans-eşleyen eşikle (val, 0,176) de sağlanırsa metinde "kış gündüzü CLM fazlası bağımsız bir kar analizinde karlı görünen piksellerde
+  toplanıyor" yazılır (tüm dönem harita farkı keşifsel kalır); aksi halde bulgu keşifsel kalır, sonuç ek tabloda raporlanır.
+  **İkincil (betimsel):** karsız piksellerde CLM − model; ertesi günün haritası; aylara göre; tüm Türkiye maskesi.
