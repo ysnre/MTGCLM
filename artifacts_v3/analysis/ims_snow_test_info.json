@@ -1,0 +1,13 @@
+{
+ "sahne": 317,
+ "gün": 108,
+ "kullanılan_sahne": {
+  "aynı gün": 311,
+  "ertesi gün": 311
+ },
+ "eşikler_u8": {
+  "0.5": 125,
+  "frekans-eşleyen (0.176)": 44
+ },
+ "kural_sağlandı": true
+}
